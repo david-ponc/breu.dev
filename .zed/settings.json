@@ -1,0 +1,39 @@
+{
+	"format_on_save": "on",
+	"file_scan_exclusions": ["**/routeTree.gen.ts"],
+	"formatter": [
+		{ "language_server": { "name": "biome" } },
+		{ "code_action": "source.fixAll.biome" },
+		{ "code_action": "source.organizeImports.biome" }
+	],
+	"lsp": {
+		"tailwindcss-language-server": {
+			"settings": {
+				"classFunctions": ["cn", "tv"]
+			}
+		}
+	},
+	"languages": {
+		"JSON": {
+			"language_servers": ["biome"],
+			"formatter": [
+				{ "language_server": { "name": "biome" } },
+				{ "code_action": "source.fixAll.biome" }
+			]
+		},
+		"JSONC": {
+			"language_servers": ["biome"],
+			"formatter": [
+				{ "language_server": { "name": "biome" } },
+				{ "code_action": "source.fixAll.biome" }
+			]
+		},
+		"CSS": {
+			"language_servers": ["biome"],
+			"formatter": [
+				{ "language_server": { "name": "biome" } },
+				{ "code_action": "source.fixAll.biome" }
+			]
+		}
+	}
+}
