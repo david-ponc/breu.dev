@@ -2,8 +2,6 @@
 
 interface ImportMetaEnv {
 	// Client-side environment variables
-	readonly VITE_APP_NAME: string;
-	readonly VITE_API_URL: string;
 	readonly VITE_BASE_URL: string;
 }
 
@@ -18,8 +16,13 @@ declare global {
 		interface ProcessEnv {
 			readonly BASE_URL: string;
 			readonly DATABASE_URL: string;
-			readonly REDIS_URL: string;
-			readonly JWT_SECRET: string;
+			readonly RABBITMQ_URL: string;
+			readonly BETTER_AUTH_SECRET: string;
+			readonly BETTER_AUTH_URL: string;
+			readonly GITHUB_CLIENT_ID: string;
+			readonly GITHUB_CLIENT_SECRET: string;
+			readonly AI_GATEWAY_API_KEY: string;
+			readonly AI_SLUG_MODEL?: string;
 			readonly NODE_ENV: 'development' | 'production' | 'test';
 		}
 	}
