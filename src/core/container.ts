@@ -6,8 +6,8 @@ import { VisitRecorder } from '#/contexts/analytics/visits/application/record/vi
 import { OnLinkResolved } from '#/contexts/analytics/visits/application/subscribers/on-link-resolved';
 import { UserAgentParser } from '#/contexts/analytics/visits/domain/user-agent-parser';
 import { VisitRepository } from '#/contexts/analytics/visits/domain/visit-repository';
-import { InMemoryVisitRepository } from '#/contexts/analytics/visits/infrastructure/in-memory-visit-repository';
 import { NodeDeviceDetectorUserAgentParser } from '#/contexts/analytics/visits/infrastructure/node-device-detector-user-agent-parser';
+import { PostgresVisitRepository } from '#/contexts/analytics/visits/infrastructure/postgres-visit-repository';
 import { LinkDeleter } from '#/contexts/brevis/links/application/delete/link-deleter';
 import { AvailableSlugSuggester } from '#/contexts/brevis/links/application/generate/available-slug-suggester';
 import { SlugCompletionSuggester } from '#/contexts/brevis/links/application/generate/slug-completion-suggester';
@@ -23,10 +23,11 @@ import { SlugGenerator } from '#/contexts/brevis/links/domain/slug-generator';
 import { GatewayAiSlugGenerator } from '#/contexts/brevis/links/infrastructure/ai-slug-generator';
 import { FriendlyWordsSlugGenerator } from '#/contexts/brevis/links/infrastructure/friendly-words-slug-generator';
 import { OpenGraphScraperMetaCollector } from '#/contexts/brevis/links/infrastructure/open-graph-scraper-meta-collector';
+import { PostgresLinkRepository } from '#/contexts/brevis/links/infrastructure/postgres-link-repository';
 import { LinkResolver } from '#/contexts/redirect/links/application/resolve/link-resolver';
 import { LinkResolvedEvent } from '#/contexts/redirect/links/domain/events/link-resolved-event';
 import { LinkRepository as RedirectLinkRepository } from '#/contexts/redirect/links/domain/link-repository';
-import { InMemoryLinkRepository as RedirectInMemoryLinkRepository } from '#/contexts/redirect/links/infrastructure/in-memory-link-repository';
+import { PostgresLinkRepository as RedirectPostgresLinkRepository } from '#/contexts/redirect/links/infrastructure/postgres-link-repository';
 import { DomainEventMapping } from '#/contexts/shared/domain/events/domain-event-mapping';
 import { EventBus } from '#/contexts/shared/domain/events/event-bus';
 import { PostgresConnection } from '#/contexts/shared/infrastructure/postgres/connection';
@@ -64,6 +65,8 @@ builder
 /*  BREVIS
 /* -------------------------------------------------------------------------- */
 
+builder.registerAndUse(PostgresLinkRepository).withDependencies([PostgresConnection]);
+builder.register(BrevisLinkRepository).use(PostgresLinkRepository).withDependencies([PostgresConnection]);
 builder.registerAndUse(FriendlyWordsSlugGenerator);
 builder.registerAndUse(GatewayAiSlugGenerator);
 builder.register(SlugGenerator).use(FriendlyWordsSlugGenerator);
@@ -82,16 +85,18 @@ builder.registerAndUse(LinkDeleter).withDependencies([BrevisLinkRepository, Even
 /*  REDIRECT
 /* -------------------------------------------------------------------------- */
 
-builder.registerAndUse(RedirectInMemoryLinkRepository);
-builder.register(RedirectLinkRepository).use(RedirectInMemoryLinkRepository);
+builder
+	.registerAndUse(RedirectPostgresLinkRepository)
+	.withDependencies([PostgresConnection]);
+builder.register(RedirectLinkRepository).use(RedirectPostgresLinkRepository).withDependencies([PostgresConnection]);
 builder.registerAndUse(LinkResolver).withDependencies([RedirectLinkRepository, EventBus]);
 
 /* -------------------------------------------------------------------------- */
 /*  ANALYTICS
 /* -------------------------------------------------------------------------- */
 
-builder.registerAndUse(InMemoryVisitRepository);
-builder.register(VisitRepository).use(InMemoryVisitRepository);
+builder.registerAndUse(PostgresVisitRepository).withDependencies([PostgresConnection]);
+builder.register(VisitRepository).use(PostgresVisitRepository).withDependencies([PostgresConnection]);
 builder.registerAndUse(NodeDeviceDetectorUserAgentParser);
 builder.register(UserAgentParser).use(NodeDeviceDetectorUserAgentParser);
 builder
