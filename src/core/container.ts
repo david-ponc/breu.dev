@@ -30,9 +30,9 @@ import { LinkRepository as RedirectLinkRepository } from '#/contexts/redirect/li
 import { PostgresLinkRepository as RedirectPostgresLinkRepository } from '#/contexts/redirect/links/infrastructure/postgres-link-repository';
 import { DomainEventMapping } from '#/contexts/shared/domain/events/domain-event-mapping';
 import { EventBus } from '#/contexts/shared/domain/events/event-bus';
+import { BullMqConnection } from '#/contexts/shared/infrastructure/bullmq/connection';
+import { BullMqEventBus } from '#/contexts/shared/infrastructure/bullmq/event-bus';
 import { PostgresConnection } from '#/contexts/shared/infrastructure/postgres/connection';
-import { RabbitMqConnection } from '#/contexts/shared/infrastructure/rabbitmq/connection';
-import { RabbitMqEventBus } from '#/contexts/shared/infrastructure/rabbitmq/event-bus';
 
 import { registerSubscribers } from './register-subscribers';
 
@@ -43,7 +43,7 @@ const builder = new ContainerBuilder();
 /* -------------------------------------------------------------------------- */
 
 builder.registerAndUse(PostgresConnection);
-builder.registerAndUse(RabbitMqConnection);
+builder.registerAndUse(BullMqConnection);
 builder.registerAndUse(OnLinkCreated);
 
 const domainEventMapping = new DomainEventMapping({
@@ -57,8 +57,8 @@ builder.register(DomainEventMapping).useInstance(domainEventMapping);
 
 builder
 	.register(EventBus)
-	.use(RabbitMqEventBus)
-	.withDependencies([RabbitMqConnection, DomainEventMapping])
+	.use(BullMqEventBus)
+	.withDependencies([BullMqConnection, DomainEventMapping])
 	.asSingleton();
 
 /* -------------------------------------------------------------------------- */
@@ -66,7 +66,10 @@ builder
 /* -------------------------------------------------------------------------- */
 
 builder.registerAndUse(PostgresLinkRepository).withDependencies([PostgresConnection]);
-builder.register(BrevisLinkRepository).use(PostgresLinkRepository).withDependencies([PostgresConnection]);
+builder
+	.register(BrevisLinkRepository)
+	.use(PostgresLinkRepository)
+	.withDependencies([PostgresConnection]);
 builder.registerAndUse(FriendlyWordsSlugGenerator);
 builder.registerAndUse(GatewayAiSlugGenerator);
 builder.register(SlugGenerator).use(FriendlyWordsSlugGenerator);
@@ -88,7 +91,10 @@ builder.registerAndUse(LinkDeleter).withDependencies([BrevisLinkRepository, Even
 builder
 	.registerAndUse(RedirectPostgresLinkRepository)
 	.withDependencies([PostgresConnection]);
-builder.register(RedirectLinkRepository).use(RedirectPostgresLinkRepository).withDependencies([PostgresConnection]);
+builder
+	.register(RedirectLinkRepository)
+	.use(RedirectPostgresLinkRepository)
+	.withDependencies([PostgresConnection]);
 builder.registerAndUse(LinkResolver).withDependencies([RedirectLinkRepository, EventBus]);
 
 /* -------------------------------------------------------------------------- */
@@ -96,7 +102,10 @@ builder.registerAndUse(LinkResolver).withDependencies([RedirectLinkRepository, E
 /* -------------------------------------------------------------------------- */
 
 builder.registerAndUse(PostgresVisitRepository).withDependencies([PostgresConnection]);
-builder.register(VisitRepository).use(PostgresVisitRepository).withDependencies([PostgresConnection]);
+builder
+	.register(VisitRepository)
+	.use(PostgresVisitRepository)
+	.withDependencies([PostgresConnection]);
 builder.registerAndUse(NodeDeviceDetectorUserAgentParser);
 builder.register(UserAgentParser).use(NodeDeviceDetectorUserAgentParser);
 builder

@@ -1,7 +1,7 @@
 Object.assign(process.env, {
 	BASE_URL: 'http://localhost:3000',
 	DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-	RABBITMQ_URL: 'amqp://guest:guest@localhost:5672',
+	REDIS_URL: 'redis://localhost:6379',
 	BETTER_AUTH_SECRET: 'test-secret-for-testing-purposes-only-32chars',
 	BETTER_AUTH_URL: 'http://localhost:3000',
 	GITHUB_CLIENT_ID: 'test-client-id',

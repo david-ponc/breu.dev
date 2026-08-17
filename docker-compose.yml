@@ -1,13 +1,12 @@
 services:
-  rabbitmq:
-    image: rabbitmq:4-management
+  redis:
+    image: redis:alpine
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - '6379:6379'
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - redis_data:/data
     healthcheck:
-      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,5 +25,5 @@ services:
       retries: 5
 
 volumes:
-  rabbitmq_data:
+  redis_data:
   postgres_data:
