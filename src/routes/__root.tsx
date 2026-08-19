@@ -19,11 +19,11 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: PropsWithChildren) {
 	return (
-		<html lang='en'>
+		<html lang='en' className='scroll-smooth'>
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body className='flex size-full h-svh flex-col overscroll-none bg-background font-sans text-foreground'>
 				{children}
 				<TanStackDevtools
 					config={{
