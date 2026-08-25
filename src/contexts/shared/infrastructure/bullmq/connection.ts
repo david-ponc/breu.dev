@@ -1,7 +1,7 @@
 import { Service } from 'diod';
 import IORedis from 'ioredis';
 
-import { serverEnv } from '#/config/env';
+import { serverEnv } from '#/config/env/server';
 import { logger } from '#/core/lib/logging';
 
 @Service()

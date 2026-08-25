@@ -1,6 +1,6 @@
 import pino from 'pino';
 
-import { IS_DEVELOPMENT, IS_PRODUCTION, IS_TEST } from '#/config/env';
+import { IS_DEVELOPMENT, IS_PRODUCTION, IS_TEST } from '#/config/env/server';
 
 export const logger = pino({
 	level: IS_TEST ? 'silent' : IS_DEVELOPMENT ? 'debug' : 'info',

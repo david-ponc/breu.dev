@@ -2,7 +2,7 @@ import { PostgresJSDialect } from 'kysely-postgres-js';
 import type { Sql } from 'postgres';
 import postgres from 'postgres';
 
-import { IS_DEVELOPMENT, serverEnv } from '#/config/env';
+import { IS_DEVELOPMENT, serverEnv } from '#/config/env/server';
 
 type PoolOptions = {
 	searchPath?: string;

@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { Elysia } from 'elysia';
 
-import { clientEnv } from '#/config/env';
+import { clientEnv } from '#/config/env/client';
 import { brevisLinksRoutes } from '#/contexts/brevis/links/infrastructure/http/routes';
 import { redirectLinkRoutes } from '#/contexts/redirect/links/infrastructure/http/routes';
 import { auth } from '#/core/lib/auth';

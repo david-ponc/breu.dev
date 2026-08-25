@@ -2,7 +2,7 @@ import { gateway, generateText, Output } from 'ai';
 import { Service } from 'diod';
 import z from 'zod';
 
-import { serverEnv } from '#/config/env';
+import { serverEnv } from '#/config/env/server';
 import { SlugSuggestionFailedError } from '#/contexts/brevis/links/domain/errors/slug-suggestion-failed';
 import {
 	type LinkSlug,

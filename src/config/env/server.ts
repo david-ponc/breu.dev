@@ -13,13 +13,7 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'production', 'test']),
 });
 
-const clientEnvSchema = z.object({
-	VITE_BASE_URL: z.url(),
-});
-
 export const serverEnv = envSchema.parse(process.env);
-
-export const clientEnv = clientEnvSchema.parse(import.meta.env);
 
 export const IS_DEVELOPMENT = serverEnv.NODE_ENV === 'development';
 export const IS_PRODUCTION = serverEnv.NODE_ENV === 'production';

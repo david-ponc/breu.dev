@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
-import { serverEnv } from '#/config/env';
+import { serverEnv } from '#/config/env/server';
 import { authPool } from '#/contexts/shared/infrastructure/postgres/pool';
 import { Identifier } from '#/core/lib/identifier';
 
