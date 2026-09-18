@@ -9,7 +9,7 @@ import { Button } from '../button/button';
 import { type BaseInput, Input } from '../input';
 import { Textarea } from '../textarea';
 
-export function InputGroupRoot({ className, ...props }: ComponentProps<'div'>) {
+function InputGroupRoot({ className, ...props }: ComponentProps<'div'>) {
 	return (
 		<div
 			data-slot='input-group'
@@ -43,7 +43,7 @@ const inputGroupAddonVariants = tv({
 	},
 });
 
-export function InputGroupAddon({
+function InputGroupAddon({
 	className,
 	align = 'inline-start',
 	...props
@@ -81,7 +81,7 @@ const inputGroupButtonVariants = tv({
 	},
 });
 
-export function InputGroupButton({
+function InputGroupButton({
 	className,
 	type = 'button',
 	variant = 'ghost',
@@ -102,7 +102,7 @@ export function InputGroupButton({
 	);
 }
 
-export function InputGroupText({ className, ...props }: ComponentProps<'span'>) {
+function InputGroupText({ className, ...props }: ComponentProps<'span'>) {
 	return (
 		<span
 			className={cn(
@@ -114,7 +114,7 @@ export function InputGroupText({ className, ...props }: ComponentProps<'span'>) 
 	);
 }
 
-export function InputGroupInput({ className, ...props }: BaseInput.Props) {
+function InputGroupInput({ className, ...props }: BaseInput.Props) {
 	return (
 		<Input
 			data-slot='input-group-control'
@@ -127,7 +127,7 @@ export function InputGroupInput({ className, ...props }: BaseInput.Props) {
 	);
 }
 
-export function InputGroupTextarea({ className, ...props }: ComponentProps<'textarea'>) {
+function InputGroupTextarea({ className, ...props }: ComponentProps<'textarea'>) {
 	return (
 		<Textarea
 			data-slot='input-group-control'
@@ -139,3 +139,12 @@ export function InputGroupTextarea({ className, ...props }: ComponentProps<'text
 		/>
 	);
 }
+
+export const InputGroup = {
+	Root: InputGroupRoot,
+	Addon: InputGroupAddon,
+	Button: InputGroupButton,
+	Text: InputGroupText,
+	Input: InputGroupInput,
+	Textarea: InputGroupTextarea,
+};

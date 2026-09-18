@@ -3,6 +3,8 @@ import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import type { PropsWithChildren } from 'react';
 
+import { Toaster } from '#/core/ui/toast';
+
 import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
@@ -25,6 +27,7 @@ function RootDocument({ children }: PropsWithChildren) {
 			</head>
 			<body className='flex size-full h-svh flex-col overscroll-none bg-background font-sans text-foreground'>
 				{children}
+				<Toaster />
 				<TanStackDevtools
 					config={{
 						position: 'bottom-right',

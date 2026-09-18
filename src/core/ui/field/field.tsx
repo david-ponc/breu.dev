@@ -1,5 +1,4 @@
 import { Field as BaseField } from '@base-ui/react/field';
-import { AnimatePresence, type MotionProps, motion } from 'motion/react';
 import type { ComponentProps } from 'react';
 
 import { cn } from '#/core/lib/cn';
@@ -23,7 +22,7 @@ const fieldVariants = tv({
 	},
 });
 
-export function FieldRoot({
+function FieldRoot({
 	className,
 	orientation = 'vertical',
 	...props
@@ -39,7 +38,7 @@ export function FieldRoot({
 	);
 }
 
-export function FieldItem({ className, ...props }: BaseField.Item.Props) {
+function FieldItem({ className, ...props }: BaseField.Item.Props) {
 	return (
 		<BaseField.Item
 			data-slot='field-item'
@@ -52,7 +51,7 @@ export function FieldItem({ className, ...props }: BaseField.Item.Props) {
 	);
 }
 
-export function FieldLabel({ className, ...props }: BaseField.Label.Props) {
+function FieldLabel({ className, ...props }: BaseField.Label.Props) {
 	return (
 		<BaseField.Label
 			data-slot='field-label'
@@ -67,7 +66,7 @@ export function FieldLabel({ className, ...props }: BaseField.Label.Props) {
 	);
 }
 
-export function FieldDescription({ className, ...props }: BaseField.Description.Props) {
+function FieldDescription({ className, ...props }: BaseField.Description.Props) {
 	return (
 		<BaseField.Description
 			data-slot='field-description'
@@ -81,36 +80,25 @@ export function FieldDescription({ className, ...props }: BaseField.Description.
 	);
 }
 
-const BaseFieldError = motion.create(BaseField.Error);
-
-export function FieldError({
-	className,
-	match,
-	children,
-	...props
-}: BaseField.Error.Props & MotionProps) {
+function FieldError({ className, match, children, ...props }: BaseField.Error.Props) {
 	return (
-		<AnimatePresence>
+		<>
 			{match && (
-				<BaseFieldError
-					key='field-error'
+				<BaseField.Error
 					role='alert'
 					data-slot='field-error'
 					match={match}
-					initial={{ opacity: 0, height: 0, filter: 'blur(4px)' }}
-					animate={{ opacity: 1, height: 'auto', filter: 'blur(0)' }}
-					exit={{ opacity: 0, height: 0, filter: 'blur(4px)' }}
 					className={cn('text-destructive-foreground text-xs', className)}
 					{...props}
 				>
 					{children}
-				</BaseFieldError>
+				</BaseField.Error>
 			)}
-		</AnimatePresence>
+		</>
 	);
 }
 
-export function FieldSeparator({ children, className, ...props }: ComponentProps<'div'>) {
+function FieldSeparator({ children, className, ...props }: ComponentProps<'div'>) {
 	return (
 		<div
 			data-slot='field-separator'
@@ -130,3 +118,12 @@ export function FieldSeparator({ children, className, ...props }: ComponentProps
 		</div>
 	);
 }
+
+export const Field = {
+	Root: FieldRoot,
+	Item: FieldItem,
+	Label: FieldLabel,
+	Description: FieldDescription,
+	Error: FieldError,
+	Separator: FieldSeparator,
+};

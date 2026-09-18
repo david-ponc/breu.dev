@@ -23,6 +23,7 @@
 	* {
 		scrollbar-width: thin;
 		scrollbar-color: var(--color-zinc-500) transparent;
+		border-color: var(--border, currentColor);
 	}
 
 	code:not(h1 code, h2 code, h3 code, h4 code, .callout code) {
@@ -156,12 +157,282 @@
 	--color-sidebar-ring: var(--sidebar-ring);
 }
 
+@utility hit-area-debug {
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+		@apply border border-dashed border-blue-500;
+		@apply bg-blue-500/10;
+	}
+
+	&:hover::before {
+		@apply border border-dashed border-green-500;
+		@apply bg-green-500/10;
+	}
+}
+
+@utility hit-area {
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-* {
+	position: relative;
+	--hit-area-t: --spacing(--value(number) * -1);
+	--hit-area-t: calc(--value([*]) * -1);
+	--hit-area-b: --spacing(--value(number) * -1);
+	--hit-area-b: calc(--value([*]) * -1);
+	--hit-area-l: --spacing(--value(number) * -1);
+	--hit-area-l: calc(--value([*]) * -1);
+	--hit-area-r: --spacing(--value(number) * -1);
+	--hit-area-r: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-l-* {
+	position: relative;
+	--hit-area-l: --spacing(--value(number) * -1);
+	--hit-area-l: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-r-* {
+	position: relative;
+	--hit-area-r: --spacing(--value(number) * -1);
+	--hit-area-r: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-t-* {
+	position: relative;
+	--hit-area-t: --spacing(--value(number) * -1);
+	--hit-area-t: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-b-* {
+	position: relative;
+	--hit-area-b: --spacing(--value(number) * -1);
+	--hit-area-b: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-x-* {
+	position: relative;
+	--hit-area-l: --spacing(--value(number) * -1);
+	--hit-area-l: calc(--value([*]) * -1);
+	--hit-area-r: --spacing(--value(number) * -1);
+	--hit-area-r: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
+@utility hit-area-y-* {
+	position: relative;
+	--hit-area-t: --spacing(--value(number) * -1);
+	--hit-area-t: calc(--value([*]) * -1);
+	--hit-area-b: --spacing(--value(number) * -1);
+	--hit-area-b: calc(--value([*]) * -1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: var(--hit-area-t, 0px);
+		right: var(--hit-area-r, 0px);
+		bottom: var(--hit-area-b, 0px);
+		left: var(--hit-area-l, 0px);
+		pointer-events: inherit;
+	}
+}
+
 @keyframes spinner-line {
 	0% {
 		opacity: 1;
 	}
 	100% {
 		opacity: 0.15;
+	}
+}
+
+@keyframes skeleton-sweep {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes loading-opacity {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.6;
+	}
+}
+
+@layer components {
+	.loading-skeleton::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(90deg, transparent, var(--color-card), transparent);
+		animation: skeleton-sweep 1.8s linear infinite;
+	}
+	.loading-shimmer {
+		animation: loading-opacity 1.8s linear infinite;
+	}
+	.empty-link-icon-enter {
+		opacity: 1;
+		transform: scale(1);
+		transition:
+			opacity 200ms var(--ease-out),
+			transform 200ms var(--ease-out);
+		@starting-style {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.loading-skeleton::after {
+			animation: none;
+			opacity: 0;
+		}
+		.loading-shimmer {
+			animation: none;
+		}
+		.empty-link-icon-enter {
+			transition-property: opacity;
+			@starting-style {
+				transform: scale(1);
+			}
+		}
+	}
+}
+
+@keyframes links-delete-enter {
+	from {
+		filter: blur(2px);
+		opacity: 0;
+		transform: translateY(16px) scale(0.97);
+	}
+	to {
+		filter: blur(0);
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes links-delete-exit {
+	from {
+		filter: blur(0);
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+	to {
+		filter: blur(2px);
+		opacity: 0;
+		transform: translateY(16px) scale(0.97);
+	}
+}
+
+@keyframes links-delete-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+::view-transition-new(.links-delete-enter) {
+	transform-origin: center;
+	animation: links-delete-enter 200ms var(--ease-out) both;
+}
+
+::view-transition-old(.links-delete-exit) {
+	transform-origin: center;
+	animation: links-delete-exit 200ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-new(.links-delete-enter) {
+		animation: links-delete-fade 100ms var(--ease-out) both;
+	}
+	::view-transition-old(.links-delete-exit) {
+		animation: links-delete-fade 100ms var(--ease-out) reverse both;
 	}
 }
 
@@ -172,12 +443,16 @@
 }
 
 @theme {
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 	--inset-shadow-t-px: inset 0 1px 0 0;
 	--background-image-default-active: linear-gradient(
 		to bottom,
 		--alpha(var(--color-sky-800) / 8%),
 		transparent
 	);
+	--background-image-default-enphasis:
+		linear-gradient(to bottom, --alpha(var(--color-sky-200) / 32%), transparent),
+		linear-gradient(var(--color-primary), var(--color-primary));
 	--background-image-secondary-active: linear-gradient(
 		to bottom,
 		--alpha(var(--color-zinc-900) / 4%),
@@ -198,6 +473,9 @@
 		--alpha(var(--color-red-800) / 16%),
 		transparent
 	);
+	--background-image-destructive-enphasis:
+		linear-gradient(to bottom, --alpha(var(--color-red-200) / 24%), transparent),
+		linear-gradient(var(--color-destructive), var(--color-destructive));
 	--background-image-destructive-outline-active: linear-gradient(
 		to bottom,
 		--alpha(var(--color-red-800) / 6%),
