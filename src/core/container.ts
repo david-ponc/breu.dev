@@ -11,6 +11,7 @@ import { PostgresVisitRepository } from '#/contexts/analytics/visits/infrastruct
 import { LinkDeleter } from '#/contexts/brevis/links/application/delete/link-deleter';
 import { AvailableSlugSuggester } from '#/contexts/brevis/links/application/generate/available-slug-suggester';
 import { SlugCompletionSuggester } from '#/contexts/brevis/links/application/generate/slug-completion-suggester';
+import { UserLinkLister } from '#/contexts/brevis/links/application/list/user-link-lister';
 import { SlugAvailabilityChecker } from '#/contexts/brevis/links/application/search-one/slug-availability-checker.ts';
 import { OnLinkCreated } from '#/contexts/brevis/links/application/subscribers/on-link-created';
 import { LinkUpserter } from '#/contexts/brevis/links/application/upsert/link-upserter';
@@ -18,12 +19,14 @@ import { LinkCreatedEvent } from '#/contexts/brevis/links/domain/events/link-cre
 import { LinkDeletedEvent } from '#/contexts/brevis/links/domain/events/link-deleted-event';
 import { LinkUpdatedEvent } from '#/contexts/brevis/links/domain/events/link-updated-event';
 import { LinkRepository as BrevisLinkRepository } from '#/contexts/brevis/links/domain/link-repository';
+import { LinkSummaryRepository } from '#/contexts/brevis/links/domain/link-summary-repository';
 import { MetaCollector } from '#/contexts/brevis/links/domain/meta-collector';
 import { SlugGenerator } from '#/contexts/brevis/links/domain/slug-generator';
 import { GatewayAiSlugGenerator } from '#/contexts/brevis/links/infrastructure/ai-slug-generator';
 import { FriendlyWordsSlugGenerator } from '#/contexts/brevis/links/infrastructure/friendly-words-slug-generator';
 import { OpenGraphScraperMetaCollector } from '#/contexts/brevis/links/infrastructure/open-graph-scraper-meta-collector';
 import { PostgresLinkRepository } from '#/contexts/brevis/links/infrastructure/postgres-link-repository';
+import { PostgresLinkSummaryRepository } from '#/contexts/brevis/links/infrastructure/postgres-link-summary-repository';
 import { LinkResolver } from '#/contexts/redirect/links/application/resolve/link-resolver';
 import { LinkResolvedEvent } from '#/contexts/redirect/links/domain/events/link-resolved-event';
 import { LinkRepository as RedirectLinkRepository } from '#/contexts/redirect/links/domain/link-repository';
@@ -83,6 +86,11 @@ builder
 builder.registerAndUse(SlugAvailabilityChecker).withDependencies([BrevisLinkRepository]);
 builder.registerAndUse(LinkUpserter).withDependencies([BrevisLinkRepository, EventBus]);
 builder.registerAndUse(LinkDeleter).withDependencies([BrevisLinkRepository, EventBus]);
+builder
+	.register(LinkSummaryRepository)
+	.use(PostgresLinkSummaryRepository)
+	.withDependencies([PostgresConnection]);
+builder.registerAndUse(UserLinkLister).withDependencies([LinkSummaryRepository]);
 
 /* -------------------------------------------------------------------------- */
 /*  REDIRECT

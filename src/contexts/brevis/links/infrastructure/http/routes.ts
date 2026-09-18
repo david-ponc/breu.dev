@@ -4,12 +4,14 @@ import z from 'zod';
 import { LinkDeleter } from '#/contexts/brevis/links/application/delete/link-deleter';
 import { AvailableSlugSuggester } from '#/contexts/brevis/links/application/generate/available-slug-suggester';
 import { SlugCompletionSuggester } from '#/contexts/brevis/links/application/generate/slug-completion-suggester';
+import { UserLinkLister } from '#/contexts/brevis/links/application/list/user-link-lister';
 import { LinkUpserter } from '#/contexts/brevis/links/application/upsert/link-upserter';
 import {
 	CreateLinkSchema,
 	LinkSlugSchema,
 	MetaSchema,
 } from '#/contexts/brevis/links/domain/link';
+import { LinkSummarySchema } from '#/contexts/brevis/links/domain/link-summary';
 import { MetaCollector } from '#/contexts/brevis/links/domain/meta-collector';
 import { container } from '#/core/container';
 import { authPlugin } from '#/core/lib/auth/plugin';
@@ -20,6 +22,10 @@ import { errorHandler } from './error-handling';
 export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 	.use(authPlugin)
 	.use(errorHandler)
+	.get('/', ({ user }) => container.get(UserLinkLister).execute(user.id), {
+		auth: true,
+		response: { 200: z.array(LinkSummarySchema) },
+	})
 	.get(
 		'/availability',
 		async ({ query }) => {
