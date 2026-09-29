@@ -20,28 +20,6 @@ interface LinkDetailHeaderProps {
 
 export function LinkDetailHeader({ linkId, userId }: LinkDetailHeaderProps) {
 	const { data: link } = useSuspenseQuery(userLinkQueryOptions(userId, linkId));
-	const shortHref = shortLinkPath(link.slug);
-	const copyButtonRef = useRef<HTMLButtonElement>(null);
-	const [copied, setCopied] = useState(false);
-
-	const copyShortUrl = async () => {
-		try {
-			await navigator.clipboard.writeText(
-				new URL(shortHref, clientEnv.VITE_BASE_URL).href,
-			);
-			setCopied(true);
-			anchoredToastManager.add({
-				title: 'Copied to clipboard',
-				positionerProps: {
-					anchor: copyButtonRef.current,
-					sideOffset: 8,
-				},
-				onClose: () => setCopied(false),
-			});
-		} catch {
-			toastManager.add({ type: 'error', title: 'Unable to copy link' });
-		}
-	};
 
 	return (
 		<header className='flex flex-col gap-4'>
@@ -75,40 +53,57 @@ export function LinkDetailHeader({ linkId, userId }: LinkDetailHeaderProps) {
 					</p>
 				</div>
 				<menu className='flex flex-wrap items-center gap-2'>
-					<Button
-						ref={copyButtonRef}
-						variant='outline'
-						onClick={() => void copyShortUrl()}
-					>
-						Copy link
-						<span
-							data-icon='inline-end'
-							className='grid size-4 shrink-0 place-items-center'
-						>
-							<Icon
-								name='clipboard'
-								aria-hidden
-								className={cn(
-									'col-start-1 row-start-1 transition-[opacity,scale,filter] duration-200 ease-out motion-reduce:transition-none',
-									copied
-										? 'scale-75 opacity-0 blur-[2px]'
-										: 'scale-100 opacity-100 blur-[0px]',
-								)}
-							/>
-							<Icon
-								name='check'
-								aria-hidden
-								className={cn(
-									'col-start-1 row-start-1 transition-[opacity,scale,filter] duration-200 ease-out motion-reduce:transition-none',
-									copied
-										? 'scale-100 opacity-100 blur-[0px]'
-										: 'scale-75 opacity-0 blur-[2px]',
-								)}
-							/>
-						</span>
-					</Button>
+					<CopyLinkButton slug={link.slug} />
 				</menu>
 			</div>
 		</header>
+	);
+}
+
+function CopyLinkButton({ slug }: { slug: string }) {
+	const copyButtonRef = useRef<HTMLButtonElement>(null);
+	const [copied, setCopied] = useState(false);
+
+	const copyShortUrl = async () => {
+		try {
+			await navigator.clipboard.writeText(
+				new URL(shortLinkPath(slug), clientEnv.VITE_BASE_URL).href,
+			);
+			setCopied(true);
+			anchoredToastManager.add({
+				title: 'Copied to clipboard',
+				positionerProps: {
+					anchor: copyButtonRef.current,
+					sideOffset: 8,
+				},
+				onClose: () => setCopied(false),
+			});
+		} catch {
+			toastManager.add({ type: 'error', title: 'Unable to copy link' });
+		}
+	};
+
+	return (
+		<Button ref={copyButtonRef} variant='outline' onClick={() => void copyShortUrl()}>
+			Copy link
+			<span data-icon='inline-end' className='grid size-4 shrink-0 place-items-center'>
+				<Icon
+					name='clipboard'
+					aria-hidden
+					className={cn(
+						'col-start-1 row-start-1 transition-[opacity,scale,filter] duration-200 ease-out motion-reduce:transition-none',
+						copied ? 'scale-75 opacity-0 blur-[2px]' : 'scale-100 opacity-100 blur-[0px]',
+					)}
+				/>
+				<Icon
+					name='check'
+					aria-hidden
+					className={cn(
+						'col-start-1 row-start-1 transition-[opacity,scale,filter] duration-200 ease-out motion-reduce:transition-none',
+						copied ? 'scale-100 opacity-100 blur-[0px]' : 'scale-75 opacity-0 blur-[2px]',
+					)}
+				/>
+			</span>
+		</Button>
 	);
 }
