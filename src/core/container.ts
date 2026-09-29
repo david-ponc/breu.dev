@@ -2,17 +2,22 @@ import 'reflect-metadata';
 
 import { ContainerBuilder } from 'diod';
 
+import { LinkVisitLister } from '#/contexts/analytics/visits/application/list/link-visit-lister';
 import { VisitRecorder } from '#/contexts/analytics/visits/application/record/visit-recorder';
+import { LinkStatsFinder } from '#/contexts/analytics/visits/application/search/link-stats-finder';
 import { OnLinkResolved } from '#/contexts/analytics/visits/application/subscribers/on-link-resolved';
 import { UserAgentParser } from '#/contexts/analytics/visits/domain/user-agent-parser';
 import { VisitRepository } from '#/contexts/analytics/visits/domain/visit-repository';
+import { VisitStatsRepository } from '#/contexts/analytics/visits/domain/visit-stats-repository';
 import { NodeDeviceDetectorUserAgentParser } from '#/contexts/analytics/visits/infrastructure/node-device-detector-user-agent-parser';
 import { PostgresVisitRepository } from '#/contexts/analytics/visits/infrastructure/postgres-visit-repository';
+import { PostgresVisitStatsRepository } from '#/contexts/analytics/visits/infrastructure/postgres-visit-stats-repository';
 import { LinkDeleter } from '#/contexts/brevis/links/application/delete/link-deleter';
 import { AvailableSlugSuggester } from '#/contexts/brevis/links/application/generate/available-slug-suggester';
 import { SlugCompletionSuggester } from '#/contexts/brevis/links/application/generate/slug-completion-suggester';
 import { UserLinkLister } from '#/contexts/brevis/links/application/list/user-link-lister';
 import { SlugAvailabilityChecker } from '#/contexts/brevis/links/application/search-one/slug-availability-checker.ts';
+import { UserLinkFinder } from '#/contexts/brevis/links/application/search-one/user-link-finder';
 import { OnLinkCreated } from '#/contexts/brevis/links/application/subscribers/on-link-created';
 import { LinkUpserter } from '#/contexts/brevis/links/application/upsert/link-upserter';
 import { LinkCreatedEvent } from '#/contexts/brevis/links/domain/events/link-created-event';
@@ -84,6 +89,7 @@ builder
 	.registerAndUse(SlugCompletionSuggester)
 	.withDependencies([MetaCollector, GatewayAiSlugGenerator, BrevisLinkRepository]);
 builder.registerAndUse(SlugAvailabilityChecker).withDependencies([BrevisLinkRepository]);
+builder.registerAndUse(UserLinkFinder).withDependencies([BrevisLinkRepository]);
 builder.registerAndUse(LinkUpserter).withDependencies([BrevisLinkRepository, EventBus]);
 builder.registerAndUse(LinkDeleter).withDependencies([BrevisLinkRepository, EventBus]);
 builder
@@ -120,6 +126,15 @@ builder
 	.registerAndUse(VisitRecorder)
 	.withDependencies([VisitRepository, UserAgentParser]);
 builder.registerAndUse(OnLinkResolved).withDependencies([VisitRecorder]);
+builder
+	.registerAndUse(PostgresVisitStatsRepository)
+	.withDependencies([PostgresConnection]);
+builder
+	.register(VisitStatsRepository)
+	.use(PostgresVisitStatsRepository)
+	.withDependencies([PostgresConnection]);
+builder.registerAndUse(LinkStatsFinder).withDependencies([VisitStatsRepository]);
+builder.registerAndUse(LinkVisitLister).withDependencies([VisitStatsRepository]);
 
 export const container = builder.build();
 

@@ -2,9 +2,9 @@ import { Service } from 'diod';
 
 import { LinkSlugUnavailableError } from '#/contexts/brevis/links/domain/errors/link-slug-unavailable';
 import {
-	type CreateLinkCommand,
 	createLink,
 	type Link,
+	type UpsertLinkCommand,
 	updateLink,
 } from '#/contexts/brevis/links/domain/link';
 import type { LinkRepository } from '#/contexts/brevis/links/domain/link-repository';
@@ -18,7 +18,7 @@ export class LinkUpserter {
 		private readonly eventBus: EventBus,
 	) {}
 
-	async execute(command: CreateLinkCommand): Promise<Link> {
+	async execute(command: UpsertLinkCommand): Promise<Link> {
 		const existing = await this.repository.searchBySlug(command.slug);
 
 		if (existing && existing.userId !== command.userId) {

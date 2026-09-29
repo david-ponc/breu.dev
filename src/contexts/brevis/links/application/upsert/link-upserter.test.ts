@@ -4,9 +4,9 @@ import { LinkSlugUnavailableError } from '#/contexts/brevis/links/domain/errors/
 import { LinkCreatedEvent } from '#/contexts/brevis/links/domain/events/link-created-event';
 import { LinkUpdatedEvent } from '#/contexts/brevis/links/domain/events/link-updated-event';
 import {
-	type CreateLinkCommand,
 	type Link,
 	LinkSchema,
+	type UpsertLinkCommand,
 } from '#/contexts/brevis/links/domain/link';
 import { InMemoryLinkRepository } from '#/contexts/brevis/links/infrastructure/in-memory-link-repository';
 import { InMemoryEventBus } from '#/contexts/shared/infrastructure/in-memory-event-bus';
@@ -14,7 +14,7 @@ import { Identifier } from '#/core/lib/identifier';
 
 import { LinkUpserter } from './link-upserter';
 
-function aLinkCommand(overrides?: Partial<CreateLinkCommand>): CreateLinkCommand {
+function aLinkCommand(overrides?: Partial<UpsertLinkCommand>): UpsertLinkCommand {
 	return {
 		id: Identifier.generate(),
 		userId: Identifier.generate(),
@@ -122,5 +122,44 @@ describe('upserting a link', () => {
 		expect(eventBus.publishedEvents).toHaveLength(0);
 		const saved = await repository.searchBySlug(existing.slug);
 		expect(saved?.url).toBe(existing.url);
+	});
+
+	it('creates the link as active even when a status is provided', async () => {
+		const command = aLinkCommand({ status: 'disabled' });
+
+		const link = await upserter.execute(command);
+
+		expect(link.status).toBe('active');
+	});
+
+	it('updates the status when the command includes it', async () => {
+		const userId = Identifier.generate();
+		const existing = aLink({ userId, status: 'active' });
+		await repository.save(existing);
+		const command = aLinkCommand({
+			slug: existing.slug,
+			userId,
+			status: 'disabled',
+		});
+
+		const link = await upserter.execute(command);
+
+		expect(link.status).toBe('disabled');
+	});
+
+	it('preserves the status when the command omits it', async () => {
+		const userId = Identifier.generate();
+		const existing = aLink({ userId, status: 'disabled' });
+		await repository.save(existing);
+		const command = aLinkCommand({
+			slug: existing.slug,
+			userId,
+			url: 'https://updated.com',
+		});
+
+		const link = await upserter.execute(command);
+
+		expect(link.status).toBe('disabled');
+		expect(link.url).toBe('https://updated.com');
 	});
 });

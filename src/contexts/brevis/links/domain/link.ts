@@ -78,16 +78,20 @@ export const DeleteLinkSchema = LinkSchema.pick({
 	userId: true,
 });
 
-export type CreateLinkCommand = z.infer<typeof CreateLinkSchema>;
-export type DeleteLinkCommand = z.infer<typeof DeleteLinkSchema>;
-
 export const UpdateLinkSchema = LinkSchema.partial().omit({
 	id: true,
 	userId: true,
 	createdAt: true,
 });
 
+export const UpsertLinkSchema = CreateLinkSchema.extend({
+	status: LinkStatusSchema.optional(),
+});
+
+export type CreateLinkCommand = z.infer<typeof CreateLinkSchema>;
+export type DeleteLinkCommand = z.infer<typeof DeleteLinkSchema>;
 export type UpdateLinkCommand = z.infer<typeof UpdateLinkSchema>;
+export type UpsertLinkCommand = z.infer<typeof UpsertLinkSchema>;
 
 /* -------------------------------------------------------------------------- */
 /*  FACTORIES

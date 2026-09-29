@@ -83,6 +83,14 @@ describe('updating a link', () => {
 		expect(updated.comments).toBe(existing.comments);
 	});
 
+	it('can change the link status', () => {
+		const existing = aLink({ status: 'active' });
+		const [updated] = updateLink(existing, { status: 'disabled' });
+
+		expect(updated.status).toBe('disabled');
+		expect(updated.url).toBe(existing.url);
+	});
+
 	it('preserves the original creation timestamp', () => {
 		const existing = aLink();
 		const [updated] = updateLink(existing, { url: 'https://other.com' });

@@ -5,11 +5,13 @@ import { LinkDeleter } from '#/contexts/brevis/links/application/delete/link-del
 import { AvailableSlugSuggester } from '#/contexts/brevis/links/application/generate/available-slug-suggester';
 import { SlugCompletionSuggester } from '#/contexts/brevis/links/application/generate/slug-completion-suggester';
 import { UserLinkLister } from '#/contexts/brevis/links/application/list/user-link-lister';
+import { UserLinkFinder } from '#/contexts/brevis/links/application/search-one/user-link-finder';
 import { LinkUpserter } from '#/contexts/brevis/links/application/upsert/link-upserter';
 import {
-	CreateLinkSchema,
+	LinkSchema,
 	LinkSlugSchema,
 	MetaSchema,
+	UpsertLinkSchema,
 } from '#/contexts/brevis/links/domain/link';
 import { LinkSummarySchema } from '#/contexts/brevis/links/domain/link-summary';
 import { MetaCollector } from '#/contexts/brevis/links/domain/meta-collector';
@@ -71,6 +73,18 @@ export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 			},
 		},
 	)
+	.get(
+		'/:id',
+		({ params, user }) => container.get(UserLinkFinder).execute(params.id, user.id),
+		{
+			auth: true,
+			params: z.object({ id: LinkSchema.shape.id }),
+			response: {
+				200: LinkSchema,
+				404: z.object({ code: z.string(), message: z.string() }),
+			},
+		},
+	)
 	.put(
 		'/:id',
 		async ({ body, params, user }) => {
@@ -81,7 +95,7 @@ export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 
 			return linkUpserter.execute({ ...body, id, userId, meta });
 		},
-		{ auth: true, body: CreateLinkSchema.omit({ id: true, userId: true }) },
+		{ auth: true, body: UpsertLinkSchema.omit({ id: true, userId: true }) },
 	)
 	.delete(
 		'/:id',
