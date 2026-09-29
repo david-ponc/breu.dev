@@ -423,6 +423,34 @@
 	}
 }
 
+@keyframes kpi-value-in {
+	from {
+		filter: blur(4px);
+		opacity: 0;
+		translate: 0 8px;
+	}
+}
+
+@keyframes kpi-value-out {
+	to {
+		filter: blur(4px);
+		opacity: 0;
+		translate: 0 -8px;
+	}
+}
+
+@keyframes kpi-value-fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes kpi-value-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
 ::view-transition-new(.links-delete-enter) {
 	transform-origin: center;
 	animation: links-delete-enter 200ms var(--ease-out) both;
@@ -445,6 +473,24 @@
 @layer utilities {
 	.animate-spinner-line {
 		animation: spinner-line 1.2s linear infinite;
+	}
+
+	.kpi-value-in {
+		animation: kpi-value-in 280ms var(--ease-out);
+	}
+
+	.kpi-value-out {
+		animation: kpi-value-out 280ms var(--ease-out) both;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.kpi-value-in {
+			animation: kpi-value-fade-in 160ms var(--ease-out);
+		}
+
+		.kpi-value-out {
+			animation: kpi-value-fade-out 120ms var(--ease-out) both;
+		}
 	}
 }
 
