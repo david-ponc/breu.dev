@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './morph.css';
+@import './stagger.css';
 @import '@fontsource-variable/ibm-plex-sans/wght.css';
 @import '@fontsource-variable/fira-code/wght.css';
 

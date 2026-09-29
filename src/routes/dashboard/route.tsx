@@ -3,6 +3,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { BreuBrandIcon } from '#/core/icons/breu';
 import { getSession } from '#/core/lib/auth/functions';
 import { Card } from '#/core/ui/card';
+import { PageTransition } from '#/core/ui/motion';
 import { Navbar } from '#/features/dashboard/layout/navbar';
 import { UserMenu } from '#/features/dashboard/layout/user-menu';
 
@@ -34,7 +35,9 @@ function Layout() {
 			<div className='flex flex-1 flex-col pb-2 lg:px-2'>
 				<Card.Root className='flex-1'>
 					<Card.Panel className='mx-auto size-full max-w-7xl flex-1'>
-						<Outlet />
+						<PageTransition>
+							<Outlet />
+						</PageTransition>
 					</Card.Panel>
 				</Card.Root>
 			</div>

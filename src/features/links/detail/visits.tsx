@@ -19,7 +19,7 @@ export function LinkDetailVisits({ linkId, userId }: LinkDetailVisitsProps) {
 	const { data: visits } = useSuspenseQuery(linkVisitsQueryOptions(userId, linkId));
 
 	return (
-		<Card.Root>
+		<Card.Root data-stagger>
 			<Card.Header>
 				<Card.Title>Recent visits</Card.Title>
 				<Card.Description>Latest 50 clicks, without IP addresses.</Card.Description>

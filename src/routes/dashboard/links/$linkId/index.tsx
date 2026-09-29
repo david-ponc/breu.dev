@@ -31,7 +31,7 @@ function Page() {
 	const [range, setRange] = useState<ActivityRange>('14d');
 
 	return (
-		<div className='flex min-w-0 flex-col gap-6 pb-6'>
+		<div data-stagger className='flex min-w-0 flex-col gap-6 pb-6'>
 			<QueryBoundary fallback={<KpisSkeleton />}>
 				<LinkDetailKpis linkId={linkId} userId={userId} range={range} />
 			</QueryBoundary>

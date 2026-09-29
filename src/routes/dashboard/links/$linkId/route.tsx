@@ -3,6 +3,7 @@ import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { Icon } from '#/core/icons/icon';
 import { Button } from '#/core/ui/button';
 import { Empty } from '#/core/ui/empty';
+import { PageTransition } from '#/core/ui/motion';
 import { QueryBoundary } from '#/core/ui/query-boundary';
 import { LinkDetailHeader } from '#/features/links/detail/header';
 import { userLinkQueryOptions } from '#/features/links/detail/query';
@@ -32,7 +33,9 @@ function Layout() {
 				</QueryBoundary>
 				<LinkDetailTabs linkId={linkId} />
 			</div>
-			<Outlet />
+			<PageTransition>
+				<Outlet />
+			</PageTransition>
 		</div>
 	);
 }

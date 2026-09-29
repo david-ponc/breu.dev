@@ -32,7 +32,7 @@ function Page() {
 	};
 
 	return (
-		<div className='flex min-w-0 flex-col gap-6'>
+		<div data-stagger className='flex min-w-0 flex-col gap-6'>
 			<header className='flex items-end justify-between gap-4'>
 				<div>
 					<h1 className='font-semibold text-xl'>Links</h1>

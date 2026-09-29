@@ -48,7 +48,10 @@ function Page() {
 	return (
 		<div className='grid size-full h-dvh place-items-center'>
 			<GridPattern />
-			<div className='relative flex w-full max-w-sm flex-col items-start gap-3'>
+			<div
+				data-stagger
+				className='relative flex w-full max-w-sm flex-col items-start gap-3'
+			>
 				<div className='flex items-center gap-0.75'>
 					<Icon name='link' className='mt-1 size-4 text-brand' />
 					<BreuBrandIcon className='h-4 w-auto' />
