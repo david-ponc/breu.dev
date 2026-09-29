@@ -6,6 +6,7 @@ import { BreuBrandIcon } from '../icons/breu';
 import { CheckIcon } from '../icons/check';
 import { ChevronLeftIcon } from '../icons/chevron-left';
 import { ChevronRightIcon } from '../icons/chevron-right';
+import { ClipboardIcon } from '../icons/clipboard';
 import { DiscordIcon } from '../icons/discord';
 import { DoorOutIcon } from '../icons/door-out';
 import { EllipsisVerticalIcon } from '../icons/ellipsis-vertical';
@@ -25,6 +26,7 @@ export const ICON_REGISTRY = {
 	check: CheckIcon,
 	'chevron-left': ChevronLeftIcon,
 	'chevron-right': ChevronRightIcon,
+	clipboard: ClipboardIcon,
 	'door-out': DoorOutIcon,
 	'ellipsis-vertical': EllipsisVerticalIcon,
 	link: LinkIcon,

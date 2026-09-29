@@ -1,31 +1,43 @@
-import { areaY, defineChart, dot, lineY } from '@tanstack/charts';
+import { areaY, d3Curve, defineChart, dot, lineY } from '@tanstack/charts';
 import { Chart } from '@tanstack/charts/react';
 import { scaleLinear } from '@tanstack/charts/scales/linear';
+import { curveMonotoneX } from 'd3-shape';
 import { useMemo } from 'react';
 
 import type { LinkActivity } from '#/contexts/brevis/links/domain/link-summary';
 
 const WIDTH = 160;
 const HEIGHT = 32;
-const STROKE_WIDTH = 1.5;
+const STROKE_WIDTH = 2;
 const COLOR = 'var(--primary)';
+const FILL_ID = 'activity-fill';
+const monotone = d3Curve(curveMonotoneX);
 
 export function ActivitySparkline({ activity }: { activity: LinkActivity[] }) {
 	const definition = useMemo(() => {
 		const points = activity.map((point, index) => ({ ...point, index }));
+		const values = activity.map((point) => point.clicks);
+		const minimum = values.length ? Math.min(...values) : 0;
+		const maximum = values.length ? Math.max(...values) : 1;
+		const padding = Math.max((maximum - minimum) * 0.16, 0.1);
+		const baseline = minimum - padding;
+
 		return defineChart({
 			marks: [
 				areaY(points, {
 					x: 'index',
 					y: 'clicks',
-					y1: 0,
-					fill: 'url(#activity-fill)',
+					y1: baseline,
+					fill: `url(#${FILL_ID})`,
+					fillOpacity: 1,
+					curve: monotone,
 				}),
 				lineY(points, {
 					x: 'index',
 					y: 'clicks',
 					stroke: COLOR,
 					strokeWidth: STROKE_WIDTH,
+					curve: monotone,
 				}),
 				dot(points.length === 1 ? points : [], {
 					x: 'index',
@@ -40,25 +52,25 @@ export function ActivitySparkline({ activity }: { activity: LinkActivity[] }) {
 					domain: points.length > 1 ? [0, points.length - 1] : [-1, 1],
 				},
 				y: {
-					scale: scaleLinear,
-					domain: [0, Math.max(1, ...activity.map((point) => point.clicks))],
+					scale: scaleLinear().domain([baseline, maximum + padding]),
 				},
 			},
 			gradients: [
 				{
-					id: 'activity-fill',
+					id: FILL_ID,
 					x1: 0,
 					y1: 0,
 					x2: 0,
 					y2: 1,
 					stops: [
-						{ offset: 0, color: COLOR, opacity: 0.3 },
-						{ offset: 1, color: COLOR, opacity: 0 },
+						{ offset: 0, color: COLOR, opacity: 0.34 },
+						{ offset: 0.58, color: COLOR, opacity: 0.13 },
+						{ offset: 1, color: COLOR, opacity: 0.015 },
 					],
 				},
 			],
 			guides: false,
-			margin: { top: 4, right: 2, bottom: 2, left: 2 },
+			clip: false,
 			pointer: false,
 			keyboard: false,
 		});

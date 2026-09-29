@@ -10,6 +10,7 @@ const badgeVariants = tv({
 		'has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:pointer-events-none [&>svg]:size-3!',
 		'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
 		'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+		'inset-shadow-t-px inset-shadow-white/40',
 	],
 	variants: {
 		variant: {

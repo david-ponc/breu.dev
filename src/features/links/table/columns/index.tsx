@@ -1,4 +1,5 @@
-import type { ColumnDef } from '@tanstack/react-table';
+import { Link } from '@tanstack/react-router';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 import { Checkbox } from '#/core/ui/checkbox';
@@ -14,8 +15,10 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 	timeZone: 'UTC',
 });
 
-export const columns: ColumnDef<LinkSummary>[] = [
-	{
+const columnHelper = createColumnHelper<LinkSummary>();
+
+export const columns = [
+	columnHelper.display({
 		id: 'select',
 		header: ({ table }) => (
 			<Checkbox
@@ -37,24 +40,35 @@ export const columns: ColumnDef<LinkSummary>[] = [
 		),
 		enableSorting: false,
 		enableHiding: false,
-	},
-	{
-		accessorKey: 'slug',
+	}),
+	columnHelper.accessor('slug', {
 		header: 'Link',
-		cell: ({ row }) => <SlugColumn link={row.original} />,
-	},
-	{
-		accessorKey: 'status',
+		cell: ({ row }) => (
+			<>
+				<SlugColumn link={row.original} />
+				<Link
+					to='/dashboard/links/$linkId'
+					params={{ linkId: row.original.id }}
+					aria-label={`Open details for /${row.original.slug}`}
+					className='absolute inset-0 z-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset'
+				/>
+			</>
+		),
+	}),
+	columnHelper.accessor('status', {
 		header: 'Status',
 		cell: ({ row }) => <StatusColumn status={row.original.status} />,
-	},
-	{
-		accessorKey: 'totalClicks',
+	}),
+	columnHelper.accessor('totalClicks', {
 		header: 'Activity',
-		cell: ({ row }) => <ActivityColumn activity={row.original.activity} />,
-	},
-	{
-		accessorKey: 'createdAt',
+		cell: ({ row }) => (
+			<ActivityColumn
+				activity={row.original.activity}
+				totalClicks={row.getValue('totalClicks')}
+			/>
+		),
+	}),
+	columnHelper.accessor('createdAt', {
 		header: 'Created',
 		cell: ({ row }) => (
 			<time
@@ -65,5 +79,5 @@ export const columns: ColumnDef<LinkSummary>[] = [
 				{dateFormatter.format(new Date(row.original.createdAt))}
 			</time>
 		),
-	},
+	}),
 ];

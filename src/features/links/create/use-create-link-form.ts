@@ -55,7 +55,10 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 				success: (data) => {
 					if (data.error) throw data.error;
 					void queryClient.invalidateQueries({ queryKey: ['links'] });
-					navigate({ to: '/dashboard/links' });
+					navigate({
+						to: '/dashboard/links/$linkId',
+						params: { linkId: link.id },
+					});
 					return {
 						title: 'Link crafted successfully',
 						description: `Your link has been crafted successfully`,

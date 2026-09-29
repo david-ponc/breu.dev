@@ -12,10 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as RSlugRouteImport } from './routes/r/$slug'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as DashboardLinksIndexRouteImport } from './routes/dashboard/links/index'
 import { Route as DashboardLinksNewRouteImport } from './routes/dashboard/links/new'
+import { Route as DashboardLinksLinkIdRouteRouteImport } from './routes/dashboard/links/$linkId/route'
+import { Route as DashboardLinksLinkIdIndexRouteImport } from './routes/dashboard/links/$linkId/index'
+import { Route as DashboardLinksLinkIdVisitsRouteImport } from './routes/dashboard/links/$linkId/visits'
+import { Route as DashboardLinksLinkIdSettingsRouteImport } from './routes/dashboard/links/$linkId/settings'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -31,6 +36,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
+} as any)
+const RSlugRoute = RSlugRouteImport.update({
+  id: '/r/$slug',
+  path: '/r/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/auth/sign-in',
@@ -52,23 +62,56 @@ const DashboardLinksNewRoute = DashboardLinksNewRouteImport.update({
   path: '/links/new',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardLinksLinkIdRouteRoute =
+  DashboardLinksLinkIdRouteRouteImport.update({
+    id: '/links/$linkId',
+    path: '/links/$linkId',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardLinksLinkIdIndexRoute =
+  DashboardLinksLinkIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardLinksLinkIdRouteRoute,
+  } as any)
+const DashboardLinksLinkIdVisitsRoute =
+  DashboardLinksLinkIdVisitsRouteImport.update({
+    id: '/visits',
+    path: '/visits',
+    getParentRoute: () => DashboardLinksLinkIdRouteRoute,
+  } as any)
+const DashboardLinksLinkIdSettingsRoute =
+  DashboardLinksLinkIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => DashboardLinksLinkIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/r/$slug': typeof RSlugRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/links/$linkId': typeof DashboardLinksLinkIdRouteRouteWithChildren
   '/dashboard/links/new': typeof DashboardLinksNewRoute
   '/dashboard/links/': typeof DashboardLinksIndexRoute
+  '/dashboard/links/$linkId/settings': typeof DashboardLinksLinkIdSettingsRoute
+  '/dashboard/links/$linkId/visits': typeof DashboardLinksLinkIdVisitsRoute
+  '/dashboard/links/$linkId/': typeof DashboardLinksLinkIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/r/$slug': typeof RSlugRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/links/new': typeof DashboardLinksNewRoute
   '/dashboard/links': typeof DashboardLinksIndexRoute
+  '/dashboard/links/$linkId/settings': typeof DashboardLinksLinkIdSettingsRoute
+  '/dashboard/links/$linkId/visits': typeof DashboardLinksLinkIdVisitsRoute
+  '/dashboard/links/$linkId': typeof DashboardLinksLinkIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,9 +119,14 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/r/$slug': typeof RSlugRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/links/$linkId': typeof DashboardLinksLinkIdRouteRouteWithChildren
   '/dashboard/links/new': typeof DashboardLinksNewRoute
   '/dashboard/links/': typeof DashboardLinksIndexRoute
+  '/dashboard/links/$linkId/settings': typeof DashboardLinksLinkIdSettingsRoute
+  '/dashboard/links/$linkId/visits': typeof DashboardLinksLinkIdVisitsRoute
+  '/dashboard/links/$linkId/': typeof DashboardLinksLinkIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,26 +135,40 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/$'
     | '/auth/sign-in'
+    | '/r/$slug'
     | '/dashboard/'
+    | '/dashboard/links/$linkId'
     | '/dashboard/links/new'
     | '/dashboard/links/'
+    | '/dashboard/links/$linkId/settings'
+    | '/dashboard/links/$linkId/visits'
+    | '/dashboard/links/$linkId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/api/$'
     | '/auth/sign-in'
+    | '/r/$slug'
     | '/dashboard'
     | '/dashboard/links/new'
     | '/dashboard/links'
+    | '/dashboard/links/$linkId/settings'
+    | '/dashboard/links/$linkId/visits'
+    | '/dashboard/links/$linkId'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/api/$'
     | '/auth/sign-in'
+    | '/r/$slug'
     | '/dashboard/'
+    | '/dashboard/links/$linkId'
     | '/dashboard/links/new'
     | '/dashboard/links/'
+    | '/dashboard/links/$linkId/settings'
+    | '/dashboard/links/$linkId/visits'
+    | '/dashboard/links/$linkId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,6 +176,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
   AuthSignInRoute: typeof AuthSignInRoute
+  RSlugRoute: typeof RSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,6 +201,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
+    }
+    '/r/$slug': {
+      id: '/r/$slug'
+      path: '/r/$slug'
+      fullPath: '/r/$slug'
+      preLoaderRoute: typeof RSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/sign-in': {
       id: '/auth/sign-in'
@@ -167,17 +237,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLinksNewRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/links/$linkId': {
+      id: '/dashboard/links/$linkId'
+      path: '/links/$linkId'
+      fullPath: '/dashboard/links/$linkId'
+      preLoaderRoute: typeof DashboardLinksLinkIdRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/links/$linkId/': {
+      id: '/dashboard/links/$linkId/'
+      path: '/'
+      fullPath: '/dashboard/links/$linkId/'
+      preLoaderRoute: typeof DashboardLinksLinkIdIndexRouteImport
+      parentRoute: typeof DashboardLinksLinkIdRouteRoute
+    }
+    '/dashboard/links/$linkId/visits': {
+      id: '/dashboard/links/$linkId/visits'
+      path: '/visits'
+      fullPath: '/dashboard/links/$linkId/visits'
+      preLoaderRoute: typeof DashboardLinksLinkIdVisitsRouteImport
+      parentRoute: typeof DashboardLinksLinkIdRouteRoute
+    }
+    '/dashboard/links/$linkId/settings': {
+      id: '/dashboard/links/$linkId/settings'
+      path: '/settings'
+      fullPath: '/dashboard/links/$linkId/settings'
+      preLoaderRoute: typeof DashboardLinksLinkIdSettingsRouteImport
+      parentRoute: typeof DashboardLinksLinkIdRouteRoute
+    }
   }
 }
 
+interface DashboardLinksLinkIdRouteRouteChildren {
+  DashboardLinksLinkIdSettingsRoute: typeof DashboardLinksLinkIdSettingsRoute
+  DashboardLinksLinkIdVisitsRoute: typeof DashboardLinksLinkIdVisitsRoute
+  DashboardLinksLinkIdIndexRoute: typeof DashboardLinksLinkIdIndexRoute
+}
+
+const DashboardLinksLinkIdRouteRouteChildren: DashboardLinksLinkIdRouteRouteChildren =
+  {
+    DashboardLinksLinkIdSettingsRoute: DashboardLinksLinkIdSettingsRoute,
+    DashboardLinksLinkIdVisitsRoute: DashboardLinksLinkIdVisitsRoute,
+    DashboardLinksLinkIdIndexRoute: DashboardLinksLinkIdIndexRoute,
+  }
+
+const DashboardLinksLinkIdRouteRouteWithChildren =
+  DashboardLinksLinkIdRouteRoute._addFileChildren(
+    DashboardLinksLinkIdRouteRouteChildren,
+  )
+
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardLinksLinkIdRouteRoute: typeof DashboardLinksLinkIdRouteRouteWithChildren
   DashboardLinksNewRoute: typeof DashboardLinksNewRoute
   DashboardLinksIndexRoute: typeof DashboardLinksIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardLinksLinkIdRouteRoute: DashboardLinksLinkIdRouteRouteWithChildren,
   DashboardLinksNewRoute: DashboardLinksNewRoute,
   DashboardLinksIndexRoute: DashboardLinksIndexRoute,
 }
@@ -191,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
   AuthSignInRoute: AuthSignInRoute,
+  RSlugRoute: RSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

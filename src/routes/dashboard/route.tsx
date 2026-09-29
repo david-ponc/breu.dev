@@ -33,7 +33,7 @@ function Layout() {
 			</header>
 			<div className='flex flex-1 flex-col pb-2 lg:px-2'>
 				<Card.Root className='flex-1'>
-					<Card.Panel className='mx-auto size-full max-w-[125rem] flex-1'>
+					<Card.Panel className='mx-auto size-full max-w-7xl flex-1'>
 						<Outlet />
 					</Card.Panel>
 				</Card.Root>

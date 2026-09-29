@@ -166,7 +166,7 @@ export function LinkTable({
 	return (
 		<Table.Root aria-busy={query.isFetching}>
 			<Table.Viewport>
-				<Table.Content aria-label='Your links' className='min-w-[720px]'>
+				<Table.Content aria-label='Your links' className='min-w-180'>
 					<Table.Header>
 						{table.getHeaderGroups().map((group) => (
 							<Table.Row key={group.id}>
@@ -190,13 +190,16 @@ export function LinkTable({
 					</Table.Header>
 					<Table.Body>
 						{rows.map((row) => (
-							<Table.Row key={row.id}>
+							<Table.Row
+								key={row.id}
+								className='relative isolate cursor-pointer hover:[&>td]:bg-muted/60'
+							>
 								{row.getVisibleCells().map((cell) => (
 									<Table.Cell
 										key={cell.id}
 										className={
 											cell.column.id === 'select'
-												? 'size-10 min-w-10 max-w-10 p-0 text-center leading-0'
+												? 'relative z-10 size-10 min-w-10 max-w-10 p-0 text-center leading-0'
 												: undefined
 										}
 									>

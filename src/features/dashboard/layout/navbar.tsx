@@ -4,7 +4,7 @@ import { Tabs } from '#/core/ui/tabs';
 
 export function Navbar() {
 	const location = useLocation();
-	const activeTab = location.pathname === '/dashboard/links' ? 'links' : null;
+	const activeTab = location.pathname.startsWith('/dashboard/links') ? 'links' : null;
 
 	return (
 		<Tabs.Root value={activeTab} className='grow'>

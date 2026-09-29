@@ -2,6 +2,10 @@ export function stripHttpProtocol(value: string) {
 	return value.replace(/^https?:\/\//i, '');
 }
 
+export function shortLinkPath(slug: string) {
+	return `/r/${encodeURIComponent(slug)}`;
+}
+
 export function ensureHttpsProtocol(value: string) {
 	const trimmed = value.trim();
 	if (!trimmed) return '';

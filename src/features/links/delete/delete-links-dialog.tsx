@@ -1,12 +1,11 @@
-import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 import { Button } from '#/core/ui/button';
 import { Dialog } from '#/core/ui/dialog';
 
-import { useDeleteLinks } from './use-delete-links';
+import { type DeletableLink, useDeleteLinks } from './use-delete-links';
 
 interface DeleteLinksDialogProps {
 	handle: ReturnType<typeof Dialog.createHandle>;
-	selectedLinks: LinkSummary[];
+	selectedLinks: DeletableLink[];
 	userId: string;
 	onDeleted: () => void;
 }

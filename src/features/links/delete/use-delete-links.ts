@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 import { httpClient } from '#/core/lib/http/client';
 import { toastManager } from '#/core/ui/toast';
 import { userLinksQueryKey } from '#/features/links/table/query';
+
+export type DeletableLink = { id: string; slug: string };
 
 export function useDeleteLinks({ handle, userId, onDeleted }: UseDeleteLinksOptions) {
 	const queryClient = useQueryClient();
@@ -38,7 +39,7 @@ interface DeleteLinksResult {
 	failed: FailedDelete[];
 }
 
-async function deleteLinks(links: LinkSummary[]): Promise<DeleteLinksResult> {
+async function deleteLinks(links: DeletableLink[]): Promise<DeleteLinksResult> {
 	const toastId = toastManager.add(loadingToast(links));
 	const results = await Promise.allSettled(links.map(deleteLink));
 	const failed = results.flatMap((result, index) =>
@@ -51,12 +52,12 @@ async function deleteLinks(links: LinkSummary[]): Promise<DeleteLinksResult> {
 	return { deleted, failed };
 }
 
-async function deleteLink(link: LinkSummary) {
+async function deleteLink(link: DeletableLink) {
 	const { error } = await httpClient().brevis.links({ id: link.id }).delete();
 	if (error) throw error;
 }
 
-function loadingToast(links: LinkSummary[]) {
+function loadingToast(links: DeletableLink[]) {
 	const isSingle = links.length === 1;
 	return {
 		type: 'loading' as const,
@@ -68,7 +69,11 @@ function loadingToast(links: LinkSummary[]) {
 	};
 }
 
-function completionToast(links: LinkSummary[], deleted: number, failed: FailedDelete[]) {
+function completionToast(
+	links: DeletableLink[],
+	deleted: number,
+	failed: FailedDelete[],
+) {
 	const total = links.length;
 	const isSingle = total === 1;
 
