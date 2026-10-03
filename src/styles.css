@@ -371,6 +371,15 @@
 			transform: scale(0.97);
 		}
 	}
+	.table-page-enter {
+		transition:
+			opacity 160ms var(--ease-out),
+			translate 160ms var(--ease-out);
+		@starting-style {
+			opacity: 0;
+			translate: 0 4px;
+		}
+	}
 	@media (prefers-reduced-motion: reduce) {
 		.loading-skeleton::after {
 			animation: none;
@@ -383,6 +392,12 @@
 			transition-property: opacity;
 			@starting-style {
 				transform: scale(1);
+			}
+		}
+		.table-page-enter {
+			transition-property: opacity;
+			@starting-style {
+				translate: 0 0;
 			}
 		}
 	}

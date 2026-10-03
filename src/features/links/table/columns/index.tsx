@@ -23,11 +23,11 @@ export const columns = [
 		header: ({ table }) => (
 			<Checkbox
 				className='hit-area-3'
-				aria-label='Select all links'
-				checked={table.getIsAllRowsSelected()}
-				indeterminate={table.getIsSomeRowsSelected()}
+				aria-label='Select all links on this page'
+				checked={table.getIsAllPageRowsSelected()}
+				indeterminate={table.getIsSomePageRowsSelected()}
 				disabled={table.getRowModel().rows.length === 0}
-				onCheckedChange={(checked) => table.toggleAllRowsSelected(checked)}
+				onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked)}
 			/>
 		),
 		cell: ({ row }) => (

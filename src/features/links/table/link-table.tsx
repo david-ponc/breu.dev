@@ -10,6 +10,7 @@ import { RefreshIcon } from '#/core/icons/refresh';
 import { Button } from '#/core/ui/button';
 import { Checkbox } from '#/core/ui/checkbox';
 import { Empty } from '#/core/ui/empty';
+import { Pagination } from '#/core/ui/pagination';
 import { GridPattern } from '#/core/ui/patterns/grid-pattern';
 import { Skeleton } from '#/core/ui/skeleton';
 import { Table } from '#/core/ui/table';
@@ -65,7 +66,12 @@ function LinkTableSkeleton() {
 			</Table.Viewport>
 			<Table.Footer className='text-muted-foreground text-xs'>
 				<span>Loading…</span>
-				<span>Total clicks · activity over the last 14 days (UTC)</span>
+				<Pagination
+					pageIndex={0}
+					pageCount={1}
+					canPreviousPage={false}
+					canNextPage={false}
+				/>
 			</Table.Footer>
 		</Table.Root>
 	);
@@ -141,6 +147,10 @@ export function LinkTable({
 		onSelectionChange,
 	});
 	const rows = table.getRowModel().rows;
+	const { pageIndex, pageSize } = table.getState().pagination;
+	const total = table.getPrePaginationRowModel().rows.length;
+	const first = total === 0 ? 0 : pageIndex * pageSize + 1;
+	const last = Math.min((pageIndex + 1) * pageSize, total);
 	const [hasResolved, setHasResolved] = useState(false);
 	useEffect(() => {
 		if (!query.isPending) setHasResolved(true);
@@ -188,7 +198,7 @@ export function LinkTable({
 							</Table.Row>
 						))}
 					</Table.Header>
-					<Table.Body>
+					<Table.Body key={pageIndex} className='table-page-enter'>
 						{rows.map((row) => (
 							<Table.Row
 								key={row.id}
@@ -212,10 +222,17 @@ export function LinkTable({
 				</Table.Content>
 			</Table.Viewport>
 			<Table.Footer className='text-muted-foreground text-xs'>
-				<span>
-					{rows.length} {rows.length === 1 ? 'link' : 'links'}
+				<span aria-live='polite' className='tabular-nums'>
+					Showing {first}–{last} of {total} {total === 1 ? 'link' : 'links'}
 				</span>
-				<span>Total clicks · activity over the last 14 days (UTC)</span>
+				<Pagination
+					pageIndex={pageIndex}
+					pageCount={table.getPageCount()}
+					canPreviousPage={table.getCanPreviousPage()}
+					canNextPage={table.getCanNextPage()}
+					onPreviousPage={() => table.previousPage()}
+					onNextPage={() => table.nextPage()}
+				/>
 			</Table.Footer>
 		</Table.Root>
 	);

@@ -1,6 +1,8 @@
 import {
 	getCoreRowModel,
+	getPaginationRowModel,
 	type OnChangeFn,
+	type PaginationState,
 	type RowSelectionState,
 	useReactTable,
 } from '@tanstack/react-table';
@@ -11,6 +13,8 @@ import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 import { columns } from './columns';
 
 const EMPTY_LINKS: LinkSummary[] = [];
+
+export const LINKS_PAGE_SIZE = 10;
 
 interface UseLinkTableOptions {
 	links?: LinkSummary[];
@@ -35,14 +39,30 @@ export function useLinkTable({
 		onRowSelectionChange?.(next);
 	};
 
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: LINKS_PAGE_SIZE,
+	});
+	const pageCount = Math.max(1, Math.ceil(links.length / pagination.pageSize));
+	const pageIndex = Math.min(pagination.pageIndex, pageCount - 1);
+
+	useEffect(() => {
+		if (pagination.pageIndex > pageCount - 1) {
+			setPagination((prev) => ({ ...prev, pageIndex: pageCount - 1 }));
+		}
+	}, [pageCount, pagination.pageIndex]);
+
 	const table = useReactTable({
 		data: links,
-		state: { rowSelection },
+		state: { rowSelection, pagination: { ...pagination, pageIndex } },
 		enableRowSelection: true,
 		onRowSelectionChange: handleRowSelectionChange,
+		onPaginationChange: setPagination,
+		autoResetPageIndex: false,
 		columns,
 		getRowId: (link) => link.id,
 		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
 	});
 
 	useEffect(() => {
