@@ -37,7 +37,7 @@ export function LinkDetailBreakdowns({
 	const { data: stats } = useSuspenseQuery(linkStatsQueryOptions(userId, linkId, range));
 
 	return (
-		<div data-stagger className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'>
+		<div data-stagger className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6'>
 			<BreakdownCard
 				title='Countries'
 				items={stats.countries}
@@ -67,7 +67,10 @@ function BreakdownCard({
 	empty?: string;
 }) {
 	return (
-		<Card.Root size='sm'>
+		<Card.Root
+			size='sm'
+			className='min-w-0 md:last:col-span-2 xl:col-span-2 xl:nth-4:col-span-3 xl:last:col-span-3'
+		>
 			<Card.Header>
 				<Card.Title>{title}</Card.Title>
 			</Card.Header>

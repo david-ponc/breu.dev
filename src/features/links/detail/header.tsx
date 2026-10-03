@@ -23,7 +23,12 @@ export function LinkDetailHeader({ linkId, userId }: LinkDetailHeaderProps) {
 
 	return (
 		<header className='flex flex-col gap-4'>
-			<Button variant='outline' className='w-fit' render={<Link to='/dashboard/links' />}>
+			<Button
+				variant='secondary'
+				size='sm'
+				className='w-fit'
+				render={<Link to='/dashboard/links' />}
+			>
 				<Icon name='chevron-left' data-icon='inline-start' />
 				Back
 			</Button>

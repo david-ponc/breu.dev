@@ -15,7 +15,7 @@ import { formatCount, formatDate } from './format';
 import { linkStatsQueryOptions } from './query';
 import { ACTIVITY_RANGES, type ActivityRange, activityRangeLabel } from './range';
 
-const COLOR = 'var(--activity-line)';
+const COLOR = 'var(--primary)';
 const FILL_ID = 'detail-activity-fill';
 const CHART_ANIMATION = { duration: 280, easing: 'ease-out' } as const;
 const monotone = d3Curve(curveMonotoneX);
@@ -111,8 +111,8 @@ export function LinkDetailActivityChart({
 	}, [stats.activity]);
 
 	return (
-		<Card.Root className='h-full'>
-			<Card.Header className='flex flex-row items-start justify-between gap-3'>
+		<Card.Root className='min-w-0'>
+			<Card.Header className='flex flex-wrap items-start justify-between gap-3'>
 				<div>
 					<Card.Title>Activity</Card.Title>
 					<Card.Description>Clicks over time (UTC)</Card.Description>
@@ -135,7 +135,7 @@ export function LinkDetailActivityChart({
 			</Card.Header>
 			<Card.Panel>
 				{stats.activity.length === 0 ? (
-					<p className='py-16 text-center text-muted-foreground text-sm'>
+					<p className='flex h-65 items-center justify-center text-center text-muted-foreground text-sm'>
 						No clicks in this period.
 					</p>
 				) : (

@@ -40,13 +40,16 @@ export function KpisSkeleton() {
 
 export function ChartSkeleton() {
 	return (
-		<Card.Root className='min-h-70'>
-			<Card.Header className='flex flex-row items-center justify-between'>
-				<Skeleton className='h-5 w-24' />
-				<Skeleton className='h-8 w-40' />
+		<Card.Root className='min-w-0'>
+			<Card.Header className='flex flex-wrap items-center justify-between gap-3'>
+				<div className='flex flex-col gap-1'>
+					<Skeleton className='h-5 w-24' />
+					<Skeleton className='h-4 w-36' />
+				</div>
+				<Skeleton className='h-9 w-40' />
 			</Card.Header>
 			<Card.Panel>
-				<Skeleton className='h-50 w-full' />
+				<Skeleton className='h-65 w-full' />
 			</Card.Panel>
 		</Card.Root>
 	);
@@ -54,8 +57,8 @@ export function ChartSkeleton() {
 
 export function PreviewSkeleton() {
 	return (
-		<Card.Root className='min-h-70'>
-			<Skeleton className='h-36 w-full rounded-none' />
+		<Card.Root className='max-h-144 min-w-0 pt-0 lg:max-h-88'>
+			<Skeleton className='aspect-video max-h-48 w-full shrink-0 rounded-none' />
 			<Card.Header>
 				<Skeleton className='h-5 w-40' />
 				<Skeleton className='h-4 w-full' />
@@ -66,10 +69,14 @@ export function PreviewSkeleton() {
 
 export function BreakdownsSkeleton() {
 	return (
-		<div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'>
+		<div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6'>
 			{Array.from({ length: 5 }).map((_, index) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
-				<Card.Root key={index} size='sm'>
+				<Card.Root
+					// biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
+					key={index}
+					size='sm'
+					className='min-w-0 md:last:col-span-2 xl:col-span-2 xl:nth-4:col-span-3 xl:last:col-span-3'
+				>
 					<Card.Header>
 						<Skeleton className='h-4 w-24' />
 					</Card.Header>

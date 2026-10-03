@@ -35,8 +35,8 @@ function Page() {
 			<QueryBoundary fallback={<KpisSkeleton />}>
 				<LinkDetailKpis linkId={linkId} userId={userId} range={range} />
 			</QueryBoundary>
-			<div className='grid grid-cols-1 gap-3 lg:grid-cols-3'>
-				<div className='lg:col-span-2'>
+			<div className='grid min-w-0 grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]'>
+				<div className='min-w-0'>
 					<QueryBoundary fallback={<ChartSkeleton />}>
 						<LinkDetailActivityChart
 							linkId={linkId}
