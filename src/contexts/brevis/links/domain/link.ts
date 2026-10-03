@@ -23,6 +23,14 @@ export const OpenGraphSchema = z.object({
 	title: z.string().nullable(),
 	description: z.string().nullable(),
 	image: z.url().nullable(),
+	author: z.string().nullish(),
+	tags: z.array(z.string()).optional(),
+	siteName: z.string().nullish(),
+	type: z.string().nullish(),
+	locale: z.string().nullish(),
+	section: z.string().nullish(),
+	publishedTime: z.string().nullish(),
+	modifiedTime: z.string().nullish(),
 });
 
 export const MetaSchema = z.object({

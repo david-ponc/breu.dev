@@ -1,9 +1,23 @@
 import ogs from 'open-graph-scraper';
 import { describe, expect, it } from 'vitest';
 
-import { mapOgObjectToMeta } from './open-graph-scraper-meta-collector';
+import { OpenGraphSchema } from '../domain/link';
+import {
+	ARTICLE_META_TAGS,
+	mapOgObjectToMeta,
+} from './open-graph-scraper-meta-collector';
 
 const PAGE_URL = 'https://example.com/articles/hello';
+const EMPTY_ARTICLE_FIELDS = {
+	author: null,
+	tags: [],
+	siteName: null,
+	type: null,
+	locale: null,
+	section: null,
+	publishedTime: null,
+	modifiedTime: null,
+};
 
 describe('mapOgObjectToMeta', () => {
 	it('maps open graph tags into the domain Meta shape', async () => {
@@ -30,6 +44,7 @@ describe('mapOgObjectToMeta', () => {
 			title: 'OG Title',
 			description: 'OG Description',
 			openGraph: {
+				...EMPTY_ARTICLE_FIELDS,
 				title: 'OG Title',
 				description: 'OG Description',
 				image: 'https://example.com/images/cover.png',
@@ -75,10 +90,52 @@ describe('mapOgObjectToMeta', () => {
 			title: null,
 			description: null,
 			openGraph: {
+				...EMPTY_ARTICLE_FIELDS,
 				title: null,
 				description: null,
 				image: null,
 			},
 		});
+	});
+
+	it.each([
+		'article',
+		'og:article',
+	])('collects %s metadata and preserves repeated tags', async (prefix) => {
+		const { result } = await ogs({
+			customMetaTags: ARTICLE_META_TAGS,
+			html: `<html><head>
+					<meta property="og:site_name" content="Example Magazine" />
+					<meta property="og:type" content="article" />
+					<meta property="og:locale" content="en_US" />
+					<meta property="${prefix}:author" content=" Ada Lovelace " />
+					<meta property="${prefix}:section" content="Technology" />
+					<meta property="${prefix}:published_time" content="2026-09-01T12:00:00Z" />
+					<meta property="${prefix}:modified_time" content="2026-09-02T12:00:00Z" />
+					<meta property="${prefix}:tag" content=" React " />
+					<meta property="${prefix}:tag" content="TypeScript" />
+					<meta property="${prefix}:tag" content="React" />
+					<meta property="${prefix}:tag" content=" " />
+				</head></html>`,
+		});
+
+		const meta = mapOgObjectToMeta(result, PAGE_URL);
+
+		expect(meta.author).toBe('Ada Lovelace');
+		expect(meta.openGraph).toMatchObject({
+			author: 'Ada Lovelace',
+			tags: ['React', 'TypeScript'],
+			siteName: 'Example Magazine',
+			type: 'article',
+			locale: 'en_US',
+			section: 'Technology',
+			publishedTime: '2026-09-01T12:00:00Z',
+			modifiedTime: '2026-09-02T12:00:00Z',
+		});
+	});
+
+	it('accepts metadata saved before article fields were supported', () => {
+		const saved = { title: 'Saved title', description: null, image: null };
+		expect(OpenGraphSchema.parse(saved)).toEqual(saved);
 	});
 });

@@ -11,6 +11,12 @@ import { logger } from '#/core/lib/logging';
 const USER_AGENT =
 	'Mozilla/5.0 (compatible; BreuBot/1.0; +https://breu.dev) AppleWebKit/537.36 (KHTML, like Gecko)';
 
+// The scraper's built-in article tag fields keep only one value.
+export const ARTICLE_META_TAGS = [
+	{ property: 'article:tag', fieldName: 'articleTags', multiple: true },
+	{ property: 'og:article:tag', fieldName: 'ogArticleTags', multiple: true },
+];
+
 function resolveUrl(baseUrl: string, value: string | undefined): string | null {
 	if (!value) {
 		return null;
@@ -58,6 +64,13 @@ export function mapOgObjectToMeta(result: OgObject, pageUrl: string): Meta {
 		pageUrl,
 		result.ogImage?.[0]?.url ?? result.twitterImage?.[0]?.url ?? result.ogLogo,
 	);
+	const tags = [
+		result.customMetaTags?.articleTags ?? result.articleTag ?? [],
+		result.customMetaTags?.ogArticleTags ?? result.ogArticleTag ?? [],
+	]
+		.flat()
+		.map((tag) => tag.trim())
+		.filter(Boolean);
 
 	return MetaSchema.parse({
 		author,
@@ -68,6 +81,26 @@ export function mapOgObjectToMeta(result: OgObject, pageUrl: string): Meta {
 			title: firstDefined(result.ogTitle, result.twitterTitle),
 			description: firstDefined(result.ogDescription, result.twitterDescription),
 			image,
+			author: firstDefined(
+				result.articleAuthor,
+				result.ogArticleAuthor,
+				result.bookAuthor,
+			),
+			tags: [...new Set(tags)],
+			siteName: firstDefined(result.ogSiteName),
+			type: firstDefined(result.ogType),
+			locale: firstDefined(result.ogLocale),
+			section: firstDefined(result.articleSection, result.ogArticleSection),
+			publishedTime: firstDefined(
+				result.articlePublishedTime,
+				result.ogArticlePublishedTime,
+				result.articlePublishedDate,
+			),
+			modifiedTime: firstDefined(
+				result.articleModifiedTime,
+				result.ogArticleModifiedTime,
+				result.articleModifiedDate,
+			),
 		},
 	});
 }
@@ -80,6 +113,7 @@ export class OpenGraphScraperMetaCollector implements MetaCollector {
 		try {
 			const { error, result } = await ogs({
 				url,
+				customMetaTags: ARTICLE_META_TAGS,
 				timeout: 10,
 				fetchOptions: {
 					headers: {
