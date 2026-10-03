@@ -7,6 +7,7 @@ import { CheckIcon } from '../icons/check';
 import { ChevronLeftIcon } from '../icons/chevron-left';
 import { ChevronRightIcon } from '../icons/chevron-right';
 import { ClipboardIcon } from '../icons/clipboard';
+import { CursorClickIcon } from '../icons/cursor-click';
 import { DiscordIcon } from '../icons/discord';
 import { DoorOutIcon } from '../icons/door-out';
 import { EllipsisVerticalIcon } from '../icons/ellipsis-vertical';
@@ -27,6 +28,7 @@ export const ICON_REGISTRY = {
 	'chevron-left': ChevronLeftIcon,
 	'chevron-right': ChevronRightIcon,
 	clipboard: ClipboardIcon,
+	'cursor-click': CursorClickIcon,
 	'door-out': DoorOutIcon,
 	'ellipsis-vertical': EllipsisVerticalIcon,
 	link: LinkIcon,
