@@ -23,7 +23,7 @@ function TableViewport({ className, ...props }: ComponentProps<'div'>) {
 	return (
 		<div
 			data-slot='table-viewport'
-			className={cn('min-w-0 overflow-x-auto rounded-[14px]', className)}
+			className={cn('min-w-0 overflow-x-auto overflow-y-clip rounded-[14px]', className)}
 			{...props}
 		/>
 	);
@@ -56,8 +56,8 @@ function TableBody({ className, ...props }: ComponentProps<'tbody'>) {
 			className={cn(
 				'text-card-foreground [&>tr>*]:border-border [&>tr>*]:border-b [&>tr>*]:bg-card',
 				'[&>tr:first-child>*]:border-t [&>tr>:first-child]:border-l [&>tr>:last-child]:border-r',
-				'[&>tr:first-child>:first-child]:rounded-tl-xl [&>tr:first-child>:last-child]:rounded-tr-xl',
-				'[&>tr:last-child>:first-child]:rounded-bl-xl [&>tr:last-child>:last-child]:rounded-br-xl',
+				'[&>tr:first-child>:first-child]:rounded-tl-[14px] [&>tr:first-child>:last-child]:rounded-tr-[14px]',
+				'[&>tr:last-child>:first-child]:rounded-bl-[14px] [&>tr:last-child>:last-child]:rounded-br-[14px]',
 				className,
 			)}
 			{...props}
@@ -101,7 +101,7 @@ function TableFooter({ className, ...props }: ComponentProps<'footer'>) {
 		<footer
 			data-slot='table-footer'
 			className={cn(
-				'flex flex-wrap items-center justify-between gap-2 rounded-b-[14px] bg-muted px-3 py-2',
+				'flex flex-wrap items-center justify-between gap-2 rounded-b-[14px] bg-muted px-3 py-2 pb-[calc(--spacing(2)-1px)]',
 				className,
 			)}
 			{...props}
