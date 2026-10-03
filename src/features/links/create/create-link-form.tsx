@@ -27,6 +27,7 @@ export function CreateLinkForm(props: Props) {
 
 	return (
 		<form
+			data-stagger='blur'
 			className='grow space-y-6'
 			onSubmit={(event) => {
 				event.preventDefault();
