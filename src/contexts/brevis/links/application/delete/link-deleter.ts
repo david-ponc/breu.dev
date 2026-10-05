@@ -1,5 +1,6 @@
 import { Service } from 'diod';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { LinkNotFoundError } from '#/contexts/brevis/links/domain/errors/link-not-found';
 import { LinkDeletedEvent } from '#/contexts/brevis/links/domain/events/link-deleted-event';
 import type { DeleteLinkCommand } from '#/contexts/brevis/links/domain/link';
@@ -15,6 +16,14 @@ export class LinkDeleter {
 	) {}
 
 	async execute(command: DeleteLinkCommand): Promise<void> {
+		if (command.isAnonymous) {
+			logger.warn(
+				{ id: command.id, userId: command.userId },
+				'Anonymous user attempted to delete a link',
+			);
+			throw new AnonymousActionForbiddenError();
+		}
+
 		const link = await this.repository.findById(command.id);
 
 		if (link.userId !== command.userId) {

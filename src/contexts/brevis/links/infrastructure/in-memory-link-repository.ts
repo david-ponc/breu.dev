@@ -27,6 +27,18 @@ export class InMemoryLinkRepository implements LinkRepository {
 		return link;
 	}
 
+	async countByUserId(userId: LinkId): Promise<number> {
+		let count = 0;
+
+		for (const link of this.storageById.values()) {
+			if (link.userId === userId) {
+				count += 1;
+			}
+		}
+
+		return count;
+	}
+
 	async delete(id: LinkId): Promise<void> {
 		const link = await this.findById(id);
 

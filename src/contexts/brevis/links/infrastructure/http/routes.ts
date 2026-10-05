@@ -93,7 +93,13 @@ export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 			const linkUpserter = container.get(LinkUpserter);
 			const meta = await container.get(MetaCollector).collect(body.url);
 
-			return linkUpserter.execute({ ...body, id, userId, meta });
+			return linkUpserter.execute({
+				...body,
+				id,
+				userId,
+				meta,
+				isAnonymous: Boolean(user.isAnonymous),
+			});
 		},
 		{ auth: true, body: UpsertLinkSchema.omit({ id: true, userId: true }) },
 	)
@@ -104,7 +110,7 @@ export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 			const userId = user.id;
 			const linkDeleter = container.get(LinkDeleter);
 
-			return linkDeleter.execute({ id, userId });
+			return linkDeleter.execute({ id, userId, isAnonymous: Boolean(user.isAnonymous) });
 		},
 		{ auth: true },
 	);

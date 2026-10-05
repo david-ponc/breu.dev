@@ -105,6 +105,18 @@ export class PostgresLinkRepository implements LinkRepository {
 		return this.toDomain(row);
 	}
 
+	async countByUserId(userId: string): Promise<number> {
+		const { sql } = this.connection;
+
+		const [row] = await sql<{ count: string }[]>`
+			SELECT COUNT(*)::text AS count
+			FROM brevis.links
+			WHERE user_id = ${userId}
+		`;
+
+		return Number(row?.count ?? 0);
+	}
+
 	async delete(id: LinkId): Promise<void> {
 		const { sql } = this.connection;
 

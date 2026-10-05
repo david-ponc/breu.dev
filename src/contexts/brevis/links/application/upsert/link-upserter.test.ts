@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { LinkSlugUnavailableError } from '#/contexts/brevis/links/domain/errors/link-slug-unavailable';
 import { LinkCreatedEvent } from '#/contexts/brevis/links/domain/events/link-created-event';
 import { LinkUpdatedEvent } from '#/contexts/brevis/links/domain/events/link-updated-event';
@@ -161,5 +162,38 @@ describe('upserting a link', () => {
 
 		expect(link.status).toBe('disabled');
 		expect(link.url).toBe('https://updated.com');
+	});
+
+	it('lets an anonymous user create their first link', async () => {
+		const command = aLinkCommand({ isAnonymous: true });
+
+		const link = await upserter.execute(command);
+
+		expect(link.slug).toBe(command.slug);
+	});
+
+	it('rejects an anonymous user creating a second link', async () => {
+		const userId = Identifier.generate();
+		await upserter.execute(aLinkCommand({ userId, isAnonymous: true }));
+
+		await expect(
+			upserter.execute(aLinkCommand({ userId, slug: 'second-link', isAnonymous: true })),
+		).rejects.toThrow(AnonymousActionForbiddenError);
+	});
+
+	it('rejects an anonymous user editing an existing link', async () => {
+		const userId = Identifier.generate();
+		const existing = aLink({ userId });
+		await repository.save(existing);
+		const command = aLinkCommand({
+			slug: existing.slug,
+			userId,
+			isAnonymous: true,
+			url: 'https://updated.com',
+		});
+
+		await expect(upserter.execute(command)).rejects.toThrow(
+			AnonymousActionForbiddenError,
+		);
 	});
 });

@@ -1,5 +1,6 @@
 import { Service } from 'diod';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { LinkSlugUnavailableError } from '#/contexts/brevis/links/domain/errors/link-slug-unavailable';
 import {
 	createLink,
@@ -20,6 +21,26 @@ export class LinkUpserter {
 
 	async execute(command: UpsertLinkCommand): Promise<Link> {
 		const existing = await this.repository.searchBySlug(command.slug);
+
+		if (command.isAnonymous) {
+			if (existing) {
+				logger.warn(
+					{ slug: command.slug, userId: command.userId },
+					'Anonymous user attempted to edit a link',
+				);
+				throw new AnonymousActionForbiddenError();
+			}
+
+			const linkCount = await this.repository.countByUserId(command.userId);
+
+			if (linkCount >= 1) {
+				logger.warn(
+					{ userId: command.userId },
+					'Anonymous user attempted to create more than one link',
+				);
+				throw new AnonymousActionForbiddenError();
+			}
+		}
 
 		if (existing && existing.userId !== command.userId) {
 			logger.error(`Link slug "${command.slug}" is already taken by another user.`);

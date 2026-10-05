@@ -2,6 +2,10 @@ import { useStore } from '@tanstack/react-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 
+import {
+	isAnonymousActionForbidden,
+	useRequireAccountPrompt,
+} from '#/core/lib/auth/require-account';
 import { useAppForm } from '#/core/lib/form';
 import { httpClient } from '#/core/lib/http/client';
 import { Identifier } from '#/core/lib/identifier';
@@ -16,6 +20,7 @@ interface Props {
 
 export function useCreateLinkForm({ defaultValues }: Props) {
 	const queryClient = useQueryClient();
+	const requireAccount = useRequireAccountPrompt();
 	const { data: initialSlug, isPending: isInitialSlugPending } = useQuery({
 		queryKey: ['initial-slug'],
 		queryFn: () => httpClient().brevis.links.slugs.get(),
@@ -46,6 +51,14 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 					description: 'Please wait while we create your link.',
 				},
 				error: (error) => {
+					if (isAnonymousActionForbidden(error)) {
+						requireAccount('Guests can create one link. Sign up to manage more.');
+						return {
+							title: 'Create a free account',
+							description: 'Sign up to create more links.',
+						};
+					}
+
 					return {
 						title: 'Failed to craft link',
 						description:

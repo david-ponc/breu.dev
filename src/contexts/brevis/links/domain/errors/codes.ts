@@ -3,4 +3,5 @@ export const LINK_ERROR = {
 	SlugSuggestionFailed: 'LINK_SLUG_SUGGESTION_FAILED',
 	MetaCollectionFailed: 'LINK_META_COLLECTION_FAILED',
 	NotFound: 'LINK_NOT_FOUND',
+	AnonymousActionForbidden: 'LINK_ANONYMOUS_ACTION_FORBIDDEN',
 } as const;

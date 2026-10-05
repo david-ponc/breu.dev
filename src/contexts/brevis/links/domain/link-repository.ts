@@ -9,5 +9,6 @@ export abstract class LinkRepository {
 	abstract save(link: Link): Promise<void>;
 	abstract searchBySlug(slug: LinkSlug): Promise<Maybe<Link>>;
 	abstract findById(id: LinkId): Promise<Link>;
+	abstract countByUserId(userId: LinkId): Promise<number>;
 	abstract delete(id: LinkId): Promise<void>;
 }

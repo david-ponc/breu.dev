@@ -84,6 +84,8 @@ export const CreateLinkSchema = LinkSchema.omit({
 export const DeleteLinkSchema = LinkSchema.pick({
 	id: true,
 	userId: true,
+}).extend({
+	isAnonymous: z.boolean().optional(),
 });
 
 export const UpdateLinkSchema = LinkSchema.partial().omit({
@@ -94,6 +96,7 @@ export const UpdateLinkSchema = LinkSchema.partial().omit({
 
 export const UpsertLinkSchema = CreateLinkSchema.extend({
 	status: LinkStatusSchema.optional(),
+	isAnonymous: z.boolean().optional(),
 });
 
 export type CreateLinkCommand = z.infer<typeof CreateLinkSchema>;

@@ -4,6 +4,7 @@ import { match, P } from 'ts-pattern';
 import { STATUS_CODES } from '#/core/lib/http/status-codes';
 import { logger } from '#/core/lib/logging';
 
+import { AnonymousActionForbiddenError } from '../../domain/errors/anonymous-action-forbidden';
 import { LINK_ERROR } from '../../domain/errors/codes';
 import { LinkNotFoundError } from '../../domain/errors/link-not-found';
 import { LinkSlugUnavailableError } from '../../domain/errors/link-slug-unavailable';
@@ -16,6 +17,7 @@ export const errorHandler = new Elysia({ name: 'brevis.error-handling' })
 		[LINK_ERROR.SlugSuggestionFailed]: SlugSuggestionFailedError,
 		[LINK_ERROR.MetaCollectionFailed]: MetaCollectionFailedError,
 		[LINK_ERROR.NotFound]: LinkNotFoundError,
+		[LINK_ERROR.AnonymousActionForbidden]: AnonymousActionForbiddenError,
 	})
 	.onError({ as: 'scoped' }, ({ code, error, set }) =>
 		match({ code, error })
@@ -61,6 +63,16 @@ export const errorHandler = new Elysia({ name: 'brevis.error-handling' })
 				{ code: LINK_ERROR.NotFound, error: P.instanceOf(LinkNotFoundError) },
 				({ error }) => {
 					set.status = STATUS_CODES.NotFound;
+					return { code, message: error.message };
+				},
+			)
+			.with(
+				{
+					code: LINK_ERROR.AnonymousActionForbidden,
+					error: P.instanceOf(AnonymousActionForbiddenError),
+				},
+				({ error }) => {
+					set.status = STATUS_CODES.Forbidden;
 					return { code, message: error.message };
 				},
 			)

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { LinkNotFoundError } from '#/contexts/brevis/links/domain/errors/link-not-found';
 import { LinkDeletedEvent } from '#/contexts/brevis/links/domain/events/link-deleted-event';
 import {
@@ -92,6 +93,19 @@ describe('deleting a link', () => {
 		const command = aDeleteCommand({ id: link.id, userId: Identifier.generate() });
 
 		await expect(deleter.execute(command)).rejects.toThrow(LinkNotFoundError);
+
+		expect(eventBus.publishedEvents).toHaveLength(0);
+		const saved = await repository.findById(link.id);
+		expect(saved).toEqual(link);
+	});
+
+	it('rejects an anonymous user deleting a link', async () => {
+		const userId = Identifier.generate();
+		const link = aLink({ userId });
+		await repository.save(link);
+		const command = aDeleteCommand({ id: link.id, userId, isAnonymous: true });
+
+		await expect(deleter.execute(command)).rejects.toThrow(AnonymousActionForbiddenError);
 
 		expect(eventBus.publishedEvents).toHaveLength(0);
 		const saved = await repository.findById(link.id);

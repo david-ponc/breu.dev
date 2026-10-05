@@ -1,5 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import {
+	isAnonymousActionForbidden,
+	useRequireAccountPrompt,
+} from '#/core/lib/auth/require-account';
 import { httpClient } from '#/core/lib/http/client';
 import { toastManager } from '#/core/ui/toast';
 import { userLinksQueryKey } from '#/features/links/table/query';
@@ -8,8 +12,18 @@ export type DeletableLink = { id: string; slug: string };
 
 export function useDeleteLinks({ handle, userId, onDeleted }: UseDeleteLinksOptions) {
 	const queryClient = useQueryClient();
+	const requireAccount = useRequireAccountPrompt();
 	const { isPending, mutate } = useMutation({
-		mutationFn: deleteLinks,
+		mutationFn: (links: DeletableLink[]) =>
+			deleteLinks(links).then((result) => {
+				if (result.failed.length === links.length) {
+					const reason = result.failed[0]?.reason;
+					if (isAnonymousActionForbidden(reason)) {
+						requireAccount('Guests cannot delete links. Sign up to manage your links.');
+					}
+				}
+				return result;
+			}),
 		onSuccess: ({ deleted }) => {
 			if (deleted === 0) return;
 			handle.close();
@@ -32,6 +46,7 @@ interface UseDeleteLinksOptions {
 interface FailedDelete {
 	slug: string;
 	message: string;
+	reason?: unknown;
 }
 
 interface DeleteLinksResult {
@@ -44,7 +59,13 @@ async function deleteLinks(links: DeletableLink[]): Promise<DeleteLinksResult> {
 	const results = await Promise.allSettled(links.map(deleteLink));
 	const failed = results.flatMap((result, index) =>
 		result.status === 'rejected'
-			? [{ slug: links[index].slug, message: errorMessage(result.reason) }]
+			? [
+					{
+						slug: links[index].slug,
+						message: errorMessage(result.reason),
+						reason: result.reason,
+					},
+				]
 			: [],
 	);
 	const deleted = links.length - failed.length;
