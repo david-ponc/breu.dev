@@ -1,16 +1,15 @@
 import {
-	getCoreRowModel,
-	getPaginationRowModel,
 	type OnChangeFn,
 	type PaginationState,
 	type RowSelectionState,
-	useReactTable,
+	useTable,
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
 import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 
 import { columns } from './columns';
+import { linkTableFeatures } from './features';
 
 const EMPTY_LINKS: LinkSummary[] = [];
 
@@ -52,7 +51,8 @@ export function useLinkTable({
 		}
 	}, [pageCount, pagination.pageIndex]);
 
-	const table = useReactTable({
+	const table = useTable({
+		features: linkTableFeatures,
 		data: links,
 		state: { rowSelection, pagination: { ...pagination, pageIndex } },
 		enableRowSelection: true,
@@ -61,8 +61,6 @@ export function useLinkTable({
 		autoResetPageIndex: false,
 		columns,
 		getRowId: (link) => link.id,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
 	});
 
 	useEffect(() => {

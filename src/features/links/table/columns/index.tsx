@@ -4,6 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 import { Checkbox } from '#/core/ui/checkbox';
 
+import type { linkTableFeatures } from '../features';
 import { ActivityColumn } from './activity-column';
 import { SlugColumn } from './slug-column';
 import { StatusColumn } from './status-column';
@@ -15,9 +16,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 	timeZone: 'UTC',
 });
 
-const columnHelper = createColumnHelper<LinkSummary>();
+const columnHelper = createColumnHelper<typeof linkTableFeatures, LinkSummary>();
 
-export const columns = [
+export const columns = columnHelper.columns([
 	columnHelper.display({
 		id: 'select',
 		header: ({ table }) => (
@@ -25,7 +26,9 @@ export const columns = [
 				className='hit-area-3'
 				aria-label='Select all links on this page'
 				checked={table.getIsAllPageRowsSelected()}
-				indeterminate={table.getIsSomePageRowsSelected()}
+				indeterminate={
+					table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+				}
 				disabled={table.getRowModel().rows.length === 0}
 				onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked)}
 			/>
@@ -38,8 +41,6 @@ export const columns = [
 				onCheckedChange={(checked) => row.toggleSelected(checked)}
 			/>
 		),
-		enableSorting: false,
-		enableHiding: false,
 	}),
 	columnHelper.accessor('slug', {
 		header: 'Link',
@@ -80,4 +81,4 @@ export const columns = [
 			</time>
 		),
 	}),
-];
+]);

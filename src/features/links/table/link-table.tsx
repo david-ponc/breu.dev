@@ -147,8 +147,8 @@ export function LinkTable({
 		onSelectionChange,
 	});
 	const rows = table.getRowModel().rows;
-	const { pageIndex, pageSize } = table.getState().pagination;
-	const total = table.getPrePaginationRowModel().rows.length;
+	const { pageIndex, pageSize } = table.state.pagination;
+	const total = table.getPrePaginatedRowModel().rows.length;
 	const first = total === 0 ? 0 : pageIndex * pageSize + 1;
 	const last = Math.min((pageIndex + 1) * pageSize, total);
 	const [hasResolved, setHasResolved] = useState(false);
@@ -204,7 +204,7 @@ export function LinkTable({
 								key={row.id}
 								className='relative isolate cursor-pointer hover:[&>td]:bg-muted/60'
 							>
-								{row.getVisibleCells().map((cell) => (
+								{row.getAllCells().map((cell) => (
 									<Table.Cell
 										key={cell.id}
 										className={

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import type { RowSelectionState } from '@tanstack/react-table';
 import { startTransition, useMemo, useState, ViewTransition } from 'react';
 
 import { Icon } from '#/core/icons/icon';
@@ -17,7 +18,7 @@ function Page() {
 	const { session } = Route.useRouteContext();
 	const userId = session.user.id;
 	const { data: links } = useQuery(userLinksQueryOptions(userId));
-	const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 	const [deleteDialogHandle] = useState(() => Dialog.createHandle());
 
 	const selectedLinks = useMemo(
@@ -27,7 +28,7 @@ function Page() {
 	const selectedCount = selectedLinks.length;
 
 	// Keep checkbox state and button visibility in the same transition commit.
-	const handleRowSelectionChange = (selection: Record<string, boolean>) => {
+	const handleRowSelectionChange = (selection: RowSelectionState) => {
 		startTransition(() => setRowSelection(selection));
 	};
 
