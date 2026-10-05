@@ -98,13 +98,12 @@ describe('mapOgObjectToMeta', () => {
 		});
 	});
 
-	it.each([
-		'article',
-		'og:article',
-	])('collects %s metadata and preserves repeated tags', async (prefix) => {
-		const { result } = await ogs({
-			customMetaTags: ARTICLE_META_TAGS,
-			html: `<html><head>
+	it.each(['article', 'og:article'])(
+		'collects %s metadata and preserves repeated tags',
+		async (prefix) => {
+			const { result } = await ogs({
+				customMetaTags: ARTICLE_META_TAGS,
+				html: `<html><head>
 					<meta property="og:site_name" content="Example Magazine" />
 					<meta property="og:type" content="article" />
 					<meta property="og:locale" content="en_US" />
@@ -117,22 +116,23 @@ describe('mapOgObjectToMeta', () => {
 					<meta property="${prefix}:tag" content="React" />
 					<meta property="${prefix}:tag" content=" " />
 				</head></html>`,
-		});
+			});
 
-		const meta = mapOgObjectToMeta(result, PAGE_URL);
+			const meta = mapOgObjectToMeta(result, PAGE_URL);
 
-		expect(meta.author).toBe('Ada Lovelace');
-		expect(meta.openGraph).toMatchObject({
-			author: 'Ada Lovelace',
-			tags: ['React', 'TypeScript'],
-			siteName: 'Example Magazine',
-			type: 'article',
-			locale: 'en_US',
-			section: 'Technology',
-			publishedTime: '2026-09-01T12:00:00Z',
-			modifiedTime: '2026-09-02T12:00:00Z',
-		});
-	});
+			expect(meta.author).toBe('Ada Lovelace');
+			expect(meta.openGraph).toMatchObject({
+				author: 'Ada Lovelace',
+				tags: ['React', 'TypeScript'],
+				siteName: 'Example Magazine',
+				type: 'article',
+				locale: 'en_US',
+				section: 'Technology',
+				publishedTime: '2026-09-01T12:00:00Z',
+				modifiedTime: '2026-09-02T12:00:00Z',
+			});
+		},
+	);
 
 	it('accepts metadata saved before article fields were supported', () => {
 		const saved = { title: 'Saved title', description: null, image: null };

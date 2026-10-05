@@ -44,29 +44,29 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('LinkDetailPreview', () => {
-	it.each([
-		true,
-		false,
-	])('resolves text with non-empty Open Graph values: %s', (hasOgText) => {
-		preview.link = aLink({
-			...EMPTY_META,
-			title: ' HTML title ',
-			description: ' HTML description ',
-			author: ' HTML author ',
-			openGraph: {
-				title: hasOgText ? ' OG title ' : ' ',
-				description: hasOgText ? ' OG description ' : '\n',
-				author: hasOgText ? ' OG author ' : '\t',
-				image: null,
-			},
-		});
-		renderPreview();
-		for (const field of ['title', 'description', 'author']) {
-			const expected = `${hasOgText ? 'OG' : 'HTML'} ${field}`;
-			expect(screen.getByText(expected).textContent).toBe(expected);
-			expect(screen.queryByText(`${hasOgText ? 'HTML' : 'OG'} ${field}`)).toBeNull();
-		}
-	});
+	it.each([true, false])(
+		'resolves text with non-empty Open Graph values: %s',
+		(hasOgText) => {
+			preview.link = aLink({
+				...EMPTY_META,
+				title: ' HTML title ',
+				description: ' HTML description ',
+				author: ' HTML author ',
+				openGraph: {
+					title: hasOgText ? ' OG title ' : ' ',
+					description: hasOgText ? ' OG description ' : '\n',
+					author: hasOgText ? ' OG author ' : '\t',
+					image: null,
+				},
+			});
+			renderPreview();
+			for (const field of ['title', 'description', 'author']) {
+				const expected = `${hasOgText ? 'OG' : 'HTML'} ${field}`;
+				expect(screen.getByText(expected).textContent).toBe(expected);
+				expect(screen.queryByText(`${hasOgText ? 'HTML' : 'OG'} ${field}`)).toBeNull();
+			}
+		},
+	);
 
 	it('omits empty fields and preserves metadata order', () => {
 		preview.link = aLink({
@@ -134,18 +134,17 @@ describe('LinkDetailPreview', () => {
 		expect(screen.queryByText('New description')).toBeNull();
 	});
 
-	it.each([
-		null,
-		EMPTY_META,
-		{ ...EMPTY_META, openGraph: null },
-	])('uses Empty when metadata is absent or empty (%j)', (meta) => {
-		preview.link = aLink(meta);
-		const { container } = renderPreview();
-		expect(container.querySelector('[data-slot="empty"]')).not.toBeNull();
-		expect(screen.getByText('No preview available')).toBeDefined();
-		expect(screen.getByText('My notes')).toBeDefined();
-		expect(screen.queryByText('No image available')).toBeNull();
-	});
+	it.each([null, EMPTY_META, { ...EMPTY_META, openGraph: null }])(
+		'uses Empty when metadata is absent or empty (%j)',
+		(meta) => {
+			preview.link = aLink(meta);
+			const { container } = renderPreview();
+			expect(container.querySelector('[data-slot="empty"]')).not.toBeNull();
+			expect(screen.getByText('No preview available')).toBeDefined();
+			expect(screen.getByText('My notes')).toBeDefined();
+			expect(screen.queryByText('No image available')).toBeNull();
+		},
+	);
 
 	it('treats whitespace-only metadata as empty', () => {
 		preview.link = aLink({
