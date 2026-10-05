@@ -15,7 +15,7 @@ export const Route = createFileRoute('/auth/sign-in')({
 	beforeLoad: async () => {
 		const session = await getSession();
 
-		if (session) {
+		if (session && !session.user.isAnonymous) {
 			throw redirect({ to: '/dashboard/links' });
 		}
 	},

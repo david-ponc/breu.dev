@@ -19,7 +19,7 @@ function UserIdentity({
 	image,
 }: {
 	name: string;
-	email: string;
+	email?: string;
 	image?: string | null;
 }) {
 	const initials = name
@@ -33,7 +33,7 @@ function UserIdentity({
 		<>
 			<div className='flex flex-col text-right'>
 				<p className='font-medium text-xs'>{name}</p>
-				<p className='text-muted-foreground text-xs'>{email}</p>
+				{email ? <p className='text-muted-foreground text-xs'>{email}</p> : null}
 			</div>
 			<Avatar.Root>
 				{image ? (
@@ -53,6 +53,7 @@ export function UserMenu() {
 	const [triggerVisible, setTriggerVisible] = useState(true);
 
 	const user = session.user;
+	const email = user.isAnonymous ? undefined : user.email;
 
 	const handleSignOut = async () => {
 		await authClient.signOut();
@@ -82,7 +83,7 @@ export function UserMenu() {
 				className='flex cursor-pointer items-center gap-2 rounded-lg'
 				style={{ opacity: triggerVisible ? 1 : 0 }}
 			>
-				<UserIdentity name={user.name} email={user.email} image={user.image} />
+				<UserIdentity name={user.name} email={email} image={user.image} />
 			</MenuTrigger>
 			<MenuPopup
 				align='end'
@@ -92,7 +93,7 @@ export function UserMenu() {
 				className='w-max min-w-(--anchor-width) rounded-t-none data-ending-style:scale-100 data-starting-style:scale-100'
 			>
 				<div className='flex items-center justify-end gap-2 px-2 py-2' aria-hidden='true'>
-					<UserIdentity name={user.name} email={user.email} image={user.image} />
+					<UserIdentity name={user.name} email={email} image={user.image} />
 				</div>
 				<MenuSeparator />
 				<MenuItem onClick={handleSignOut} variant='destructive'>
