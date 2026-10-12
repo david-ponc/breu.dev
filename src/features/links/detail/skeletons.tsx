@@ -57,11 +57,12 @@ export function ChartSkeleton() {
 
 export function PreviewSkeleton() {
 	return (
-		<Card.Root className='max-h-144 min-w-0 pt-0 lg:max-h-88'>
-			<Skeleton className='aspect-video max-h-48 w-full shrink-0 rounded-none' />
-			<Card.Header>
-				<Skeleton className='h-5 w-40' />
+		<Card.Root className='relative h-120 min-w-0 justify-end py-4 lg:h-88'>
+			<Skeleton className='absolute inset-0 size-full rounded-none' />
+			<Card.Header className='relative gap-2'>
+				<Skeleton className='h-5 w-2/3' />
 				<Skeleton className='h-4 w-full' />
+				<Skeleton className='h-4 w-4/5' />
 			</Card.Header>
 		</Card.Root>
 	);

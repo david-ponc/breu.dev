@@ -5,7 +5,7 @@ import { QueryBoundary } from '#/core/ui/query-boundary';
 import { LinkDetailActivityChart } from '#/features/links/detail/activity-chart';
 import { LinkDetailBreakdowns } from '#/features/links/detail/breakdowns';
 import { LinkDetailKpis } from '#/features/links/detail/kpis';
-import { LinkDetailPreview } from '#/features/links/detail/preview';
+import { LinkDetailPreview } from '#/features/links/detail/preview-loader';
 import { linkStatsQueryOptions } from '#/features/links/detail/query';
 import type { ActivityRange } from '#/features/links/detail/range';
 import {

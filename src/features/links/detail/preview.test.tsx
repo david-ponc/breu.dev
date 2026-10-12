@@ -1,16 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import type { Link, Meta } from '#/contexts/brevis/links/domain/link';
+import type { Meta } from '#/contexts/brevis/links/domain/link';
 
-import { LinkDetailPreview } from './preview';
-
-const preview = vi.hoisted(() => ({ link: null as Link | null }));
-vi.mock('@tanstack/react-query', () => ({
-	useSuspenseQuery: () => ({ data: preview.link }),
-}));
-vi.mock('./query', () => ({ userLinkQueryOptions: vi.fn() }));
+import { LinkPreview } from './preview';
 
 const EMPTY_META: Meta = {
 	author: null,
@@ -20,34 +14,17 @@ const EMPTY_META: Meta = {
 	openGraph: { title: null, description: null, image: null },
 };
 
-function aLink(meta: Meta | null): Link {
-	return {
-		id: '01992611-0000-7000-8000-000000000001',
-		userId: '01992611-0000-7000-8000-000000000002',
-		slug: 'example-link',
-		url: 'https://example.com',
-		comments: 'My notes',
-		meta,
-		status: 'active',
-		createdAt: '2026-09-01T12:00:00Z',
-		updatedAt: '2026-09-01T12:00:00Z',
-	};
+function renderPreview(meta: Meta | null, comments: string | null = 'My notes') {
+	return render(<LinkPreview meta={meta} comments={comments} />);
 }
 
-function renderPreview() {
-	return render(<LinkDetailPreview linkId='link-id' userId='user-id' />);
-}
-
-beforeEach(() => {
-	preview.link = aLink(EMPTY_META);
-});
 afterEach(cleanup);
 
-describe('LinkDetailPreview', () => {
+describe('LinkPreview', () => {
 	it.each([true, false])(
 		'resolves text with non-empty Open Graph values: %s',
 		(hasOgText) => {
-			preview.link = aLink({
+			const meta: Meta = {
 				...EMPTY_META,
 				title: ' HTML title ',
 				description: ' HTML description ',
@@ -58,8 +35,8 @@ describe('LinkDetailPreview', () => {
 					author: hasOgText ? ' OG author ' : '\t',
 					image: null,
 				},
-			});
-			renderPreview();
+			};
+			renderPreview(meta);
 			for (const field of ['title', 'description', 'author']) {
 				const expected = `${hasOgText ? 'OG' : 'HTML'} ${field}`;
 				expect(screen.getByText(expected).textContent).toBe(expected);
@@ -69,7 +46,7 @@ describe('LinkDetailPreview', () => {
 	);
 
 	it('omits empty fields and preserves metadata order', () => {
-		preview.link = aLink({
+		renderPreview({
 			...EMPTY_META,
 			author: ' Ada ',
 			openGraph: {
@@ -83,7 +60,6 @@ describe('LinkDetailPreview', () => {
 				publishedTime: ' 2026-09-01T12:00:00Z ',
 			},
 		});
-		renderPreview();
 		expect(screen.getAllByRole('term').map((term) => term.textContent)).toEqual([
 			'Author',
 			'Type',
@@ -96,7 +72,7 @@ describe('LinkDetailPreview', () => {
 	});
 
 	it('shows a preview with only tags, cleaned and deduplicated in source order', () => {
-		preview.link = aLink({
+		renderPreview({
 			...EMPTY_META,
 			openGraph: {
 				title: null,
@@ -105,7 +81,6 @@ describe('LinkDetailPreview', () => {
 				tags: [' TypeScript ', 'React', 'TypeScript', ' ', ' React '],
 			},
 		});
-		renderPreview();
 		expect(screen.queryByText('No preview available')).toBeNull();
 		expect(screen.getAllByRole('term').map((term) => term.textContent)).toEqual(['Tags']);
 		expect(
@@ -113,22 +88,23 @@ describe('LinkDetailPreview', () => {
 		).toEqual(['TypeScript', 'React']);
 	});
 
-	it('refreshes derived content when query data changes and clears it when empty', () => {
-		preview.link = aLink({ ...EMPTY_META, title: 'Old title', author: 'Old author' });
-		const { rerender } = renderPreview();
-		preview.link = aLink({
-			...EMPTY_META,
-			title: 'New title',
-			description: 'New description',
-		});
-		rerender(<LinkDetailPreview linkId='link-id' userId='user-id' />);
+	it('refreshes derived content when the meta changes and clears it when empty', () => {
+		const { rerender } = renderPreview(
+			{ ...EMPTY_META, title: 'Old title', author: 'Old author' },
+			null,
+		);
+		rerender(
+			<LinkPreview
+				comments={null}
+				meta={{ ...EMPTY_META, title: 'New title', description: 'New description' }}
+			/>,
+		);
 		expect(screen.getByText('New title')).toBeDefined();
 		expect(screen.getByText('New description')).toBeDefined();
 		expect(screen.queryByText('Old title')).toBeNull();
 		expect(screen.queryByText('Old author')).toBeNull();
 		expect(screen.queryByRole('term')).toBeNull();
-		preview.link = aLink(null);
-		rerender(<LinkDetailPreview linkId='link-id' userId='user-id' />);
+		rerender(<LinkPreview comments={null} meta={null} />);
 		expect(screen.getByText('No preview available')).toBeDefined();
 		expect(screen.queryByText('New title')).toBeNull();
 		expect(screen.queryByText('New description')).toBeNull();
@@ -137,17 +113,19 @@ describe('LinkDetailPreview', () => {
 	it.each([null, EMPTY_META, { ...EMPTY_META, openGraph: null }])(
 		'uses Empty when metadata is absent or empty (%j)',
 		(meta) => {
-			preview.link = aLink(meta);
-			const { container } = renderPreview();
+			const { container } = renderPreview(meta);
 			expect(container.querySelector('[data-slot="empty"]')).not.toBeNull();
 			expect(screen.getByText('No preview available')).toBeDefined();
 			expect(screen.getByText('My notes')).toBeDefined();
 			expect(screen.queryByText('No image available')).toBeNull();
+			expect(
+				container.querySelector('[data-slot="preview-backdrop"][data-fallback]'),
+			).not.toBeNull();
 		},
 	);
 
 	it('treats whitespace-only metadata as empty', () => {
-		preview.link = aLink({
+		renderPreview({
 			...EMPTY_META,
 			title: ' ',
 			description: '\n',
@@ -160,37 +138,37 @@ describe('LinkDetailPreview', () => {
 				siteName: ' ',
 			},
 		});
-		renderPreview();
 		expect(screen.getByText('No preview available')).toBeDefined();
 	});
 
-	it('keeps title and description fallbacks and shows a missing image placeholder', () => {
-		preview.link = aLink({
+	it('keeps title and description over the default background when the image is missing', () => {
+		const { container } = renderPreview({
 			...EMPTY_META,
 			title: 'HTML title',
 			description: 'HTML description',
 		});
-		renderPreview();
 		expect(screen.getByText('HTML title')).toBeDefined();
 		expect(screen.getByText('HTML description')).toBeDefined();
-		expect(screen.getByText('No image available')).toBeDefined();
+		expect(
+			container.querySelector('[data-slot="preview-backdrop"][data-fallback]'),
+		).not.toBeNull();
+		expect(screen.queryByText('No image available')).toBeNull();
 	});
 
 	it.each([
 		{ title: 'OG title', description: null, missing: 'No description available' },
 		{ title: null, description: 'OG description', missing: 'No title available' },
 	])('shows the missing text field: $missing', ({ title, description, missing }) => {
-		preview.link = aLink({
+		renderPreview({
 			...EMPTY_META,
 			openGraph: { title, description, image: null },
 		});
-		renderPreview();
 		expect(screen.getByText(title || description || '')).toBeDefined();
 		expect(screen.getByText(missing)).toBeDefined();
 	});
 
 	it('replaces broken images and retries when the image URL changes', () => {
-		preview.link = aLink({
+		const { container, rerender } = renderPreview({
 			...EMPTY_META,
 			openGraph: {
 				title: 'OG title',
@@ -198,29 +176,35 @@ describe('LinkDetailPreview', () => {
 				image: 'https://example.com/one.png',
 			},
 		});
-		const { container, rerender } = renderPreview();
 		const image = container.querySelector('img');
 		expect(image?.getAttribute('src')).toBe('https://example.com/one.png');
 		fireEvent.error(image as HTMLImageElement);
 		expect(container.querySelector('img')).toBeNull();
-		expect(screen.getByText('No image available')).toBeDefined();
-		preview.link = aLink({
-			...EMPTY_META,
-			openGraph: {
-				title: 'OG title',
-				description: null,
-				image: 'https://example.com/two.png',
-			},
-		});
-		rerender(<LinkDetailPreview linkId='link-id' userId='user-id' />);
+		expect(
+			container.querySelector('[data-slot="preview-backdrop"][data-fallback]'),
+		).not.toBeNull();
+		rerender(
+			<LinkPreview
+				meta={{
+					...EMPTY_META,
+					openGraph: {
+						title: 'OG title',
+						description: null,
+						image: 'https://example.com/two.png',
+					},
+				}}
+			/>,
+		);
 		expect(container.querySelector('img')?.getAttribute('src')).toBe(
 			'https://example.com/two.png',
 		);
-		expect(screen.queryByText('No image available')).toBeNull();
+		expect(
+			container.querySelector('[data-slot="preview-backdrop"][data-fallback]'),
+		).toBeNull();
 	});
 
 	it('renders supplemental metadata even without title, description or image', () => {
-		preview.link = aLink({
+		renderPreview({
 			...EMPTY_META,
 			openGraph: {
 				title: null,
@@ -236,7 +220,6 @@ describe('LinkDetailPreview', () => {
 				modifiedTime: '2026-09-02T12:00:00Z',
 			},
 		});
-		renderPreview();
 		for (const value of [
 			'Ada Lovelace',
 			'React',
@@ -249,7 +232,6 @@ describe('LinkDetailPreview', () => {
 			'2026-09-02T12:00:00Z',
 			'No title available',
 			'No description available',
-			'No image available',
 		]) {
 			expect(screen.getAllByText(value)).toHaveLength(1);
 		}
@@ -257,8 +239,7 @@ describe('LinkDetailPreview', () => {
 	});
 
 	it('displays the author from previously saved metadata', () => {
-		preview.link = aLink({ ...EMPTY_META, author: 'Grace Hopper' });
-		renderPreview();
+		renderPreview({ ...EMPTY_META, author: 'Grace Hopper' });
 		expect(screen.getByText('Grace Hopper')).toBeDefined();
 		expect(screen.queryByText('No preview available')).toBeNull();
 	});
@@ -267,8 +248,8 @@ describe('LinkDetailPreview', () => {
 		const title = 'A long title '.repeat(50).trim();
 		const description = 'A complete description '.repeat(100).trim();
 		const comments = `https://example.com/${'long-path'.repeat(100)}`;
-		preview.link = {
-			...aLink({
+		renderPreview(
+			{
 				...EMPTY_META,
 				openGraph: {
 					title,
@@ -276,10 +257,9 @@ describe('LinkDetailPreview', () => {
 					image: null,
 					tags: Array.from({ length: 50 }, (_, index) => `Topic ${index + 1}`),
 				},
-			}),
+			},
 			comments,
-		};
-		renderPreview();
+		);
 		const region = screen.getByRole('region', { name: 'Link preview details' });
 		region.focus();
 		expect(document.activeElement).toBe(region);

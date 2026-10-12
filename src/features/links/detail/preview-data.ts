@@ -1,26 +1,14 @@
 import type { Meta } from '#/contexts/brevis/links/domain/link';
 
 function cleanText(value: string | null | undefined) {
-	return value?.trim() || undefined;
+	return value?.trim() || null;
 }
 
-export function getLinkPreviewData(meta: Meta | null | undefined) {
+export function getLinkPreviewData(meta: Meta | null | undefined): Meta {
 	const og = meta?.openGraph;
 	const title = cleanText(og?.title) || cleanText(meta?.title);
 	const description = cleanText(og?.description) || cleanText(meta?.description);
-	const image = og?.image;
-	const metadata = [
-		{ label: 'Author', value: cleanText(og?.author) || cleanText(meta?.author) },
-		{ label: 'Site', value: og?.siteName },
-		{ label: 'Type', value: og?.type },
-		{ label: 'Locale', value: og?.locale },
-		{ label: 'Section', value: og?.section },
-		{ label: 'Published', value: og?.publishedTime },
-		{ label: 'Modified', value: og?.modifiedTime },
-	].flatMap(({ label, value }) => {
-		const text = cleanText(value);
-		return text ? [{ label, value: text }] : [];
-	});
+	const author = cleanText(og?.author) || cleanText(meta?.author);
 	const tags = [
 		...new Set(
 			(og?.tags ?? []).flatMap((tag) => {
@@ -29,8 +17,26 @@ export function getLinkPreviewData(meta: Meta | null | undefined) {
 			}),
 		),
 	];
-	const hasMetadata = metadata.length > 0 || tags.length > 0;
-	const hasPreview = Boolean(title || description || image || hasMetadata);
 
-	return { title, description, image, metadata, tags, hasMetadata, hasPreview };
+	return {
+		author,
+		favicon: meta?.favicon ?? null,
+		title,
+		description,
+		openGraph: og
+			? {
+					title,
+					description,
+					image: og.image ?? null,
+					author,
+					tags,
+					siteName: cleanText(og.siteName),
+					type: cleanText(og.type),
+					locale: cleanText(og.locale),
+					section: cleanText(og.section),
+					publishedTime: cleanText(og.publishedTime),
+					modifiedTime: cleanText(og.modifiedTime),
+				}
+			: null,
+	};
 }
