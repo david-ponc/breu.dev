@@ -3,14 +3,25 @@ import { use } from 'react';
 import { browser } from 'react-dom';
 
 import { CursorClickIcon } from '#/core/icons/cursor-click';
+import { Icon } from '#/core/icons/icon';
+import { cn } from '#/core/lib/cn';
 import { Badge } from '#/core/ui/badge';
 import { Card } from '#/core/ui/card';
 import { Empty } from '#/core/ui/empty';
 import { GridPattern } from '#/core/ui/patterns/grid-pattern';
 import { Table } from '#/core/ui/table';
 
-import { formatDateTime, formatDevice, formatReferrerHost } from './format';
+import { formatDateTime, formatReferrerHost } from './format';
 import { linkVisitsQueryOptions } from './query';
+import {
+	type AgentBadge,
+	type AgentMeta,
+	browserAgent,
+	deviceAgent,
+	originAgent,
+	osAgent,
+	referrerAgent,
+} from './visit-agent';
 
 interface LinkDetailVisitsProps {
 	linkId: string;
@@ -55,7 +66,7 @@ export function LinkDetailVisits({ linkId, userId }: LinkDetailVisitsProps) {
 									<Table.Head>Device</Table.Head>
 									<Table.Head>Browser</Table.Head>
 									<Table.Head>OS</Table.Head>
-									<Table.Head>Bot</Table.Head>
+									<Table.Head>Origin</Table.Head>
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
@@ -69,16 +80,26 @@ export function LinkDetailVisits({ linkId, userId }: LinkDetailVisitsProps) {
 												{formatDateTime(visit.visitedAt)}
 											</time>
 										</Table.Cell>
-										<Table.Cell className='max-w-48 truncate'>
-											{formatReferrerHost(visit.referer)}
+										<Table.Cell>
+											<AgentBadgeCell
+												{...referrerAgent(formatReferrerHost(visit.referer))}
+											/>
 										</Table.Cell>
 										<Table.Cell>
-											{formatDevice(visit.userAgent?.deviceType ?? 'unknown')}
+											<AgentLabelCell
+												{...deviceAgent(visit.userAgent?.deviceType ?? 'unknown')}
+											/>
 										</Table.Cell>
-										<Table.Cell>{visit.userAgent?.browser ?? 'Unknown'}</Table.Cell>
-										<Table.Cell>{visit.userAgent?.os ?? 'Unknown'}</Table.Cell>
 										<Table.Cell>
-											{visit.isBot ? <Badge variant='warning'>Bot</Badge> : '—'}
+											<AgentBadgeCell
+												{...browserAgent(visit.userAgent?.browser ?? null)}
+											/>
+										</Table.Cell>
+										<Table.Cell>
+											<AgentLabelCell {...osAgent(visit.userAgent?.os ?? null)} />
+										</Table.Cell>
+										<Table.Cell>
+											<AgentLabelCell {...originAgent(visit.isBot)} />
 										</Table.Cell>
 									</Table.Row>
 								))}
@@ -88,5 +109,22 @@ export function LinkDetailVisits({ linkId, userId }: LinkDetailVisitsProps) {
 				</Table.Root>
 			</Card.Panel>
 		</Card.Root>
+	);
+}
+
+function AgentLabelCell({ icon, label }: AgentMeta) {
+	return (
+		<span className='flex items-center gap-2'>
+			<Icon name={icon} aria-hidden className='size-4 shrink-0 text-muted-foreground' />
+			<span className='truncate'>{label}</span>
+		</span>
+	);
+}
+
+function AgentBadgeCell({ label, className }: AgentBadge) {
+	return (
+		<Badge className={cn('max-w-48', className)} title={label}>
+			<span className='min-w-0 truncate'>{label}</span>
+		</Badge>
 	);
 }

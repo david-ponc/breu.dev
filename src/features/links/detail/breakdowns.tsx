@@ -11,6 +11,7 @@ import { Card } from '#/core/ui/card';
 import { formatCountry, formatDevice, formatShare } from './format';
 import { linkStatsQueryOptions } from './query';
 import type { ActivityRange } from './range';
+import { referrerLabel } from './visit-agent';
 
 const MAX_ITEMS = 8;
 const ROW_HEIGHT = 36;
@@ -48,7 +49,11 @@ export function LinkDetailBreakdowns({
 			<BreakdownCard title='Devices' items={stats.devices} formatKey={formatDevice} />
 			<BreakdownCard title='Browsers' items={stats.browsers} />
 			<BreakdownCard title='Operating systems' items={stats.os} />
-			<BreakdownCard title='Referrers' items={stats.referrers} />
+			<BreakdownCard
+				title='Referrers'
+				items={stats.referrers}
+				formatKey={referrerLabel}
+			/>
 		</div>
 	);
 }
@@ -192,11 +197,7 @@ function BreakdownChart({
 
 	return (
 		<div
-			className={
-				scrollable
-					? 'mask-[linear-gradient(to_bottom,black_calc(100%-1.25rem),transparent)] overflow-y-auto'
-					: undefined
-			}
+			className={scrollable ? 'scroll-fade-b scroll-fade-b-5 overflow-y-auto' : undefined}
 			style={scrollable ? { maxHeight: VISIBLE_ROWS * ROW_HEIGHT } : undefined}
 		>
 			<div className='relative pr-11'>
