@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react';
+import { startTransition, useCallback, useRef, useState } from 'react';
 
 import { authClient } from '#/core/lib/auth/client';
 import {
 	isAnonymousActionForbidden,
 	useRequireAccountPrompt,
 } from '#/core/lib/auth/require-account';
+import { useAppForm } from '#/core/lib/form';
 import { httpClient } from '#/core/lib/http/client';
 import { Identifier } from '#/core/lib/identifier';
 import { ensureHttpsProtocol } from '#/core/lib/url';
@@ -30,22 +31,25 @@ export function useQuickLink() {
 	const [status, setStatus] = useState<QuickLinkStatus>('idle');
 	const [inputError, setInputError] = useState<string | null>(null);
 	const [created, setCreated] = useState<CreatedQuickLink | null>(null);
+	const statusRef = useRef<QuickLinkStatus>('idle');
+	const isCreating = useRef(false);
 	const requireAccount = useRequireAccountPrompt();
 
-	const submit = useCallback(
-		async (rawUrl: string) => {
-			if (status === 'creating') return;
-
-			const url = ensureHttpsProtocol(rawUrl);
-			const parsed = QuickLinkValuesSchema.safeParse({ url });
-
-			if (!parsed.success) {
-				setInputError('That does not look like a valid URL. Check it and try again.');
-				return;
-			}
-
-			setInputError(null);
-			setStatus('creating');
+	const updateStatus = useCallback((nextStatus: QuickLinkStatus) => {
+		statusRef.current = nextStatus;
+		setStatus(nextStatus);
+	}, []);
+	const form = useAppForm({
+		defaultValues: { url: '' },
+		validators: { onSubmit: QuickLinkValuesSchema },
+		onSubmit: async ({ value }) => {
+			if (isCreating.current || statusRef.current === 'success') return;
+			isCreating.current = true;
+			startTransition(() => {
+				setInputError(null);
+				updateStatus('creating');
+			});
+			const url = ensureHttpsProtocol(value.url);
 
 			try {
 				await ensureSession();
@@ -66,7 +70,7 @@ export function useQuickLink() {
 				const link = linkResult.data;
 				if (!link || !('slug' in link)) {
 					if (isAnonymousActionForbidden(linkResult.error?.value)) {
-						setStatus('idle');
+						startTransition(() => updateStatus('idle'));
 						requireAccount(
 							'Guests can create one link. Sign up to create and manage more.',
 						);
@@ -79,15 +83,20 @@ export function useQuickLink() {
 					);
 				}
 
-				setCreated({ linkId, slug: link.slug, url: link.url });
-				setStatus('success');
+				startTransition(() => {
+					setCreated({ linkId, slug: link.slug, url: link.url });
+					updateStatus('success');
+				});
 			} catch (cause) {
-				setStatus('idle');
+				const rateLimited = isRateLimited(cause);
+				startTransition(() => {
+					updateStatus('idle');
+					if (rateLimited) {
+						setInputError('You just created too many links. Try again in an hour.');
+					}
+				});
 
-				if (isRateLimited(cause)) {
-					setInputError('You just created too many links. Try again in an hour.');
-					return;
-				}
+				if (rateLimited) return;
 
 				toastManager.add({
 					type: 'error',
@@ -98,18 +107,23 @@ export function useQuickLink() {
 							: ((cause as QuickLinkFailure | undefined)?.message ??
 								'We could not reach that page. Check the URL and try again.'),
 				});
+			} finally {
+				isCreating.current = false;
 			}
 		},
-		[status, requireAccount],
-	);
+	});
 
-	const reset = useCallback(() => {
-		setStatus('idle');
-		setInputError(null);
-		setCreated(null);
-	}, []);
+	const clearInputError = useCallback(() => setInputError(null), []);
+	const shouldFocusUrlAfterSubmit = useCallback(() => statusRef.current === 'idle', []);
 
-	return { status, inputError, created, submit, reset };
+	return {
+		form,
+		status,
+		inputError,
+		created,
+		clearInputError,
+		shouldFocusUrlAfterSubmit,
+	};
 }
 
 async function ensureSession() {

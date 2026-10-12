@@ -2,6 +2,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { ensureHttpsProtocol } from '#/core/lib/url';
+
 const getSessionMock = vi.hoisted(() => vi.fn());
 const signInAnonymousMock = vi.hoisted(() => vi.fn());
 const slugsGetMock = vi.hoisted(() => vi.fn());
@@ -41,11 +43,19 @@ function allowSessionlessFlow() {
 }
 
 async function submit(
-	result: { current: { submit(url: string): Promise<void> } },
+	result: {
+		current: {
+			form: {
+				setFieldValue(name: 'url', value: string): void;
+				handleSubmit(): Promise<void>;
+			};
+		};
+	},
 	url: string,
 ) {
 	await act(async () => {
-		await result.current.submit(url);
+		result.current.form.setFieldValue('url', ensureHttpsProtocol(url));
+		await result.current.form.handleSubmit();
 	});
 }
 
@@ -60,7 +70,7 @@ describe('useQuickLink', () => {
 		await submit(result, 'not a url');
 
 		expect(result.current.status).toBe('idle');
-		expect(result.current.inputError).toMatch(/valid URL/);
+		expect(result.current.form.state.fieldMeta.url?.errors.length).toBeGreaterThan(0);
 		expect(getSessionMock).not.toHaveBeenCalled();
 		expect(linksPutMock).not.toHaveBeenCalled();
 	});
@@ -98,6 +108,15 @@ describe('useQuickLink', () => {
 		await submit(result, 'example.com');
 
 		expect(signInAnonymousMock).not.toHaveBeenCalled();
+		expect(result.current.status).toBe('success');
+	});
+
+	it('does not create another link after success', async () => {
+		allowSessionlessFlow();
+		const { result } = renderHook(() => useQuickLink());
+		await submit(result, 'example.com');
+		await submit(result, 'example.com/another');
+		expect(linksPutMock).toHaveBeenCalledTimes(1);
 		expect(result.current.status).toBe('success');
 	});
 
@@ -145,18 +164,5 @@ describe('useQuickLink', () => {
 		expect(toastAddMock).toHaveBeenCalledWith(
 			expect.objectContaining({ type: 'error', description: 'meta failed' }),
 		);
-	});
-
-	it('resets back to the idle state', async () => {
-		allowSessionlessFlow();
-		const { result } = renderHook(() => useQuickLink());
-
-		await submit(result, 'example.com');
-		expect(result.current.status).toBe('success');
-
-		act(() => result.current.reset());
-
-		expect(result.current.status).toBe('idle');
-		expect(result.current.created).toBeNull();
 	});
 });

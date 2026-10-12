@@ -8,6 +8,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { curveMonotoneX } from 'd3-shape';
 import { startTransition, useMemo } from 'react';
 
+import type { LinkActivity } from '#/contexts/analytics/visits/domain/link-stats';
 import { Card } from '#/core/ui/card';
 import { Segmented } from '#/core/ui/segmented';
 
@@ -20,51 +21,53 @@ const FILL_ID = 'detail-activity-fill';
 const CHART_ANIMATION = { duration: 280, easing: 'ease-out' } as const;
 const monotone = d3Curve(curveMonotoneX);
 
-interface LinkDetailActivityChartProps {
-	linkId: string;
-	userId: string;
-	range: ActivityRange;
-	onRangeChange: (range: ActivityRange) => void;
+interface ActivityChartProps {
+	activity: LinkActivity[];
+	interactive?: boolean;
+	height?: number;
+	ariaLabel?: string;
 }
 
-export function LinkDetailActivityChart({
-	linkId,
-	userId,
-	range,
-	onRangeChange,
-}: LinkDetailActivityChartProps) {
-	const { data: stats } = useSuspenseQuery(linkStatsQueryOptions(userId, linkId, range));
+export function ActivityChart({
+	activity,
+	interactive = true,
+	height = 260,
+	ariaLabel,
+}: ActivityChartProps) {
 	const definition = useMemo(() => {
-		const points = stats.activity;
-		const values = points.map((point) => point.clicks);
+		const values = activity.map((point) => point.clicks);
 		const maximum = values.length ? Math.max(...values, 1) : 1;
 
 		const base = defineChart({
 			marks: [
-				areaY(points, {
+				areaY(activity, {
 					x: 'date',
 					y: 'clicks',
 					y1: 0,
 					fill: `url(#${FILL_ID})`,
 					curve: monotone,
 				}),
-				lineY(points, {
+				lineY(activity, {
 					x: 'date',
 					y: 'clicks',
 					stroke: COLOR,
 					strokeWidth: 2,
 					curve: monotone,
 				}),
-				crosshair({
-					x: { strokeDasharray: '4 4', label: false },
-					y: false,
-					marker: {
-						radius: 4,
-						fill: COLOR,
-						stroke: 'var(--popover)',
-						strokeWidth: 2,
-					},
-				}),
+				...(interactive
+					? [
+							crosshair({
+								x: { strokeDasharray: '4 4', label: false },
+								y: false,
+								marker: {
+									radius: 4,
+									fill: COLOR,
+									stroke: 'var(--popover)',
+									strokeWidth: 2,
+								},
+							}),
+						]
+					: []),
 			],
 			scales: {
 				x: {
@@ -92,6 +95,16 @@ export function LinkDetailActivityChart({
 			],
 		});
 
+		if (!interactive) {
+			return defineChart(base, {
+				svgAnimation: CHART_ANIMATION,
+				focus: false,
+				pointer: false,
+				keyboard: false,
+				focusRing: false,
+			});
+		}
+
 		return defineChart(base, {
 			svgAnimation: CHART_ANIMATION,
 			focus: 'nearest-x',
@@ -108,7 +121,37 @@ export function LinkDetailActivityChart({
 					`${formatDate(point.datum.date)} · ${formatCount(point.datum.clicks)} clicks`,
 			},
 		});
-	}, [stats.activity]);
+	}, [activity, interactive]);
+
+	return (
+		<Chart
+			definition={definition}
+			height={height}
+			className='w-full'
+			ariaLabel={
+				ariaLabel ??
+				(interactive
+					? 'Clicks over time. Hover or use arrow keys to inspect a day.'
+					: 'Example activity over time.')
+			}
+		/>
+	);
+}
+
+interface LinkDetailActivityChartProps {
+	linkId: string;
+	userId: string;
+	range: ActivityRange;
+	onRangeChange: (range: ActivityRange) => void;
+}
+
+export function LinkDetailActivityChart({
+	linkId,
+	userId,
+	range,
+	onRangeChange,
+}: LinkDetailActivityChartProps) {
+	const { data: stats } = useSuspenseQuery(linkStatsQueryOptions(userId, linkId, range));
 
 	return (
 		<Card.Root className='min-w-0'>
@@ -139,12 +182,7 @@ export function LinkDetailActivityChart({
 						No clicks in this period.
 					</p>
 				) : (
-					<Chart
-						definition={definition}
-						height={260}
-						className='w-full'
-						ariaLabel='Clicks over time. Hover or use arrow keys to inspect a day.'
-					/>
+					<ActivityChart activity={stats.activity} />
 				)}
 			</Card.Panel>
 		</Card.Root>

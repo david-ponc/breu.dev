@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { HeroSection } from '#/features/landing/hero';
+import { LandingPage } from '#/features/landing/landing-page';
 
 export const Route = createFileRoute('/')({
-	component: HeroSection,
+	component: LandingPage,
 	head: () => ({
 		meta: [
-			{ title: 'breu.dev — Shorten any link in one click' },
+			{ title: 'breu.dev — Short links. Clear insights.' },
 			{
 				name: 'description',
 				content:
-					'Paste a long URL and get a clean, shareable link. No account, no friction.',
+					'Shorten your links, follow their activity, and manage everything in one place.',
 			},
 		],
 	}),
