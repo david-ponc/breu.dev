@@ -21,6 +21,7 @@ function MenuPopup({
 	side = 'bottom',
 	sideOffset = 4,
 	collisionAvoidance,
+	keepMounted,
 
 	className,
 	...props
@@ -28,9 +29,10 @@ function MenuPopup({
 	Pick<
 		BaseMenu.Positioner.Props,
 		'align' | 'alignOffset' | 'side' | 'sideOffset' | 'collisionAvoidance'
-	>) {
+	> &
+	Pick<BaseMenu.Portal.Props, 'keepMounted'>) {
 	return (
-		<BaseMenu.Portal>
+		<BaseMenu.Portal keepMounted={keepMounted}>
 			<BaseMenu.Positioner
 				className='isolate z-50 outline-none'
 				align={align}
