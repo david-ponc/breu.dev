@@ -10,6 +10,7 @@ import { useAppForm } from '#/core/lib/form';
 import { httpClient } from '#/core/lib/http/client';
 import { Identifier } from '#/core/lib/identifier';
 import { toastManager } from '#/core/ui/toast';
+import { getLinkErrorMessage } from '#/features/links/link-error-message';
 
 import { type CreateLinkValues, CreateLinkValuesSchema } from './schema';
 import { useSlugGenerator } from './use-slug-generator';
@@ -61,8 +62,7 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 
 					return {
 						title: 'Failed to craft link',
-						description:
-							error instanceof Error ? error.message : 'An unexpected error occurred.',
+						description: getLinkErrorMessage(error),
 					};
 				},
 				success: (data) => {
