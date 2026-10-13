@@ -15,10 +15,13 @@ export const toastManager = BaseToast.createToastManager();
 export const anchoredToastManager = BaseToast.createToastManager();
 export const useToastManager = BaseToast.useToastManager;
 
-const STACKED_TRANSFORM =
-	'translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))';
-const STACKED_EXPANDED_TRANSFORM =
-	'translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))';
+// Keep complete class names static so Tailwind emits these arbitrary transforms.
+const STACKED_TRANSFORM_CLASS =
+	'[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)_-_(var(--toast-index)*var(--peek))_-_(var(--shrink)*var(--height))))_scale(var(--scale))]';
+const STACKED_EXPANDED_TRANSFORM_CLASS =
+	'data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]';
+const STACKED_REDUCED_MOTION_TRANSFORMS =
+	'motion-reduce:data-starting-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)_-_(var(--toast-index)*var(--peek))_-_(var(--shrink)*var(--height))))_scale(var(--scale))] motion-reduce:data-ending-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)_-_(var(--toast-index)*var(--peek))_-_(var(--shrink)*var(--height))))_scale(var(--scale))]';
 
 const TYPE_ICONS = {
 	success: CheckCircleIcon,
@@ -170,55 +173,73 @@ function ToastIcon({ type }: { type?: string }) {
 function StackedToastList() {
 	const { toasts } = useToastManager();
 
-	return toasts.map((toast) => (
-		<ToastRoot
-			key={toast.id}
-			toast={toast}
-			swipeDirection={['down', 'right']}
-			className={cn(
-				'absolute right-0 bottom-0 left-auto z-[calc(1000-var(--toast-index))] w-full origin-bottom select-none',
-				'rounded-xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10',
-				'h-(--height) outline-none focus-visible:ring-2 focus-visible:ring-ring',
-				'[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--peek:0.75rem]',
-				'[--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]',
-				'[--offset-y:calc(var(--toast-offset-y)*-1+(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))]',
-				`[transform:${STACKED_TRANSFORM}]`,
-				'[transition:transform_400ms_cubic-bezier(0.22,1,0.36,1),opacity_400ms,height_150ms]',
-				"after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
-				'data-expanded:h-(--toast-height)',
-				`data-expanded:[transform:${STACKED_EXPANDED_TRANSFORM}]`,
-				'data-limited:opacity-0',
-				'data-starting-style:[transform:translateY(150%)]',
-				'data-ending-style:opacity-0',
-				'[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(150%)]',
-				'data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
-				'data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
-				'data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
-				'data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
-				'data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
-				'data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
-				'data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
-				'data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
-				`motion-reduce:[transition:opacity_200ms] motion-reduce:data-starting-style:[transform:${STACKED_TRANSFORM}] motion-reduce:data-ending-style:[transform:${STACKED_TRANSFORM}]`,
-			)}
-		>
-			<ToastContent
+	return toasts.map((toast) => {
+		const isAccountPrompt = toast.data?.layout === 'account-prompt';
+
+		return (
+			<ToastRoot
+				key={toast.id}
+				toast={toast}
+				swipeDirection={['down', 'right']}
 				className={cn(
-					'flex h-full items-center gap-3 overflow-hidden p-3',
-					'transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]',
-					'data-behind:opacity-0 data-expanded:opacity-100',
+					'absolute right-0 bottom-0 left-auto z-[calc(1000-var(--toast-index))] w-full origin-bottom select-none',
+					'rounded-xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10',
+					'h-(--height) outline-none focus-visible:ring-2 focus-visible:ring-ring',
+					'[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--peek:0.75rem]',
+					'[--scale:calc(max(0,_1_-(var(--toast-index)_*_0.1)))] [--shrink:calc(1_-_var(--scale))]',
+					'[--offset-y:calc(var(--toast-offset-y)_*_-1_+_(var(--toast-index)_*_var(--gap)_*_-1)_+_var(--toast-swipe-movement-y))]',
+					STACKED_TRANSFORM_CLASS,
+					'[transition:transform_400ms_cubic-bezier(0.22,1,0.36,1),opacity_400ms,height_150ms]',
+					"after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
+					'data-expanded:h-(--toast-height)',
+					STACKED_EXPANDED_TRANSFORM_CLASS,
+					'data-limited:opacity-0',
+					'data-starting-style:[transform:translateY(150%)]',
+					'data-ending-style:opacity-0',
+					'[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(150%)]',
+					'data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
+					'data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
+					'data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
+					'data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
+					'motion-reduce:[transition:opacity_200ms]',
+					STACKED_REDUCED_MOTION_TRANSFORMS,
 				)}
 			>
-				<ToastIcon type={toast.type} />
-				<div className='flex min-w-0 flex-1 flex-col gap-0.5'>
-					<ToastTitle />
-					<ToastDescription />
-				</div>
-				<ToastAction />
-				<ToastClose />
-			</ToastContent>
-		</ToastRoot>
-	));
+				<ToastContent
+					className={cn(
+						isAccountPrompt
+							? 'grid h-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 overflow-hidden p-3'
+							: 'flex h-full items-center gap-3 overflow-hidden p-3',
+						'transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]',
+						'data-behind:opacity-0 data-expanded:opacity-100',
+					)}
+				>
+					<ToastIcon type={toast.type} />
+					<div
+						className={cn(
+							'flex min-w-0 flex-1 flex-col gap-0.5',
+							isAccountPrompt && 'col-start-2 row-start-1',
+						)}
+					>
+						<ToastTitle className={isAccountPrompt ? 'whitespace-nowrap' : undefined} />
+						<ToastDescription />
+					</div>
+					<ToastAction
+						className={
+							isAccountPrompt ? 'col-start-2 row-start-2 justify-self-start' : undefined
+						}
+					/>
+					<ToastClose
+						className={isAccountPrompt ? 'col-start-3 row-start-1 self-start' : undefined}
+					/>
+				</ToastContent>
+			</ToastRoot>
+		);
+	});
 }
 
 function AnchoredToastList() {

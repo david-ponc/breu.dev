@@ -13,6 +13,7 @@ import {
 	CreateLinkValuesSchema,
 } from '#/features/links/create/schema';
 import { useSlugGenerator } from '#/features/links/create/use-slug-generator';
+import { getLinkErrorMessage } from '#/features/links/link-error-message';
 
 export function useEditLinkForm(link: Link) {
 	const queryClient = useQueryClient();
@@ -29,45 +30,47 @@ export function useEditLinkForm(link: Link) {
 			onSubmit: CreateLinkValuesSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await toastManager.promise(
-				httpClient().brevis.links({ id: link.id }).put({
+			const toastId = toastManager.add({
+				type: 'loading',
+				title: 'Saving changes...',
+				description: 'Please wait while we update your link.',
+				timeout: 0,
+			});
+
+			try {
+				const result = await httpClient().brevis.links({ id: link.id }).put({
 					slug: value.slug,
 					url: value.url,
 					comments: value.comments,
 					meta: value.meta,
-				}),
-				{
-					loading: {
-						title: 'Saving changes...',
-						description: 'Please wait while we update your link.',
-					},
-					error: (error) => {
-						if (isAnonymousActionForbidden(error)) {
-							requireAccount(
-								'Guests cannot edit links. Sign up to keep your link and edit it.',
-							);
-							return {
-								title: 'Create a free account',
-								description: 'Sign up to edit your links.',
-							};
-						}
+				});
+				if (result.error) throw result.error;
 
-						return {
-							title: 'Failed to update link',
-							description:
-								error instanceof Error ? error.message : 'An unexpected error occurred.',
-						};
-					},
-					success: (data) => {
-						if (data.error) throw data.error;
-						void queryClient.invalidateQueries({ queryKey: ['links'] });
-						return {
-							title: 'Link updated',
-							description: `/${value.slug} has been saved.`,
-						};
-					},
-				},
-			);
+				void queryClient.invalidateQueries({ queryKey: ['links'] });
+				toastManager.update(toastId, {
+					type: 'success',
+					title: 'Link updated',
+					description: `/${value.slug} has been saved.`,
+				});
+			} catch (error) {
+				if (isAnonymousActionForbidden(error)) {
+					requireAccount(
+						'Guests cannot edit links. Sign up to keep your link and edit it.',
+						{
+							toastId,
+							title: 'Keep your link',
+							description: 'Create a free account to edit it.',
+						},
+					);
+					return;
+				}
+
+				toastManager.update(toastId, {
+					type: 'error',
+					title: 'Failed to update link',
+					description: getLinkErrorMessage(error),
+				});
+			}
 		},
 	});
 
