@@ -9,16 +9,34 @@ function DialogRoot({ ...props }: BaseDialog.Root.Props) {
 	return <BaseDialog.Root data-slot='dialog' {...props} />;
 }
 
-function DialogTrigger({ ...props }: BaseDialog.Trigger.Props) {
-	return <BaseDialog.Trigger data-slot='dialog-trigger' {...props} />;
+function DialogTrigger({ className, ...props }: BaseDialog.Trigger.Props) {
+	return (
+		<BaseDialog.Trigger
+			data-slot='dialog-trigger'
+			className={cn(
+				'outline-none focus-visible:ring-2 focus-visible:ring-ring',
+				className,
+			)}
+			{...props}
+		/>
+	);
 }
 
 function DialogPortal({ ...props }: BaseDialog.Portal.Props) {
 	return <BaseDialog.Portal data-slot='dialog-portal' {...props} />;
 }
 
-function DialogClose({ ...props }: BaseDialog.Close.Props) {
-	return <BaseDialog.Close data-slot='dialog-close' {...props} />;
+function DialogClose({ className, ...props }: BaseDialog.Close.Props) {
+	return (
+		<BaseDialog.Close
+			data-slot='dialog-close'
+			className={cn(
+				'outline-none focus-visible:ring-2 focus-visible:ring-ring',
+				className,
+			)}
+			{...props}
+		/>
+	);
 }
 
 function DialogOverlay({ className, ...props }: BaseDialog.Backdrop.Props) {

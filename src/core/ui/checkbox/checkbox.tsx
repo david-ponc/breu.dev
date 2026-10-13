@@ -9,7 +9,7 @@ export function Checkbox({ className, ...props }: BaseCheckbox.Root.Props) {
 	return (
 		<BaseCheckbox.Root
 			className={cn(
-				'relative inline-flex size-[calc(--spacing(4.5)-1px)] shrink-0 rounded-sm bg-popover text-white shadow-xs ring ring-border transition-[color,background-color] duration-150 ease-out focus-visible:transition-none',
+				'relative inline-flex size-[calc(--spacing(4.5)-1px)] shrink-0 rounded-sm bg-popover text-white shadow-xs outline-none ring ring-border transition-[color,background-color] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:transition-none',
 				'inset-shadow-t-px inset-shadow-white/32',
 				'data-checked:bg-info data-checked:ring-info-foreground/70',
 				'data-indeterminate:bg-info data-indeterminate:ring-info-foreground/70',

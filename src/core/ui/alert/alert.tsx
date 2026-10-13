@@ -50,7 +50,7 @@ function AlertDescription({ className, ...props }: ComponentProps<'div'>) {
 		<div
 			data-slot='alert-description'
 			className={cn(
-				'col-start-2 min-w-0 text-pretty leading-relaxed [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-current [&_a:focus-visible]:outline-offset-2 [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4',
+				'col-start-2 min-w-0 text-pretty leading-relaxed [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-ring [&_a:focus-visible]:outline-offset-2 [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4',
 				className,
 			)}
 			{...props}

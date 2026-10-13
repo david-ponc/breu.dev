@@ -11,8 +11,17 @@ function MenuPortal({ ...props }: BaseMenu.Portal.Props) {
 	return <BaseMenu.Portal data-slot='dropdown-menu-portal' {...props} />;
 }
 
-function MenuTrigger({ ...props }: BaseMenu.Trigger.Props) {
-	return <BaseMenu.Trigger {...props} data-slot='dropdown-menu-trigger' />;
+function MenuTrigger({ className, ...props }: BaseMenu.Trigger.Props) {
+	return (
+		<BaseMenu.Trigger
+			{...props}
+			data-slot='dropdown-menu-trigger'
+			className={cn(
+				'outline-none focus-visible:ring-2 focus-visible:ring-ring',
+				className,
+			)}
+		/>
+	);
 }
 
 function MenuPopup({
@@ -97,7 +106,7 @@ function MenuItem({
 			data-variant={variant}
 			className={cn(
 				'group/dropdown-menu-item relative inset-shadow-t-px inset-shadow-white/32 flex select-none items-center gap-1.5 whitespace-nowrap rounded-none px-2 py-2.5 text-muted-foreground text-sm outline-hidden',
-				'focus:bg-secondary focus:text-foreground not-data-[variant=destructive]:focus:text-accent-foreground active:bg-outline-active',
+				'focus:bg-secondary focus:text-foreground not-data-[variant=destructive]:focus:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring active:bg-outline-active',
 				"not-data-disabled:cursor-pointer data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-destructive",
 				className,
 			)}
@@ -123,7 +132,7 @@ function MenuSubTrigger({
 			data-slot='dropdown-menu-sub-trigger'
 			data-inset={inset}
 			className={cn(
-				"flex select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-open:bg-accent data-popup-open:bg-accent data-inset:pl-7 data-open:text-accent-foreground data-popup-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"flex select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring data-open:bg-accent data-popup-open:bg-accent data-inset:pl-7 data-open:text-accent-foreground data-popup-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				className,
 			)}
 			{...props}
@@ -172,7 +181,7 @@ function MenuCheckboxItem({
 			data-slot='dropdown-menu-checkbox-item'
 			data-inset={inset}
 			className={cn(
-				"relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				className,
 			)}
 			checked={checked}
@@ -208,7 +217,7 @@ function MenuRadioItem({
 			data-slot='dropdown-menu-radio-item'
 			data-inset={inset}
 			className={cn(
-				"relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				className,
 			)}
 			{...props}

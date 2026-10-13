@@ -12,8 +12,17 @@ function TooltipRoot({ ...props }: BaseTooltip.Root.Props) {
 	return <BaseTooltip.Root data-slot='tooltip' {...props} />;
 }
 
-function TooltipTrigger({ ...props }: BaseTooltip.Trigger.Props) {
-	return <BaseTooltip.Trigger data-slot='tooltip-trigger' {...props} />;
+function TooltipTrigger({ className, ...props }: BaseTooltip.Trigger.Props) {
+	return (
+		<BaseTooltip.Trigger
+			data-slot='tooltip-trigger'
+			className={cn(
+				'outline-none focus-visible:ring-2 focus-visible:ring-ring',
+				className,
+			)}
+			{...props}
+		/>
+	);
 }
 
 function TooltipPopup({

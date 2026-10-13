@@ -45,7 +45,7 @@ export function LinkDetailHeader({ linkId, userId }: LinkDetailHeaderProps) {
 							target='_blank'
 							rel='noopener noreferrer'
 							title={link.url}
-							className='min-w-0 truncate underline decoration-dotted underline-offset-2'
+							className='min-w-0 truncate underline decoration-dotted underline-offset-2 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2'
 						>
 							{stripHttpProtocol(link.url)}
 						</a>

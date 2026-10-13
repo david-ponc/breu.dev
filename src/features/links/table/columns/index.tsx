@@ -51,7 +51,8 @@ export const columns = columnHelper.columns([
 					to='/dashboard/links/$linkId'
 					params={{ linkId: row.original.id }}
 					aria-label={`Open details for /${row.original.slug}`}
-					className='absolute inset-0 z-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset'
+					data-slot='link-row-navigation'
+					className='absolute inset-0 z-0 focus:outline-none'
 				/>
 			</>
 		),

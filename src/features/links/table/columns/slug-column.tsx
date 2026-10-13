@@ -29,7 +29,7 @@ export function SlugColumn({ link }: { link: Pick<LinkSummary, 'slug' | 'url'> }
 					target='_blank'
 					rel='noopener noreferrer'
 					title={link.url}
-					className='relative z-10 min-w-0 truncate text-muted-foreground text-xs underline underline-offset-2'
+					className='relative z-10 min-w-0 truncate text-muted-foreground text-xs underline underline-offset-2 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2'
 				>
 					{stripHttpProtocol(link.url)}
 				</a>

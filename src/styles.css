@@ -373,6 +373,27 @@
 }
 
 @layer components {
+	[data-slot='table-row']:has([data-slot='link-row-navigation']:focus-visible)
+		> [data-slot='table-cell'] {
+		box-shadow:
+			inset 0 2px 0 var(--ring),
+			inset 0 -2px 0 var(--ring);
+	}
+	[data-slot='table-row']:has([data-slot='link-row-navigation']:focus-visible)
+		> [data-slot='table-cell']:first-child {
+		box-shadow:
+			inset 2px 0 0 var(--ring),
+			inset 0 2px 0 var(--ring),
+			inset 0 -2px 0 var(--ring);
+	}
+	[data-slot='table-row']:has([data-slot='link-row-navigation']:focus-visible)
+		> [data-slot='table-cell']:last-child {
+		box-shadow:
+			inset -2px 0 0 var(--ring),
+			inset 0 2px 0 var(--ring),
+			inset 0 -2px 0 var(--ring);
+	}
+
 	.loading-skeleton::after {
 		content: '';
 		position: absolute;
