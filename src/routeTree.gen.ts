@@ -9,27 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as RSlugRouteImport } from './routes/r/$slug'
-import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
-import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as DashboardLinksIndexRouteImport } from './routes/dashboard/links/index'
-import { Route as DashboardLinksNewRouteImport } from './routes/dashboard/links/new'
 import { Route as DashboardLinksLinkIdRouteRouteImport } from './routes/dashboard/links/$linkId/route'
+import { Route as DashboardLinksNewRouteImport } from './routes/dashboard/links/new'
 import { Route as DashboardLinksLinkIdIndexRouteImport } from './routes/dashboard/links/$linkId/index'
-import { Route as DashboardLinksLinkIdVisitsRouteImport } from './routes/dashboard/links/$linkId/visits'
 import { Route as DashboardLinksLinkIdSettingsRouteImport } from './routes/dashboard/links/$linkId/settings'
+import { Route as DashboardLinksLinkIdVisitsRouteImport } from './routes/dashboard/links/$linkId/visits'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/auth/sign-in',
+  path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -42,24 +52,9 @@ const RSlugRoute = RSlugRouteImport.update({
   path: '/r/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/auth/sign-in',
-  path: '/auth/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: '/api/$',
-  path: '/api/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardLinksIndexRoute = DashboardLinksIndexRouteImport.update({
   id: '/links/',
   path: '/links/',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardLinksNewRoute = DashboardLinksNewRouteImport.update({
-  id: '/links/new',
-  path: '/links/new',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardLinksLinkIdRouteRoute =
@@ -68,22 +63,27 @@ const DashboardLinksLinkIdRouteRoute =
     path: '/links/$linkId',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardLinksNewRoute = DashboardLinksNewRouteImport.update({
+  id: '/links/new',
+  path: '/links/new',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardLinksLinkIdIndexRoute =
   DashboardLinksLinkIdIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => DashboardLinksLinkIdRouteRoute,
   } as any)
-const DashboardLinksLinkIdVisitsRoute =
-  DashboardLinksLinkIdVisitsRouteImport.update({
-    id: '/visits',
-    path: '/visits',
-    getParentRoute: () => DashboardLinksLinkIdRouteRoute,
-  } as any)
 const DashboardLinksLinkIdSettingsRoute =
   DashboardLinksLinkIdSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => DashboardLinksLinkIdRouteRoute,
+  } as any)
+const DashboardLinksLinkIdVisitsRoute =
+  DashboardLinksLinkIdVisitsRouteImport.update({
+    id: '/visits',
+    path: '/visits',
     getParentRoute: () => DashboardLinksLinkIdRouteRoute,
   } as any)
 
@@ -181,6 +181,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -188,11 +195,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/auth/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -209,32 +223,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/sign-in': {
-      id: '/auth/sign-in'
-      path: '/auth/sign-in'
-      fullPath: '/auth/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/$': {
-      id: '/api/$'
-      path: '/api/$'
-      fullPath: '/api/$'
-      preLoaderRoute: typeof ApiSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard/links/': {
       id: '/dashboard/links/'
       path: '/links'
       fullPath: '/dashboard/links/'
       preLoaderRoute: typeof DashboardLinksIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/links/new': {
-      id: '/dashboard/links/new'
-      path: '/links/new'
-      fullPath: '/dashboard/links/new'
-      preLoaderRoute: typeof DashboardLinksNewRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/links/$linkId': {
@@ -244,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLinksLinkIdRouteRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/links/new': {
+      id: '/dashboard/links/new'
+      path: '/links/new'
+      fullPath: '/dashboard/links/new'
+      preLoaderRoute: typeof DashboardLinksNewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/links/$linkId/': {
       id: '/dashboard/links/$linkId/'
       path: '/'
@@ -251,18 +251,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLinksLinkIdIndexRouteImport
       parentRoute: typeof DashboardLinksLinkIdRouteRoute
     }
-    '/dashboard/links/$linkId/visits': {
-      id: '/dashboard/links/$linkId/visits'
-      path: '/visits'
-      fullPath: '/dashboard/links/$linkId/visits'
-      preLoaderRoute: typeof DashboardLinksLinkIdVisitsRouteImport
-      parentRoute: typeof DashboardLinksLinkIdRouteRoute
-    }
     '/dashboard/links/$linkId/settings': {
       id: '/dashboard/links/$linkId/settings'
       path: '/settings'
       fullPath: '/dashboard/links/$linkId/settings'
       preLoaderRoute: typeof DashboardLinksLinkIdSettingsRouteImport
+      parentRoute: typeof DashboardLinksLinkIdRouteRoute
+    }
+    '/dashboard/links/$linkId/visits': {
+      id: '/dashboard/links/$linkId/visits'
+      path: '/visits'
+      fullPath: '/dashboard/links/$linkId/visits'
+      preLoaderRoute: typeof DashboardLinksLinkIdVisitsRouteImport
       parentRoute: typeof DashboardLinksLinkIdRouteRoute
     }
   }
