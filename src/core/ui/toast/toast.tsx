@@ -1,4 +1,5 @@
 import { Toast as BaseToast } from '@base-ui/react/toast';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import type { ComponentType, SVGProps } from 'react';
 
 import { AlertIcon } from '#/core/icons/alert';
@@ -141,31 +142,47 @@ function ToastArrow({ className, ...props }: BaseToast.Arrow.Props) {
 }
 
 function ToastIcon({ type }: { type?: string }) {
-	if (type === 'loading') {
-		return (
-			<span
-				key='loading'
-				data-slot='toast-icon'
-				className='shrink-0 text-foreground starting:opacity-0 transition-opacity duration-150 ease-out'
-			>
-				<Spinner size={16} />
-			</span>
-		);
-	}
+	const shouldReduceMotion = useReducedMotion();
+	const Icon =
+		type && type !== 'loading' ? TYPE_ICONS[type as keyof typeof TYPE_ICONS] : undefined;
+	if (type !== 'loading' && !Icon) return null;
 
-	const Icon = type ? TYPE_ICONS[type as keyof typeof TYPE_ICONS] : undefined;
-	if (!Icon) return null;
+	const icon = type === 'loading' ? <Spinner size={16} /> : Icon ? <Icon /> : null;
+	const initial = shouldReduceMotion
+		? { opacity: 0 }
+		: { opacity: 0, transform: 'scale(0.25)', filter: 'blur(4px)' };
+	const animate = shouldReduceMotion
+		? { opacity: 1 }
+		: { opacity: 1, transform: 'scale(1)', filter: 'blur(0px)' };
+	const exit = shouldReduceMotion
+		? { opacity: 0 }
+		: { opacity: 0, transform: 'scale(0.25)', filter: 'blur(4px)' };
+	const transition = shouldReduceMotion
+		? { duration: 0.15, ease: 'easeOut' as const }
+		: { type: 'spring' as const, duration: 0.3, bounce: 0 };
 
 	return (
-		<span
-			key={type}
-			data-slot='toast-icon'
-			className={cn(
-				'shrink-0 starting:opacity-0 transition-opacity duration-150 ease-out [&_svg]:size-4',
-				TYPE_ICON_COLOR[type as keyof typeof TYPE_ICON_COLOR],
-			)}
-		>
-			<Icon />
+		<span className='relative grid size-4 shrink-0 place-items-center'>
+			<AnimatePresence initial={false} mode='popLayout'>
+				<motion.span
+					key={type}
+					data-slot='toast-icon'
+					data-type={type}
+					aria-hidden='true'
+					initial={initial}
+					animate={animate}
+					exit={exit}
+					transition={transition}
+					className={cn(
+						'col-start-1 row-start-1 [&_svg]:size-4',
+						type === 'loading'
+							? 'text-foreground'
+							: TYPE_ICON_COLOR[type as keyof typeof TYPE_ICON_COLOR],
+					)}
+				>
+					{icon}
+				</motion.span>
+			</AnimatePresence>
 		</span>
 	);
 }

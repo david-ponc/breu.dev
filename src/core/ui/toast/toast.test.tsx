@@ -20,17 +20,44 @@ it('preserves the loading indicator across progress updates and replaces it on c
 			timeout: 0,
 		});
 	});
-	const icon = document.querySelector('[data-slot="toast-icon"]');
+	const toast = document.querySelector('[data-slot="toast"]');
+	const icon = document.querySelector('[data-slot="toast-icon"][data-type="loading"]');
 	expect(icon?.querySelector('[data-spinner]')).not.toBeNull();
 	for (let progress = 1; progress <= 3; progress++) {
 		act(() =>
 			toastManager.update(id, { type: 'loading', description: `${progress} of 3` }),
 		);
-		expect(document.querySelector('[data-slot="toast-icon"]')).toBe(icon);
+		expect(document.querySelector('[data-slot="toast-icon"][data-type="loading"]')).toBe(
+			icon,
+		);
 	}
 	act(() => toastManager.update(id, { type: 'success', title: 'Links deleted' }));
-	expect(document.querySelector('[data-slot="toast-icon"]')).not.toBe(icon);
-	expect(document.querySelector('[data-slot="toast-icon"] [data-spinner]')).toBeNull();
+	const successIcon = document.querySelector(
+		'[data-slot="toast-icon"][data-type="success"]',
+	);
+	expect(successIcon).not.toBeNull();
+	expect(successIcon).not.toBe(icon);
+	expect(successIcon?.querySelector('[data-spinner]')).toBeNull();
+	expect(document.querySelector('[data-slot="toast"]')).toBe(toast);
+	expect(toast?.className).toContain('height_200ms_cubic-bezier(0.77,0,0.175,1)');
+});
+
+it('replaces the loading indicator with the error icon when a promise fails', () => {
+	render(<Toaster />);
+	let id = '';
+	act(() => {
+		id = toastManager.add({
+			type: 'loading',
+			title: 'Saving link',
+			timeout: 0,
+		});
+	});
+
+	act(() => toastManager.update(id, { type: 'error', title: 'Failed to save link' }));
+
+	const errorIcon = document.querySelector('[data-slot="toast-icon"][data-type="error"]');
+	expect(errorIcon).not.toBeNull();
+	expect(errorIcon?.querySelector('[data-spinner]')).toBeNull();
 });
 
 it('places account prompt actions below the copy without changing other toast layouts', () => {
