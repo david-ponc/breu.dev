@@ -129,10 +129,10 @@ function ToastArrow({ className, ...props }: BaseToast.Arrow.Props) {
 			data-slot='toast-arrow'
 			className={cn(
 				'relative block h-1.5 w-3 overflow-clip',
-				'data-[side=bottom]:top-[-6px] data-[side=left]:right-[-9px] data-[side=left]:rotate-90',
-				'data-[side=right]:left-[-9px] data-[side=right]:-rotate-90',
-				'data-[side=top]:bottom-[-6px] data-[side=top]:rotate-180',
-				"before:absolute before:bottom-0 before:left-1/2 before:h-[calc(6px*sqrt(2))] before:w-[calc(6px*sqrt(2))] before:bg-foreground before:content-[''] before:[transform:translate(-50%,50%)_rotate(45deg)]",
+				'data-[side=bottom]:-top-1.5 data-[side=left]:-right-2.25 data-[side=left]:rotate-90',
+				'data-[side=right]:-left-2.25 data-[side=right]:-rotate-90',
+				'data-[side=top]:-bottom-1.5 data-[side=top]:rotate-180',
+				"before:transform-[translate(-50%,50%)_rotate(45deg)] before:absolute before:bottom-0 before:left-1/2 before:h-[calc(6px*sqrt(2))] before:w-[calc(6px*sqrt(2))] before:bg-foreground before:content-['']",
 				className,
 			)}
 			{...props}
@@ -186,25 +186,25 @@ function StackedToastList() {
 					'rounded-xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10',
 					'h-(--height) outline-none focus-visible:ring-2 focus-visible:ring-ring',
 					'[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--peek:0.75rem]',
-					'[--scale:calc(max(0,_1_-(var(--toast-index)_*_0.1)))] [--shrink:calc(1_-_var(--scale))]',
-					'[--offset-y:calc(var(--toast-offset-y)_*_-1_+_(var(--toast-index)_*_var(--gap)_*_-1)_+_var(--toast-swipe-movement-y))]',
+					'[--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]',
+					'[--offset-y:calc(var(--toast-offset-y)*-1+(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))]',
 					STACKED_TRANSFORM_CLASS,
-					'[transition:transform_400ms_cubic-bezier(0.22,1,0.36,1),opacity_400ms,height_150ms]',
+					'[transition:transform_400ms_cubic-bezier(0.22,1,0.36,1),opacity_400ms,height_200ms_cubic-bezier(0.77,0,0.175,1)]',
 					"after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
 					'data-expanded:h-(--toast-height)',
 					STACKED_EXPANDED_TRANSFORM_CLASS,
 					'data-limited:opacity-0',
-					'data-starting-style:[transform:translateY(150%)]',
+					'data-starting-style:transform-[translateY(150%)]',
 					'data-ending-style:opacity-0',
-					'[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(150%)]',
-					'data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
-					'data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
-					'data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
-					'data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
-					'data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]',
-					'data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
-					'data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
-					'data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
+					'[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:transform-[translateY(150%)]',
+					'data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))]',
+					'data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
+					'data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
+					'data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
+					'data-expanded:data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))]',
 					'motion-reduce:[transition:opacity_200ms]',
 					STACKED_REDUCED_MOTION_TRANSFORMS,
 				)}
@@ -276,9 +276,9 @@ function StackedToaster() {
 			<ToastPortal>
 				<ToastViewport
 					className={cn(
-						'fixed z-[100] mx-auto w-auto outline-none',
+						'fixed z-100 mx-auto w-auto outline-none',
 						'inset-x-4 bottom-4',
-						'sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-[22.5rem]',
+						'sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-90',
 					)}
 				>
 					<StackedToastList />
@@ -292,7 +292,7 @@ function AnchoredToaster() {
 	return (
 		<ToastProvider toastManager={anchoredToastManager} timeout={1500}>
 			<ToastPortal>
-				<ToastViewport className='z-[100] outline-none'>
+				<ToastViewport className='z-100 outline-none'>
 					<AnchoredToastList />
 				</ToastViewport>
 			</ToastPortal>
