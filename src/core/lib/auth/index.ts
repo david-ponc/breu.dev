@@ -14,11 +14,11 @@ export const auth = betterAuth({
 	secret: serverEnv.BETTER_AUTH_SECRET,
 	database: authPool,
 	plugins: [
-		tanstackStartCookies(),
 		anonymous({
 			onLinkAccount,
 			generateName: () => 'Invitado',
 		}),
+		tanstackStartCookies(),
 	],
 	socialProviders: {
 		github: {
