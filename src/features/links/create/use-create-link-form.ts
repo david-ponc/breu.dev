@@ -13,7 +13,7 @@ import { toastManager } from '#/core/ui/toast';
 import { getLinkErrorMessage } from '#/features/links/link-error-message';
 
 import { type CreateLinkValues, CreateLinkValuesSchema } from './schema';
-import { useSlugGenerator } from './use-slug-generator';
+import { useAiSlugGenerator, useSlugGenerator } from './use-slug-generator';
 
 interface Props {
 	defaultValues?: Partial<CreateLinkValues>;
@@ -22,19 +22,22 @@ interface Props {
 export function useCreateLinkForm({ defaultValues }: Props) {
 	const queryClient = useQueryClient();
 	const requireAccount = useRequireAccountPrompt();
-	const { data: initialSlug, isPending: isInitialSlugPending } = useQuery({
+	const shouldFetchInitialSlug = !defaultValues?.slug;
+	const initialSlugQuery = useQuery({
 		queryKey: ['initial-slug'],
 		queryFn: () => httpClient().brevis.links.slugs.get(),
-		enabled: !defaultValues?.slug, // Solo si no hay slug por defecto
+		enabled: shouldFetchInitialSlug, // Solo si no hay slug por defecto
 	});
+	const isInitialSlugPending = shouldFetchInitialSlug && initialSlugQuery.isPending;
 	const slugGenerator = useSlugGenerator();
+	const aiSlugGenerator = useAiSlugGenerator();
 	const navigate = useNavigate();
 	const form = useAppForm({
 		defaultValues: {
 			url: '',
 			comments: '',
 			meta: null,
-			slug: initialSlug?.data?.slug || '',
+			slug: initialSlugQuery.data?.data?.slug || '',
 			...defaultValues,
 		} as CreateLinkValues,
 		validators: {
@@ -84,24 +87,53 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 	const withValidUrl = useStore(form.store, (state) =>
 		Boolean(state.fieldMeta.url?.isValid && state.values.url),
 	);
+	const isGenerating = slugGenerator.isPending || aiSlugGenerator.isPending;
 
 	const generateSlug = async () => {
+		if (
+			!withValidUrl ||
+			(shouldFetchInitialSlug && isInitialSlugPending) ||
+			isGenerating
+		) {
+			return false;
+		}
+
 		const { data } = await slugGenerator.mutateAsync();
 
 		if (data?.slug) {
 			form.setFieldValue('slug', data.slug);
+			return true;
 		}
+
+		return false;
 	};
 
-	const isGenerating = slugGenerator.isPending;
+	const generateAiSlug = async () => {
+		const url = form.store.state.values.url;
+		if (!withValidUrl || !url || isGenerating) return false;
+
+		try {
+			const { slug } = await aiSlugGenerator.mutateAsync(url);
+			form.setFieldValue('slug', slug);
+			return true;
+		} catch {
+			toastManager.add({
+				type: 'error',
+				title: 'Could not generate an AI slug',
+				description: 'Please try again or use the other slug generator.',
+			});
+			return false;
+		}
+	};
 
 	const state = {
 		withValidUrl,
 		isGenerating,
 		isGeneratingSlug: slugGenerator.isPending,
+		isGeneratingAiSlug: aiSlugGenerator.isPending,
 		isInitialSlugPending,
 	};
-	const actions = { generateSlug };
+	const actions = { generateSlug, generateAiSlug };
 
 	return [form, state, actions] as const;
 }
