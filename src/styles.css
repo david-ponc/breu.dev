@@ -373,6 +373,75 @@
 }
 
 @layer components {
+	.tooltip-positioner-animated {
+		transition:
+			top 180ms var(--ease-in-out),
+			left 180ms var(--ease-in-out),
+			right 180ms var(--ease-in-out),
+			bottom 180ms var(--ease-in-out),
+			transform 180ms var(--ease-in-out);
+
+		&[data-instant] {
+			transition: none;
+		}
+	}
+
+	.tooltip-popup-animated {
+		transition:
+			width 180ms var(--ease-in-out),
+			height 180ms var(--ease-in-out),
+			opacity 150ms var(--ease-out),
+			scale 150ms var(--ease-out);
+
+		&[data-instant] {
+			transition: none;
+		}
+	}
+
+	.tooltip-viewport-animated {
+		--tooltip-inline-padding: 0.5rem;
+		box-sizing: border-box;
+		position: relative;
+		width: 100%;
+		height: 100%;
+		overflow: clip;
+		padding: 0.25rem var(--tooltip-inline-padding);
+
+		[data-current],
+		[data-previous] {
+			width: calc(var(--popup-width) - 2 * var(--tooltip-inline-padding));
+			translate: 0;
+			opacity: 1;
+			transition:
+				translate 180ms var(--ease-in-out),
+				opacity 150ms var(--ease-out);
+
+			[data-instant] & {
+				transition: none;
+			}
+		}
+
+		&[data-activation-direction~='left'] [data-current][data-starting-style] {
+			translate: -50% 0;
+			opacity: 0;
+		}
+
+		&[data-activation-direction~='right'] [data-current][data-starting-style] {
+			translate: 50% 0;
+			opacity: 0;
+		}
+
+		&[data-activation-direction~='left'] [data-previous][data-ending-style] {
+			translate: 50% 0;
+			opacity: 0;
+		}
+
+		&[data-activation-direction~='right'] [data-previous][data-ending-style] {
+			translate: -50% 0;
+			opacity: 0;
+		}
+	}
+
 	[data-slot='table-row']:has([data-slot='link-row-navigation']:focus-visible)
 		> [data-slot='table-cell'] {
 		box-shadow:
@@ -426,6 +495,19 @@
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
+		.tooltip-positioner-animated,
+		.tooltip-popup-animated {
+			transition: none;
+		}
+
+		.tooltip-viewport-animated {
+			[data-current],
+			[data-previous] {
+				translate: 0;
+				transition: opacity 120ms var(--ease-out);
+			}
+		}
+
 		.loading-skeleton::after {
 			animation: none;
 			opacity: 0;
@@ -556,6 +638,7 @@
 
 @theme {
 	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 	--inset-shadow-t-px: inset 0 1px 0 0;
 	--background-image-default-active: linear-gradient(
 		to bottom,

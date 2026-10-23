@@ -27,6 +27,7 @@ function TooltipTrigger({ className, ...props }: BaseTooltip.Trigger.Props) {
 
 function TooltipPopup({
 	className,
+	animated = false,
 	side = 'top',
 	sideOffset = 4,
 	align = 'center',
@@ -34,7 +35,9 @@ function TooltipPopup({
 	children,
 	...props
 }: BaseTooltip.Popup.Props &
-	Pick<BaseTooltip.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
+	Pick<BaseTooltip.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+		animated?: boolean;
+	}) {
 	return (
 		<BaseTooltip.Portal>
 			<BaseTooltip.Positioner
@@ -42,7 +45,10 @@ function TooltipPopup({
 				alignOffset={alignOffset}
 				side={side}
 				sideOffset={sideOffset}
-				className='z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) data-ending-style:-z-50 data-starting-style:-z-50'
+				className={cn(
+					'z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) data-ending-style:-z-50 data-starting-style:-z-50',
+					animated && 'tooltip-positioner-animated',
+				)}
 				data-slot='tooltip-positioner'
 			>
 				<BaseTooltip.Popup
@@ -55,6 +61,8 @@ function TooltipPopup({
 						'data-[side=left]:data-ending-style:translate-x-1 data-[side=left]:data-starting-style:translate-x-1',
 						'data-[side=right]:data-ending-style:-translate-x-1 data-[side=right]:data-starting-style:-translate-x-1',
 						'has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm',
+						animated &&
+							'tooltip-popup-animated h-[var(--popup-height,auto)] w-[var(--popup-width,auto)] p-0',
 						className,
 					)}
 					{...props}
@@ -66,10 +74,21 @@ function TooltipPopup({
 	);
 }
 
+function TooltipViewport({ className, ...props }: BaseTooltip.Viewport.Props) {
+	return (
+		<BaseTooltip.Viewport
+			data-slot='tooltip-viewport'
+			className={cn(className)}
+			{...props}
+		/>
+	);
+}
+
 export const Tooltip = {
 	Provider: TooltipProvider,
 	Root: TooltipRoot,
 	Trigger: TooltipTrigger,
 	Popup: TooltipPopup,
+	Viewport: TooltipViewport,
 	createHandle: TooltipCreateHandle,
 };
