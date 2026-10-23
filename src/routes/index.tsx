@@ -1,9 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { getSession } from '#/core/lib/auth/functions';
 import { LandingPage } from '#/features/landing/landing-page';
 
 export const Route = createFileRoute('/')({
-	component: LandingPage,
+	loader: async () => {
+		const session = await getSession();
+		return { isSignedIn: Boolean(session && !session.user.isAnonymous) };
+	},
+	component: Page,
 	head: () => ({
 		meta: [
 			{ title: 'breu.dev — Short links. Clear insights.' },
@@ -15,3 +20,8 @@ export const Route = createFileRoute('/')({
 		],
 	}),
 });
+
+function Page() {
+	const { isSignedIn } = Route.useLoaderData();
+	return <LandingPage isSignedIn={isSignedIn} />;
+}

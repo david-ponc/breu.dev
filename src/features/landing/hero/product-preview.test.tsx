@@ -35,4 +35,18 @@ describe('ProductPreview', () => {
 		expect(screen.getByText('Launch notes')).toBeDefined();
 		expect(screen.getByText('Breu Journal')).toBeDefined();
 	});
+
+	it('clips the preview window responsively without clipping the product frame', () => {
+		const { container } = render(<ProductPreview />);
+		const viewport = container.querySelector('[data-slot="product-preview-viewport"]');
+		const frame = container.querySelector('[data-slot="product-preview-frame"]');
+
+		expect(viewport).not.toBeNull();
+		expect(frame).not.toBeNull();
+		expect(viewport?.classList.contains('overflow-hidden')).toBe(false);
+		expect(viewport?.classList.contains('max-h-256')).toBe(true);
+		expect(viewport?.classList.contains('lg:max-h-140')).toBe(true);
+		expect(viewport?.classList.contains('focus-within:max-h-none')).toBe(true);
+		expect(frame?.classList.contains('overflow-hidden')).toBe(false);
+	});
 });

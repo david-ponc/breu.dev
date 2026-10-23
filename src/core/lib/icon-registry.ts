@@ -23,6 +23,7 @@ import { OsLinuxIcon } from '../icons/os-linux';
 import { OsUnknownIcon } from '../icons/os-unknown';
 import { OsWindowsIcon } from '../icons/os-windows';
 import { PencilSparklesIcon } from '../icons/pencil-sparkle';
+import { PresentationChartIcon } from '../icons/presentation-chart';
 import { RefreshIcon } from '../icons/refresh';
 import { RobotIcon } from '../icons/robot';
 import { XMarkIcon } from '../icons/x-mark';
@@ -52,6 +53,7 @@ export const ICON_REGISTRY = {
 	'os-unknown': OsUnknownIcon,
 	'os-windows': OsWindowsIcon,
 	'pencil-sparkles': PencilSparklesIcon,
+	'presentation-chart': PresentationChartIcon,
 	refresh: RefreshIcon,
 	robot: RobotIcon,
 	'x-mark': XMarkIcon,

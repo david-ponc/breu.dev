@@ -58,12 +58,12 @@ const linkResponse = {
 };
 const clipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
 
-async function mount(landing = false) {
+async function mount(landing = false, isSignedIn = false) {
 	const root = createRootRoute({ component: Outlet });
 	const index = createRoute({
 		getParentRoute: () => root,
 		path: '/',
-		component: landing ? LandingPage : QuickLinkForm,
+		component: landing ? () => <LandingPage isSignedIn={isSignedIn} /> : QuickLinkForm,
 	});
 	const detail = createRoute({
 		getParentRoute: () => root,
@@ -122,17 +122,35 @@ describe('QuickLinkForm', () => {
 		expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
 			'Short links. Clear insights.',
 		);
-		expect(screen.getByText(/Product preview/).textContent).toContain('Example data');
+		expect(screen.getByText('Launch notes')).toBeDefined();
 		expect(
 			screen.getByRole('img', { name: /Example activity: 1,000 clicks/ }),
 		).toBeDefined();
-		expect(screen.getByRole('link', { name: 'Open app' }).getAttribute('href')).toBe(
-			'/dashboard/links',
-		);
+		expect(
+			screen.getByRole('link', { name: 'Create account' }).getAttribute('href'),
+		).toBe('/auth/sign-in');
+		expect(
+			screen.getByRole('heading', { name: 'More than a shorter URL.' }),
+		).toBeDefined();
+		expect(
+			screen.getByRole('heading', { name: 'Make room for every link.' }),
+		).toBeDefined();
+		expect(screen.getByRole('link', { name: 'Create your account' })).toBeDefined();
 		expect(document.activeElement).not.toBe(input);
 		expect(mocks.getSession).not.toHaveBeenCalled();
 		expect(mocks.slug).not.toHaveBeenCalled();
 		expect(mocks.create).not.toHaveBeenCalled();
+	});
+
+	it('points signed-in users to their workspace in the navigation and closing CTA', async () => {
+		await mount(true, true);
+
+		expect(screen.getByRole('link', { name: 'Open app' }).getAttribute('href')).toBe(
+			'/dashboard/links',
+		);
+		expect(
+			screen.getByRole('link', { name: 'Open your dashboard' }).getAttribute('href'),
+		).toBe('/dashboard/links');
 	});
 
 	it('associates validation with the field and focuses it, including repeated failures', async () => {

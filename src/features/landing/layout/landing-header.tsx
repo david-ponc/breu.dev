@@ -4,12 +4,15 @@ import { BreuBrandIcon } from '#/core/icons/breu';
 import { Icon } from '#/core/icons/icon';
 import { Button } from '#/core/ui/button';
 
-export function LandingHeader() {
+export function LandingHeader({ isSignedIn }: { isSignedIn: boolean }) {
+	const label = isSignedIn ? 'Open app' : 'Create account';
+	const destination = isSignedIn ? '/dashboard/links' : '/auth/sign-in';
+
 	return (
 		<header className='px-6'>
 			<nav
 				aria-label='Main navigation'
-				className='mx-auto flex h-16 max-w-[125rem] items-center justify-between gap-6'
+				className='mx-auto flex max-w-[125rem] items-center justify-between gap-6 py-1'
 			>
 				<Link
 					to='/'
@@ -19,11 +22,11 @@ export function LandingHeader() {
 					<BreuBrandIcon aria-hidden className='h-5 w-auto' />
 				</Link>
 				<Button
-					variant='ghost'
-					className='h-11 px-3'
-					render={<Link to='/dashboard/links' />}
+					variant={isSignedIn ? 'ghost' : 'default'}
+					className='px-4'
+					render={<Link to={destination} />}
 				>
-					Open app
+					{label}
 					<Icon name='arrow-right' aria-hidden data-icon='inline-end' />
 				</Button>
 			</nav>

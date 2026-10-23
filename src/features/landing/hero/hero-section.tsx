@@ -7,7 +7,7 @@ export function HeroSection() {
 	return (
 		<section
 			aria-labelledby='hero-title'
-			className='mx-auto w-full max-w-7xl px-6 py-12 sm:py-16 lg:px-12'
+			className='mx-auto w-full max-w-7xl px-6 pt-12 pb-0 sm:pt-16 lg:px-12'
 		>
 			<PageTransition className='grid grid-cols-1 gap-6 [--stagger-duration:420ms] [--stagger-step:60ms] lg:grid-cols-[minmax(0,1fr)_36rem] lg:gap-x-16'>
 				<h1
