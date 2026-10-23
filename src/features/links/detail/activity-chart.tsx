@@ -6,7 +6,7 @@ import { tooltip } from '@tanstack/charts/tooltip';
 import { portal } from '@tanstack/charts/tooltip/portal';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { curveMonotoneX } from 'd3-shape';
-import { startTransition, useMemo } from 'react';
+import { startTransition, useId, useMemo } from 'react';
 
 import type { LinkActivity } from '#/contexts/analytics/visits/domain/link-stats';
 import { Card } from '#/core/ui/card';
@@ -17,7 +17,6 @@ import { linkStatsQueryOptions } from './query';
 import { ACTIVITY_RANGES, type ActivityRange, activityRangeLabel } from './range';
 
 const COLOR = 'var(--primary)';
-const FILL_ID = 'detail-activity-fill';
 const CHART_ANIMATION = { duration: 280, easing: 'ease-out' } as const;
 const monotone = d3Curve(curveMonotoneX);
 
@@ -34,6 +33,7 @@ export function ActivityChart({
 	height = 260,
 	ariaLabel,
 }: ActivityChartProps) {
+	const fillId = `activity-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 	const definition = useMemo(() => {
 		const values = activity.map((point) => point.clicks);
 		const maximum = values.length ? Math.max(...values, 1) : 1;
@@ -44,7 +44,7 @@ export function ActivityChart({
 					x: 'date',
 					y: 'clicks',
 					y1: 0,
-					fill: `url(#${FILL_ID})`,
+					fill: `url(#${fillId})`,
 					curve: monotone,
 				}),
 				lineY(activity, {
@@ -81,7 +81,7 @@ export function ActivityChart({
 			},
 			gradients: [
 				{
-					id: FILL_ID,
+					id: fillId,
 					x1: 0,
 					y1: 0,
 					x2: 0,
@@ -121,7 +121,7 @@ export function ActivityChart({
 					`${formatDate(point.datum.date)} · ${formatCount(point.datum.clicks)} clicks`,
 			},
 		});
-	}, [activity, interactive]);
+	}, [activity, fillId, interactive]);
 
 	return (
 		<Chart
