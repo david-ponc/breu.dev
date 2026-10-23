@@ -21,6 +21,8 @@ declare global {
 			readonly BETTER_AUTH_URL: string;
 			readonly GITHUB_CLIENT_ID: string;
 			readonly GITHUB_CLIENT_SECRET: string;
+			readonly DISCORD_CLIENT_ID: string;
+			readonly DISCORD_CLIENT_SECRET: string;
 			readonly AI_GATEWAY_API_KEY: string;
 			readonly AI_SLUG_MODEL?: string;
 			readonly NODE_ENV: 'development' | 'production' | 'test';

@@ -22,8 +22,11 @@ export const Route = createFileRoute('/auth/sign-in')({
 	component: Page,
 });
 
-function SignInWithGitHubButton() {
+type SocialProvider = 'github' | 'discord';
+
+function SocialSignInButton({ provider }: { provider: SocialProvider }) {
 	const [loading, setLoading] = useState(false);
+	const name = provider === 'github' ? 'GitHub' : 'Discord';
 
 	return (
 		<Button
@@ -31,15 +34,19 @@ function SignInWithGitHubButton() {
 			loading={loading}
 			onClick={async () => {
 				setLoading(true);
-				const { error } = await authClient.signIn.social({
-					provider: 'github',
-					callbackURL: '/dashboard/links',
-				});
-				if (error) setLoading(false);
+				try {
+					const { error } = await authClient.signIn.social({
+						provider,
+						callbackURL: '/dashboard/links',
+					});
+					if (error) setLoading(false);
+				} catch {
+					setLoading(false);
+				}
 			}}
 		>
-			<Icon name='github' className='size-4' />
-			Sign in with GitHub
+			<Icon name={provider} className='size-4' />
+			Sign in with {name}
 		</Button>
 	);
 }
@@ -64,11 +71,8 @@ function Page() {
 						</Card.Description>
 					</Card.Header>
 					<Card.Panel className='flex flex-col gap-3'>
-						<SignInWithGitHubButton />
-						<Button variant='outline'>
-							<Icon name='discord' className='size-4' />
-							Sign in with Discord
-						</Button>
+						<SocialSignInButton provider='github' />
+						<SocialSignInButton provider='discord' />
 						<Field.Separator className='mt-4 bg-card'>Or continue with</Field.Separator>
 					</Card.Panel>
 					<Card.Footer variant='ghost' className='flex-col items-stretch gap-2'>

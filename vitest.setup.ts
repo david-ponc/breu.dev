@@ -6,6 +6,8 @@ Object.assign(process.env, {
 	BETTER_AUTH_URL: 'http://localhost:3000',
 	GITHUB_CLIENT_ID: 'test-client-id',
 	GITHUB_CLIENT_SECRET: 'test-client-secret',
+	DISCORD_CLIENT_ID: 'test-discord-client-id',
+	DISCORD_CLIENT_SECRET: 'test-discord-client-secret',
 	AI_GATEWAY_API_KEY: 'test-ai-gateway-api-key',
 	AI_SLUG_MODEL: 'openai/gpt-4.1-mini',
 	NODE_ENV: 'test',

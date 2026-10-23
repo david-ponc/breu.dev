@@ -8,6 +8,8 @@ const envSchema = z.object({
 	BETTER_AUTH_URL: z.url(),
 	GITHUB_CLIENT_ID: z.string().min(1),
 	GITHUB_CLIENT_SECRET: z.string().min(1),
+	DISCORD_CLIENT_ID: z.string().min(1),
+	DISCORD_CLIENT_SECRET: z.string().min(1),
 	AI_GATEWAY_API_KEY: z.string().min(1),
 	AI_SLUG_MODEL: z.string().default('openai/gpt-4.1-mini'),
 	NODE_ENV: z.enum(['development', 'production', 'test']),

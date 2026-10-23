@@ -26,6 +26,10 @@ export const auth = betterAuth({
 			clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
 			scope: ['read:user', 'user:email'],
 		},
+		discord: {
+			clientId: serverEnv.DISCORD_CLIENT_ID,
+			clientSecret: serverEnv.DISCORD_CLIENT_SECRET,
+		},
 	},
 	advanced: {
 		database: {
