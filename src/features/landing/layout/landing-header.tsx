@@ -3,8 +3,10 @@ import { Link } from '@tanstack/react-router';
 import { BreuBrandIcon } from '#/core/icons/breu';
 import { Icon } from '#/core/icons/icon';
 import { Button } from '#/core/ui/button';
+import { useLandingState } from '#/features/landing/use-landing-state';
 
-export function LandingHeader({ isSignedIn }: { isSignedIn: boolean }) {
+export function LandingHeader() {
+	const { isSignedIn } = useLandingState();
 	const label = isSignedIn ? 'Open app' : 'Create account';
 	const destination = isSignedIn ? '/dashboard/links' : '/auth/sign-in';
 

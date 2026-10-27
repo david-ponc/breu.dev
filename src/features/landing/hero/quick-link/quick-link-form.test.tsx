@@ -58,12 +58,27 @@ const linkResponse = {
 };
 const clipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
 
-async function mount(landing = false, isSignedIn = false) {
+async function mount(
+	landing: boolean,
+	isSignedIn: boolean,
+	hasUsedGuestLink: true,
+): Promise<undefined>;
+async function mount(
+	landing?: boolean,
+	isSignedIn?: boolean,
+	hasUsedGuestLink?: false,
+): Promise<HTMLInputElement>;
+async function mount(
+	landing = false,
+	isSignedIn = false,
+	hasUsedGuestLink = false,
+): Promise<HTMLInputElement | undefined> {
 	const root = createRootRoute({ component: Outlet });
 	const index = createRoute({
 		getParentRoute: () => root,
 		path: '/',
-		component: landing ? () => <LandingPage isSignedIn={isSignedIn} /> : QuickLinkForm,
+		loader: () => ({ isSignedIn, hasUsedGuestLink }),
+		component: landing ? LandingPage : QuickLinkForm,
 	});
 	const detail = createRoute({
 		getParentRoute: () => root,
@@ -84,6 +99,7 @@ async function mount(landing = false, isSignedIn = false) {
 		await router.load();
 		render(<RouterProvider router={router} />);
 	});
+	if (hasUsedGuestLink) return;
 	return screen.findByRole<HTMLInputElement>('textbox', { name: 'Destination URL' });
 }
 
@@ -151,6 +167,26 @@ describe('QuickLinkForm', () => {
 		expect(
 			screen.getByRole('link', { name: 'Open your dashboard' }).getAttribute('href'),
 		).toBe('/dashboard/links');
+		expect(screen.getByRole('textbox', { name: 'Destination URL' })).toBeDefined();
+		expect(screen.queryByRole('note')).toBeNull();
+	});
+
+	it('replaces the form with an account CTA when a guest already used their link', async () => {
+		await mount(true, false, true);
+
+		expect(
+			screen.getByRole('heading', { name: "You've used your free link" }),
+		).toBeDefined();
+		expect(
+			screen.getByText(
+				'Create an account to make more links and manage them in one place.',
+			),
+		).toBeDefined();
+		expect(
+			screen.getByRole('link', { name: 'Create a free account' }).getAttribute('href'),
+		).toBe('/auth/sign-in');
+		expect(screen.queryByRole('textbox', { name: 'Destination URL' })).toBeNull();
+		expect(screen.queryByRole('note')).toBeNull();
 	});
 
 	it('associates validation with the field and focuses it, including repeated failures', async () => {

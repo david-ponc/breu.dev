@@ -111,7 +111,7 @@ function PreviewActivity() {
 			<Card.Header className='flex flex-wrap items-start justify-between gap-3'>
 				<div>
 					<Card.Title>Activity</Card.Title>
-					<Card.Description>Clicks over time (UTC)</Card.Description>
+					<Card.Description>Clicks over time</Card.Description>
 				</div>
 				<Segmented.Root value='14d' aria-hidden>
 					<Segmented.List aria-label='Activity range'>
@@ -124,7 +124,7 @@ function PreviewActivity() {
 					</Segmented.List>
 				</Segmented.Root>
 			</Card.Header>
-			<Card.Panel>
+			<Card.Panel aria-hidden inert>
 				<ActivityChart
 					activity={preview.activity}
 					interactive={false}

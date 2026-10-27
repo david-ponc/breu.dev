@@ -1,9 +1,13 @@
 import { PageTransition } from '#/core/ui/motion';
+import { useLandingState } from '#/features/landing/use-landing-state';
 
 import { ProductPreview } from './product-preview';
+import { GuestLinkLimit } from './quick-link/guest-link-limit';
 import { QuickLinkForm } from './quick-link/quick-link-form';
 
 export function HeroSection() {
+	const { hasUsedGuestLink } = useLandingState();
+
 	return (
 		<section
 			aria-labelledby='hero-title'
@@ -19,7 +23,11 @@ export function HeroSection() {
 				<p className='max-w-md text-pretty text-base text-muted-foreground leading-relaxed sm:text-lg lg:col-start-1 lg:row-start-2 lg:self-start'>
 					Shorten your links, follow their activity, and manage everything in one place.
 				</p>
-				<QuickLinkForm className='lg:col-start-2 lg:row-span-2 lg:row-start-1' />
+				{hasUsedGuestLink ? (
+					<GuestLinkLimit className='lg:col-start-2 lg:row-span-2 lg:row-start-1' />
+				) : (
+					<QuickLinkForm className='lg:col-start-2 lg:row-span-2 lg:row-start-1' />
+				)}
 				<ProductPreview className='mt-8 lg:col-span-2 lg:mt-12' />
 			</PageTransition>
 		</section>

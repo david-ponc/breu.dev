@@ -10,6 +10,7 @@ import { Button } from '#/core/ui/button';
 import { Card } from '#/core/ui/card';
 import { Field } from '#/core/ui/field';
 import { InputGroup } from '#/core/ui/input-group';
+import { useLandingState } from '#/features/landing/use-landing-state';
 
 import { QuickLinkPending } from './quick-link-pending';
 import { QuickLinkSuccess } from './quick-link-success';
@@ -17,6 +18,7 @@ import { QuickLinkValuesSchema } from './schema';
 import { useQuickLink } from './use-quick-link';
 
 export function QuickLinkForm({ className }: { className?: string }) {
+	const { isSignedIn } = useLandingState();
 	const {
 		form,
 		status,
@@ -126,23 +128,27 @@ export function QuickLinkForm({ className }: { className?: string }) {
 								</Button>
 							</form>
 						</Card.Panel>
-						<Card.Footer variant='ghost' className='bg-transparent pt-0'>
-							<Alert.Root
-								variant='info'
-								role='note'
-								aria-labelledby={`${id}-guest-title`}
-							>
-								<InfoIcon aria-hidden />
-								<Alert.Title id={`${id}-guest-title`}>
-									One link without an account
-								</Alert.Title>
-								<Alert.Description>
-									Guests can create one link.{' '}
-									<Link to='/auth/sign-in'>Create an account</Link> to get full access to
-									the platform.
-								</Alert.Description>
-							</Alert.Root>
-						</Card.Footer>
+						{!isSignedIn ? (
+							<Card.Footer variant='ghost' className='bg-transparent pt-0'>
+								<Alert.Root
+									variant='info'
+									role='note'
+									aria-labelledby={`${id}-guest-title`}
+								>
+									<InfoIcon aria-hidden />
+									<Alert.Title id={`${id}-guest-title`}>
+										One link without an account
+									</Alert.Title>
+									<Alert.Description>
+										Guests can create one link.{' '}
+										<Link to='/auth/sign-in' search={{ error: undefined }}>
+											Create an account
+										</Link>{' '}
+										to get full access to the platform.
+									</Alert.Description>
+								</Alert.Root>
+							</Card.Footer>
+						) : null}
 					</div>
 				)}
 				{status === 'creating' ? <QuickLinkPending /> : null}

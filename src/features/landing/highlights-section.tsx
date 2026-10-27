@@ -1,3 +1,6 @@
+import { use } from 'react';
+import { browser } from 'react-dom';
+
 import type { NamedCount } from '#/contexts/analytics/visits/domain/link-stats';
 import { Icon } from '#/core/icons/icon';
 import { Badge } from '#/core/ui/badge';
@@ -11,8 +14,27 @@ import { previewPeriodClicks, productPreviewData } from './hero/product-preview-
 const previewCountries = [
 	{ key: 'MX', count: 420 },
 	{ key: 'ES', count: 310 },
+	{ key: 'AR', count: 216 },
 	{ key: 'IE', count: 180 },
 ] satisfies NamedCount[];
+
+const previewLinks = [
+	{
+		shortUrl: 'breu.dev/r/launch-notes',
+		destination: 'example.com/launch',
+		clicks: '2,847',
+	},
+	{
+		shortUrl: 'breu.dev/r/early-access',
+		destination: 'example.com/early-access',
+		clicks: '1,294',
+	},
+	{
+		shortUrl: 'breu.dev/r/product-update',
+		destination: 'example.com/product/update',
+		clicks: '968',
+	},
+];
 
 export function HighlightsSection() {
 	return (
@@ -80,44 +102,45 @@ export function HighlightsSection() {
 
 function LinkVisual() {
 	return (
-		<div
-			aria-hidden
-			className='flex h-52 items-center rounded-xl bg-secondary/50 p-4 sm:p-6'
-		>
-			<Card.Root className='mx-auto w-full max-w-sm gap-3 bg-card py-3 shadow-sm'>
-				<Card.Panel className='space-y-3'>
-					<div className='flex items-center justify-between gap-3'>
-						<div className='min-w-0'>
-							<p className='truncate font-medium font-mono text-sm'>
-								breu.dev/r/launch-notes
-							</p>
-							<p className='mt-1 truncate text-muted-foreground text-xs'>
-								example.com/launch
-							</p>
+		<div aria-hidden className='grid h-64 w-full place-items-center'>
+			{previewLinks.map((link, index) => (
+				<Card.Root
+					key={link.shortUrl}
+					className='col-start-1 row-start-1 mx-auto w-full max-w-sm origin-bottom gap-3 shadow-md'
+					style={{
+						transform: `translateY(calc(${index * -12}px - ${index * 10}%)) scale(${1 - index * 0.1})`,
+						zIndex: previewLinks.length - index,
+					}}
+				>
+					<Card.Panel className='space-y-3'>
+						<div className='flex items-center justify-between gap-3'>
+							<div className='min-w-0'>
+								<p className='truncate font-medium font-mono text-sm'>{link.shortUrl}</p>
+								<p className='mt-1 truncate text-muted-foreground text-xs'>
+									{link.destination}
+								</p>
+							</div>
+							<Badge variant='success'>Active</Badge>
 						</div>
-						<Badge variant='success'>Active</Badge>
-					</div>
-					<div className='flex items-center justify-between border-border border-t pt-3 text-xs'>
-						<span className='text-muted-foreground'>Clicks</span>
-						<span className='font-medium tabular-nums'>2,847</span>
-					</div>
-				</Card.Panel>
-			</Card.Root>
+						<div className='flex items-center justify-between border-border border-t pt-3 text-xs'>
+							<span className='text-muted-foreground'>Clicks</span>
+							<span className='font-medium tabular-nums'>{link.clicks}</span>
+						</div>
+					</Card.Panel>
+				</Card.Root>
+			))}
 		</div>
 	);
 }
 
 function ActivityVisual() {
+	use(browser());
 	return (
-		<div
-			aria-hidden
-			inert
-			className='flex h-52 items-center rounded-xl bg-secondary/50 px-4 py-3 sm:px-6'
-		>
+		<div aria-hidden inert className='flex h-64 items-center'>
 			<ActivityChart
 				activity={productPreviewData.activity}
 				interactive={false}
-				height={176}
+				height={215}
 				ariaLabel={`Example activity: ${previewPeriodClicks} clicks over the last 14 days.`}
 			/>
 		</div>
@@ -125,12 +148,9 @@ function ActivityVisual() {
 }
 
 function TrafficVisual() {
+	use(browser());
 	return (
-		<div
-			aria-hidden
-			inert
-			className='flex h-52 items-center rounded-xl bg-secondary/50 p-4 sm:p-6'
-		>
+		<div aria-hidden inert className='flex h-64 items-center'>
 			<Card.Root size='sm' className='mx-auto w-full max-w-sm'>
 				<Card.Header>
 					<Card.Title>Countries</Card.Title>
