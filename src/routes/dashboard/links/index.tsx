@@ -12,6 +12,15 @@ import { userLinksQueryOptions } from '#/features/links/table/query';
 
 export const Route = createFileRoute('/dashboard/links/')({
 	component: Page,
+	head: () => ({
+		meta: [
+			{ title: 'Your links | breu.dev' },
+			{
+				name: 'description',
+				content: 'Manage your short links, destinations and activity.',
+			},
+		],
+	}),
 });
 
 function Page() {

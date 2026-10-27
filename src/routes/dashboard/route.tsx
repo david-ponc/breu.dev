@@ -18,6 +18,9 @@ export const Route = createFileRoute('/dashboard')({
 		return { session };
 	},
 	component: Layout,
+	head: () => ({
+		meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+	}),
 });
 
 function Layout() {

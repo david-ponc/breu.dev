@@ -6,6 +6,15 @@ import { CreateLinkForm } from '#/features/links/create/create-link-form';
 
 export const Route = createFileRoute('/dashboard/links/new')({
 	component: Page,
+	head: () => ({
+		meta: [
+			{ title: 'Create a short link | breu.dev' },
+			{
+				name: 'description',
+				content: 'Create a short link and choose where it sends visitors.',
+			},
+		],
+	}),
 });
 
 function Page() {

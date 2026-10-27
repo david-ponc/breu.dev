@@ -11,13 +11,15 @@ import { HeaderSkeleton } from '#/features/links/detail/skeletons';
 import { LinkDetailTabs } from '#/features/links/detail/tabs';
 
 export const Route = createFileRoute('/dashboard/links/$linkId')({
-	loader: async ({ context, params }) => {
-		await context.queryClient.ensureQueryData(
+	loader: ({ context, params }) =>
+		context.queryClient.ensureQueryData(
 			userLinkQueryOptions(context.session.user.id, params.linkId),
-		);
-	},
+		),
 	component: Layout,
 	notFoundComponent: NotFound,
+	head: ({ loaderData }) => ({
+		meta: [{ title: `Link ${loaderData?.slug ?? ''} | breu.dev` }],
+	}),
 });
 
 function Layout() {

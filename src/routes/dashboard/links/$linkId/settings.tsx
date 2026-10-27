@@ -3,10 +3,23 @@ import { createFileRoute } from '@tanstack/react-router';
 import { QueryBoundary } from '#/core/ui/query-boundary';
 import { LinkDangerZone } from '#/features/links/detail/danger-zone';
 import { EditLinkForm } from '#/features/links/detail/edit-form';
+import { getLinkSlugFromMatches } from '#/features/links/detail/route-metadata';
 import { SettingsSkeleton } from '#/features/links/detail/skeletons';
 
 export const Route = createFileRoute('/dashboard/links/$linkId/settings')({
 	component: Page,
+	head: ({ matches }) => {
+		const slug = getLinkSlugFromMatches(matches);
+		return {
+			meta: [
+				{ title: `Settings of ${slug} | breu.dev` },
+				{
+					name: 'description',
+					content: `Edit the destination and details of ${slug}, or manage its status.`,
+				},
+			],
+		};
+	},
 });
 
 function Page() {

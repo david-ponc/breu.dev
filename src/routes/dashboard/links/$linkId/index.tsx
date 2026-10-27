@@ -8,6 +8,7 @@ import { LinkDetailKpis } from '#/features/links/detail/kpis';
 import { LinkDetailPreview } from '#/features/links/detail/preview-loader';
 import { linkStatsQueryOptions } from '#/features/links/detail/query';
 import type { ActivityRange } from '#/features/links/detail/range';
+import { getLinkSlugFromMatches } from '#/features/links/detail/route-metadata';
 import {
 	BreakdownsSkeleton,
 	ChartSkeleton,
@@ -22,6 +23,18 @@ export const Route = createFileRoute('/dashboard/links/$linkId/')({
 		);
 	},
 	component: Page,
+	head: ({ matches }) => {
+		const slug = getLinkSlugFromMatches(matches);
+		return {
+			meta: [
+				{ title: `Analytics of ${slug} | breu.dev` },
+				{
+					name: 'description',
+					content: `Track clicks over time and explore traffic of ${slug}.`,
+				},
+			],
+		};
+	},
 });
 
 function Page() {
