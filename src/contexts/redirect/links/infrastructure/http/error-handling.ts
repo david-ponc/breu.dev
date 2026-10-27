@@ -25,16 +25,18 @@ export const errorHandler = new Elysia({ name: 'redirect.error-handling' })
 			})
 			.with(
 				{ code: LINK_ERROR.SlugNotFound, error: P.instanceOf(LinkSlugNotFoundError) },
-				({ error }) => {
+				() => {
 					set.status = STATUS_CODES.NotFound;
-					return { code, message: error.message };
+					set.headers['Cache-Control'] = 'no-store';
+					return { code: 'NOT_FOUND', message: 'Not found' };
 				},
 			)
 			.with(
 				{ code: LINK_ERROR.NotActive, error: P.instanceOf(LinkNotActiveError) },
-				({ error }) => {
-					set.status = STATUS_CODES.Gone;
-					return { code, message: error.message };
+				() => {
+					set.status = STATUS_CODES.NotFound;
+					set.headers['Cache-Control'] = 'no-store';
+					return { code: 'NOT_FOUND', message: 'Not found' };
 				},
 			)
 			.otherwise(() => {
