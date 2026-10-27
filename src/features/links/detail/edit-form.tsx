@@ -10,6 +10,7 @@ import { Field } from '#/core/ui/field';
 import { Input } from '#/core/ui/input';
 import { InputGroup } from '#/core/ui/input-group';
 import { Textarea } from '#/core/ui/textarea';
+import { anchoredToastManager } from '#/core/ui/toast';
 import { Tooltip } from '#/core/ui/tooltip';
 import { CreateLinkValuesSchema } from '#/features/links/create/schema';
 
@@ -25,7 +26,35 @@ interface EditLinkFormProps {
 
 export function EditLinkForm({ linkId, userId }: EditLinkFormProps) {
 	const { data: link } = useSuspenseQuery(userLinkQueryOptions(userId, linkId));
-	const [form, { isGeneratingSlug }, { generateSlug }] = useEditLinkForm(link);
+	const [
+		form,
+		{ withValidUrl, isGenerating, isGeneratingSlug, isGeneratingAiSlug },
+		{ generateSlug, generateAiSlug },
+	] = useEditLinkForm(link);
+	const isUrlMissing = !withValidUrl;
+	const randomSlugTooltip = isUrlMissing
+		? 'Enter a destination URL to generate a random slug'
+		: 'Generate a random slug';
+	const aiSlugTooltip = isUrlMissing
+		? 'Enter a destination URL to generate an AI slug'
+		: 'Generate a slug with AI';
+	const disabledButtonClassName = cn(
+		'aria-disabled:cursor-not-allowed aria-disabled:active:scale-100',
+		isUrlMissing && 'opacity-50',
+		isGenerating && 'not-data-loading:data-disabled:opacity-100',
+	);
+
+	const handleGenerateSlug = async (
+		generate: () => Promise<boolean>,
+		anchor: HTMLButtonElement,
+	) => {
+		if (!(await generate())) return;
+
+		anchoredToastManager.add({
+			title: 'Slug generated successfully',
+			positionerProps: { anchor, sideOffset: 8 },
+		});
+	};
 
 	return (
 		<form
@@ -83,38 +112,72 @@ export function EditLinkForm({ linkId, userId }: EditLinkFormProps) {
 									The slug is the unique identifier for your link. It will be used in the
 									URL.
 								</Field.Description>
-								<ButtonGroup.Root
-									className={cn('w-full', isGeneratingSlug && 'data-loading')}
-								>
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										disabled={isGeneratingSlug}
-									/>
-									<Tooltip.Provider>
+								<Tooltip.Provider>
+									<ButtonGroup.Root
+										className={cn('w-full', isGenerating && 'data-loading')}
+									>
+										<Input
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											disabled={isGenerating}
+											className={cn(
+												isGenerating &&
+													'disabled:bg-secondary disabled:opacity-100 dark:disabled:bg-secondary',
+											)}
+										/>
 										<Tooltip.Trigger
 											handle={tooltipHandle}
-											payload={'Generate new slug'}
+											payload={randomSlugTooltip}
 											render={
 												<Button
 													size='icon'
 													variant='outline'
-													onClick={() => generateSlug()}
+													onClick={(event) =>
+														void handleGenerateSlug(generateSlug, event.currentTarget)
+													}
 													loading={isGeneratingSlug}
+													disabled={isGeneratingAiSlug}
+													aria-disabled={isUrlMissing || isGenerating}
+													aria-label={randomSlugTooltip}
+													className={disabledButtonClassName}
 												>
 													<Icon name='refresh' className='size-3.5' />
 												</Button>
 											}
 										/>
+										<Tooltip.Trigger
+											handle={tooltipHandle}
+											payload={aiSlugTooltip}
+											render={
+												<Button
+													size='icon'
+													variant='outline'
+													onClick={(event) =>
+														void handleGenerateSlug(generateAiSlug, event.currentTarget)
+													}
+													loading={isGeneratingAiSlug}
+													disabled={isGeneratingSlug}
+													aria-disabled={isUrlMissing || isGenerating}
+													aria-label={aiSlugTooltip}
+													className={disabledButtonClassName}
+												>
+													<Icon name='pencil-sparkles' className='size-4' />
+												</Button>
+											}
+										/>
 										<Tooltip.Root handle={tooltipHandle}>
 											{({ payload }) => (
-												<Tooltip.Popup>{payload as string}</Tooltip.Popup>
+												<Tooltip.Popup animated>
+													<Tooltip.Viewport className='tooltip-viewport-animated'>
+														{payload as string}
+													</Tooltip.Viewport>
+												</Tooltip.Popup>
 											)}
 										</Tooltip.Root>
-									</Tooltip.Provider>
-								</ButtonGroup.Root>
+									</ButtonGroup.Root>
+								</Tooltip.Provider>
 								<Field.Error match={!field.state.meta.isValid}>
 									{field.state.meta.errors.at(0)?.message}
 								</Field.Error>

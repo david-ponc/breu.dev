@@ -49,38 +49,45 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 				id: Identifier.generate(),
 			};
 
-			await toastManager.promise(httpClient().brevis.links({ id: link.id }).put(link), {
-				loading: {
-					title: 'Crafting your link...',
-					description: 'Please wait while we create your link.',
-				},
-				error: (error) => {
-					if (isAnonymousActionForbidden(error)) {
-						requireAccount('Guests can create one link. Sign up to manage more.');
-						return {
-							title: 'Create a free account',
-							description: 'Sign up to create more links.',
-						};
-					}
-
-					return {
-						title: 'Failed to craft link',
-						description: getLinkErrorMessage(error),
-					};
-				},
-				success: (data) => {
-					if (data.error) throw data.error;
-					void queryClient.invalidateQueries({ queryKey: ['links'] });
-					navigate({
-						to: '/dashboard/links/$linkId',
-						params: { linkId: link.id },
-					});
-					return {
-						title: 'Link crafted successfully',
-						description: `Your link has been crafted successfully`,
-					};
-				},
+			const toastId = toastManager.add({
+				type: 'loading',
+				title: 'Crafting your link...',
+				description: 'Please wait while we create your link.',
+				timeout: 0,
 			});
+
+			try {
+				const result = await httpClient().brevis.links({ id: link.id }).put(link);
+				if (result.error) throw result.error;
+
+				void queryClient.invalidateQueries({ queryKey: ['links'] });
+				navigate({
+					to: '/dashboard/links/$linkId',
+					params: { linkId: link.id },
+				});
+				toastManager.update(toastId, {
+					type: 'success',
+					title: 'Link crafted successfully',
+					description: 'Your link has been crafted successfully',
+					timeout: 4000,
+				});
+			} catch (error) {
+				if (isAnonymousActionForbidden(error)) {
+					requireAccount('Create an account to make more links.', {
+						toastId,
+						title: 'Create a free account',
+						description: "You've used your free link. Sign up to create more.",
+					});
+					return;
+				}
+
+				toastManager.update(toastId, {
+					type: 'error',
+					title: 'Failed to craft link',
+					description: getLinkErrorMessage(error),
+					timeout: 4000,
+				});
+			}
 		},
 	});
 
@@ -116,7 +123,15 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 			const { slug } = await aiSlugGenerator.mutateAsync(url);
 			form.setFieldValue('slug', slug);
 			return true;
-		} catch {
+		} catch (error) {
+			if (isAnonymousActionForbidden(error)) {
+				requireAccount('Create an account to generate AI slug suggestions.', {
+					title: 'Create a free account',
+					description: 'Sign up to generate AI slug suggestions.',
+				});
+				return false;
+			}
+
 			toastManager.add({
 				type: 'error',
 				title: 'Could not generate an AI slug',

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { SlugSuggestionFailedError } from '#/contexts/brevis/links/domain/errors/slug-suggestion-failed';
 import {
 	type Link,
@@ -30,9 +31,12 @@ const SAMPLE_META: Meta = {
 };
 
 class FixedMetaCollector implements MetaCollector {
+	collectCalls = 0;
+
 	constructor(private readonly meta: Meta) {}
 
 	async collect(): Promise<Meta> {
+		this.collectCalls += 1;
 		return this.meta;
 	}
 }
@@ -88,7 +92,10 @@ describe('suggesting a slug completion from a URL', () => {
 			repository,
 		);
 
-		const result = await suggester.execute('https://example.com/hello');
+		const result = await suggester.execute({
+			url: 'https://example.com/hello',
+			isAnonymous: false,
+		});
 
 		expect(result).toEqual({ slug: 'hello-world', meta: SAMPLE_META });
 		expect(generator.contextHistory[0]?.meta).toEqual(SAMPLE_META);
@@ -103,7 +110,10 @@ describe('suggesting a slug completion from a URL', () => {
 			repository,
 		);
 
-		const result = await suggester.execute('https://example.com/hello');
+		const result = await suggester.execute({
+			url: 'https://example.com/hello',
+			isAnonymous: false,
+		});
 
 		expect(result.slug).toBe('hello-page');
 		expect(generator.contextHistory[0]?.rejected).toEqual([]);
@@ -121,8 +131,20 @@ describe('suggesting a slug completion from a URL', () => {
 			repository,
 		);
 
-		await expect(suggester.execute('https://example.com')).rejects.toThrow(
-			SlugSuggestionFailedError,
-		);
+		await expect(
+			suggester.execute({ url: 'https://example.com', isAnonymous: false }),
+		).rejects.toThrow(SlugSuggestionFailedError);
+	});
+
+	it('rejects anonymous users before collecting metadata or generating a slug', async () => {
+		const metaCollector = new FixedMetaCollector(SAMPLE_META);
+		const generator = new SequenceSlugGenerator(['hello-world']);
+		const suggester = new SlugCompletionSuggester(metaCollector, generator, repository);
+
+		await expect(
+			suggester.execute({ url: 'https://example.com/hello', isAnonymous: true }),
+		).rejects.toThrow(AnonymousActionForbiddenError);
+		expect(metaCollector.collectCalls).toBe(0);
+		expect(generator.contextHistory).toEqual([]);
 	});
 });

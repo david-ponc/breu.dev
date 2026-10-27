@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
 	getSlug: vi.fn(),
 	getAiSlug: vi.fn(),
 	addToast: vi.fn(),
+	updateToast: vi.fn(),
 	addAnchoredToast: vi.fn(),
 	put: vi.fn(),
 }));
@@ -35,7 +36,7 @@ vi.mock('#/core/lib/http/client', () => ({
 }));
 
 vi.mock('#/core/ui/toast', () => ({
-	toastManager: { add: mocks.addToast, promise: vi.fn() },
+	toastManager: { add: mocks.addToast, update: mocks.updateToast },
 	anchoredToastManager: { add: mocks.addAnchoredToast },
 }));
 
@@ -72,12 +73,64 @@ function enterUrl() {
 describe('CreateLinkForm AI slug suggestion', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		mocks.addToast.mockReturnValue('create-toast-id');
 		mocks.getAiSlug.mockResolvedValue({
 			data: { slug: 'ai-suggested-slug', meta: null },
 			error: null,
 		});
 	});
 	afterEach(() => cleanup());
+
+	it('replaces the loading toast with one account prompt when a guest reaches the link limit', async () => {
+		mocks.put.mockResolvedValue({
+			data: null,
+			error: { value: { code: 'LINK_ANONYMOUS_ACTION_FORBIDDEN' } },
+		});
+		await mountForm();
+		enterUrl();
+		const form = screen.getByRole('button', { name: 'Craft link' }).closest('form');
+		if (!form) throw new Error('The create form was not rendered.');
+		fireEvent.submit(form);
+
+		await waitFor(() => {
+			expect(mocks.updateToast).toHaveBeenCalledWith(
+				'create-toast-id',
+				expect.objectContaining({
+					type: 'info',
+					title: 'Create a free account',
+					description: "You've used your free link. Sign up to create more.",
+					data: { layout: 'account-prompt' },
+				}),
+			);
+		});
+		expect(mocks.addToast).toHaveBeenCalledTimes(1);
+		expect(mocks.updateToast).toHaveBeenCalledTimes(1);
+	});
+
+	it('keeps a single error toast for non-restriction failures', async () => {
+		mocks.put.mockResolvedValue({
+			data: null,
+			error: { value: { message: 'Service unavailable.' } },
+		});
+		await mountForm();
+		enterUrl();
+		const form = screen.getByRole('button', { name: 'Craft link' }).closest('form');
+		if (!form) throw new Error('The create form was not rendered.');
+		fireEvent.submit(form);
+
+		await waitFor(() =>
+			expect(mocks.updateToast).toHaveBeenCalledWith(
+				'create-toast-id',
+				expect.objectContaining({
+					type: 'error',
+					title: 'Failed to craft link',
+					description: 'Service unavailable.',
+				}),
+			),
+		);
+		expect(mocks.addToast).toHaveBeenCalledTimes(1);
+		expect(mocks.updateToast).toHaveBeenCalledTimes(1);
+	});
 
 	it('suggests a slug from the current valid URL', async () => {
 		await mountForm();
@@ -159,6 +212,34 @@ describe('CreateLinkForm AI slug suggestion', () => {
 				description: 'Please try again or use the other slug generator.',
 			}),
 		);
+	});
+
+	it('prompts guests to create an account when AI slug generation is restricted', async () => {
+		mocks.getAiSlug.mockResolvedValue({
+			data: null,
+			error: { value: { code: 'LINK_ANONYMOUS_ACTION_FORBIDDEN' } },
+		});
+		await mountForm();
+		enterUrl();
+		const aiButton = await screen.findByRole('button', {
+			name: 'Generate a slug with AI',
+		});
+		await waitFor(() => expect(aiButton.getAttribute('aria-disabled')).toBe('false'));
+		fireEvent.click(aiButton);
+
+		await waitFor(() =>
+			expect(mocks.addToast).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: 'info',
+					title: 'Create a free account',
+					description: 'Sign up to generate AI slug suggestions.',
+					data: { layout: 'account-prompt' },
+					actionProps: expect.objectContaining({ children: 'Create account' }),
+				}),
+			),
+		);
+		expect(mocks.addToast).toHaveBeenCalledTimes(1);
+		expect(mocks.addAnchoredToast).not.toHaveBeenCalled();
 	});
 
 	it('explains why slug generation is unavailable when the URL is empty', async () => {

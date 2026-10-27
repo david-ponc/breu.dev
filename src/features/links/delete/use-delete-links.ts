@@ -6,6 +6,7 @@ import {
 } from '#/core/lib/auth/require-account';
 import { httpClient } from '#/core/lib/http/client';
 import { toastManager } from '#/core/ui/toast';
+import { getLinkErrorMessage } from '#/features/links/link-error-message';
 import { userLinksQueryKey } from '#/features/links/table/query';
 
 export type DeletableLink = { id: string; slug: string };
@@ -14,16 +15,7 @@ export function useDeleteLinks({ handle, userId, onDeleted }: UseDeleteLinksOpti
 	const queryClient = useQueryClient();
 	const requireAccount = useRequireAccountPrompt();
 	const { isPending, mutate } = useMutation({
-		mutationFn: (links: DeletableLink[]) =>
-			deleteLinks(links).then((result) => {
-				if (result.failed.length === links.length) {
-					const reason = result.failed[0]?.reason;
-					if (isAnonymousActionForbidden(reason)) {
-						requireAccount('Guests cannot delete links. Sign up to manage your links.');
-					}
-				}
-				return result;
-			}),
+		mutationFn: (links: DeletableLink[]) => deleteLinks(links, requireAccount),
 		onSuccess: ({ deleted }) => {
 			if (deleted === 0) return;
 			handle.close();
@@ -54,7 +46,10 @@ interface DeleteLinksResult {
 	failed: FailedDelete[];
 }
 
-async function deleteLinks(links: DeletableLink[]): Promise<DeleteLinksResult> {
+async function deleteLinks(
+	links: DeletableLink[],
+	requireAccount: ReturnType<typeof useRequireAccountPrompt>,
+): Promise<DeleteLinksResult> {
 	const toastId = toastManager.add(loadingToast(links));
 	const results = await Promise.allSettled(links.map(deleteLink));
 	const failed = results.flatMap((result, index) =>
@@ -62,13 +57,27 @@ async function deleteLinks(links: DeletableLink[]): Promise<DeleteLinksResult> {
 			? [
 					{
 						slug: links[index].slug,
-						message: errorMessage(result.reason),
+						message: getLinkErrorMessage(result.reason),
 						reason: result.reason,
 					},
 				]
 			: [],
 	);
 	const deleted = links.length - failed.length;
+	const onlyAccountRestrictions =
+		failed.length > 0 &&
+		failed.length === links.length &&
+		failed.every(({ reason }) => isAnonymousActionForbidden(reason));
+
+	if (onlyAccountRestrictions) {
+		requireAccount('Create an account to manage and delete your links.', {
+			toastId,
+			title: 'Create a free account',
+			description: 'Sign up to manage and delete your links.',
+		});
+		return { deleted, failed };
+	}
+
 	toastManager.update(toastId, completionToast(links, deleted, failed));
 	return { deleted, failed };
 }
@@ -127,8 +136,4 @@ function completionToast(
 
 function failedSlugs(failed: FailedDelete[]) {
 	return failed.map((item) => `/${item.slug}`).join(', ');
-}
-
-function errorMessage(error: unknown) {
-	return error instanceof Error ? error.message : 'Unexpected error';
 }

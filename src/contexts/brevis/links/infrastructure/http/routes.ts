@@ -57,10 +57,13 @@ export const brevisLinksRoutes = new Elysia({ prefix: '/brevis/links' })
 	)
 	.get(
 		'/slugs/completion',
-		async ({ query }) => {
+		async ({ query, user }) => {
 			const suggester = container.get(SlugCompletionSuggester);
 
-			return suggester.execute(query.url);
+			return suggester.execute({
+				url: query.url,
+				isAnonymous: Boolean(user.isAnonymous),
+			});
 		},
 		{
 			auth: true,

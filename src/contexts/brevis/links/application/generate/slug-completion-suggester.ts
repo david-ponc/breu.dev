@@ -1,5 +1,6 @@
 import { Service } from 'diod';
 
+import { AnonymousActionForbiddenError } from '#/contexts/brevis/links/domain/errors/anonymous-action-forbidden';
 import { SlugSuggestionFailedError } from '#/contexts/brevis/links/domain/errors/slug-suggestion-failed';
 import type { LinkSlug, Meta } from '#/contexts/brevis/links/domain/link';
 import type { LinkRepository } from '#/contexts/brevis/links/domain/link-repository';
@@ -12,6 +13,11 @@ export type SlugCompletionResult = {
 	meta: Meta;
 };
 
+export type SlugCompletionCommand = {
+	url: string;
+	isAnonymous: boolean;
+};
+
 @Service()
 export class SlugCompletionSuggester {
 	private readonly MAX_ATTEMPTS = 5;
@@ -22,7 +28,12 @@ export class SlugCompletionSuggester {
 		private readonly repository: LinkRepository,
 	) {}
 
-	async execute(url: string): Promise<SlugCompletionResult> {
+	async execute({
+		url,
+		isAnonymous,
+	}: SlugCompletionCommand): Promise<SlugCompletionResult> {
+		if (isAnonymous) throw new AnonymousActionForbiddenError();
+
 		const meta = await this.metaCollector.collect(url);
 		const rejected: LinkSlug[] = [];
 
