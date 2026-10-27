@@ -14,6 +14,7 @@ const alertVariants = tv({
 		variant: {
 			default: 'bg-muted/50 text-foreground ring-foreground/10',
 			info: 'bg-info/10 text-info-foreground ring-info/20 dark:bg-info/16',
+			success: 'bg-success/10 text-success-foreground ring-success/20 dark:bg-success/16',
 		},
 	},
 	defaultVariants: { variant: 'default' },

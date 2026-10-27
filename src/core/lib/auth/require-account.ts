@@ -37,7 +37,7 @@ export function useRequireAccountPrompt() {
 				data: { layout: 'account-prompt' },
 				actionProps: {
 					children: 'Create account',
-					onClick: () => navigate({ to: '/auth/sign-in' }),
+					onClick: () => navigate({ to: '/auth/sign-in', search: { error: undefined } }),
 				},
 			};
 

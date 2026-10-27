@@ -4,6 +4,7 @@ Object.assign(process.env, {
 	REDIS_URL: 'redis://localhost:6379',
 	BETTER_AUTH_SECRET: 'test-secret-for-testing-purposes-only-32chars',
 	BETTER_AUTH_URL: 'http://localhost:3000',
+	RESEND_FROM: 'Breu <auth@davidponc.dev>',
 	GITHUB_CLIENT_ID: 'test-client-id',
 	GITHUB_CLIENT_SECRET: 'test-client-secret',
 	DISCORD_CLIENT_ID: 'test-discord-client-id',

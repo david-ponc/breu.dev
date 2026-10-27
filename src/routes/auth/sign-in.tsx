@@ -8,10 +8,13 @@ import { getSession } from '#/core/lib/auth/functions';
 import { Button } from '#/core/ui/button';
 import { Card } from '#/core/ui/card';
 import { Field } from '#/core/ui/field';
-import { Input } from '#/core/ui/input';
 import { GridPattern } from '#/core/ui/patterns/grid-pattern';
+import { MagicLinkSignInForm } from '#/features/auth/magic-link-sign-in-form';
 
 export const Route = createFileRoute('/auth/sign-in')({
+	validateSearch: (search: Record<string, unknown>) => ({
+		error: typeof search.error === 'string' ? search.error : undefined,
+	}),
 	beforeLoad: async () => {
 		const session = await getSession();
 
@@ -20,6 +23,16 @@ export const Route = createFileRoute('/auth/sign-in')({
 		}
 	},
 	component: Page,
+	head: () => ({
+		meta: [
+			{ title: 'Sign in | breu.dev' },
+			{
+				name: 'description',
+				content: 'Sign in to manage your short links and view their analytics.',
+			},
+			{ name: 'robots', content: 'noindex, nofollow' },
+		],
+	}),
 });
 
 type SocialProvider = 'github' | 'discord';
@@ -52,6 +65,8 @@ function SocialSignInButton({ provider }: { provider: SocialProvider }) {
 }
 
 function Page() {
+	const { error: linkError } = Route.useSearch();
+
 	return (
 		<div className='grid size-full h-dvh place-items-center'>
 			<GridPattern />
@@ -67,7 +82,7 @@ function Page() {
 					<Card.Header>
 						<Card.Title>Sign in to your account</Card.Title>
 						<Card.Description>
-							Sign in with your GitHub or Discord account
+							Sign in with GitHub, Discord, or an email link
 						</Card.Description>
 					</Card.Header>
 					<Card.Panel className='flex flex-col gap-3'>
@@ -76,17 +91,7 @@ function Page() {
 						<Field.Separator className='mt-4 bg-card'>Or continue with</Field.Separator>
 					</Card.Panel>
 					<Card.Footer variant='ghost' className='flex-col items-stretch gap-2'>
-						<Field.Root>
-							<Field.Label>Email address</Field.Label>
-							<Field.Description>
-								We'll email you a magic link to sign in without a password.
-							</Field.Description>
-							<Field.Item className='w-full'>
-								<Input type='email' placeholder='ejemplo@dominio.com' />
-							</Field.Item>
-							<Field.Error>Invalid email address.</Field.Error>
-						</Field.Root>
-						<Button className='mt-3 w-full'>Continue</Button>
+						<MagicLinkSignInForm linkError={Boolean(linkError)} />
 					</Card.Footer>
 				</Card.Root>
 			</div>
