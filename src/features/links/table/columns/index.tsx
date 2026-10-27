@@ -75,7 +75,7 @@ export const columns = columnHelper.columns([
 		cell: ({ row }) => (
 			<time
 				dateTime={row.original.createdAt}
-				title={`${row.original.createdAt} (UTC)`}
+				title={`${row.original.createdAt}`}
 				className='whitespace-nowrap text-muted-foreground'
 			>
 				{dateFormatter.format(new Date(row.original.createdAt))}

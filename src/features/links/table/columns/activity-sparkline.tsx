@@ -85,7 +85,7 @@ export function ActivitySparkline({ activity }: { activity: LinkActivity[] }) {
 			className='shrink-0'
 			ariaLabel={
 				activity.length
-					? `${total} clicks over the last ${activity.length} days (UTC)`
+					? `${total} clicks over the last ${activity.length} days`
 					: 'No activity data'
 			}
 		/>

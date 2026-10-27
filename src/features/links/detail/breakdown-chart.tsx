@@ -24,6 +24,7 @@ interface BreakdownChartProps {
 	items: NamedCount[];
 	formatKey?: (key: string) => string;
 	leading?: (key: string) => ReactNode;
+	initialWidth?: number;
 }
 
 export function BreakdownChart({
@@ -31,6 +32,7 @@ export function BreakdownChart({
 	items,
 	formatKey = String,
 	leading,
+	initialWidth,
 }: BreakdownChartProps) {
 	const id = `breakdown-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 	const rows = useMemo(() => {
@@ -131,6 +133,7 @@ export function BreakdownChart({
 				<Chart
 					definition={definition}
 					height={height}
+					initialWidth={initialWidth}
 					className='w-full'
 					ariaLabel={`${title}: ${rows.map((row) => `${row.label} ${row.share}`).join(', ')}`}
 				/>
