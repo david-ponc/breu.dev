@@ -14,6 +14,7 @@ const config = defineConfig({
 		nitro({
 			preset: 'vercel',
 			serverDir: './server',
+			traceDeps: ['undici'],
 			rollupConfig: { external: [/^@sentry\//] },
 			vercel: {
 				functions: { runtime: 'nodejs22.x' },
