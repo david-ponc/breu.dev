@@ -23,6 +23,7 @@ export class OnLinkResolved extends DomainEventHandler {
 			linkId: link.id,
 			userId: link.userId,
 			ip: visitor.ip,
+			country: visitor.country ?? null,
 			referer: visitor.referer,
 			userAgentRaw: visitor.userAgent,
 			visitedAt: event.occurredOn.toISOString(),

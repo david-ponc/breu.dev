@@ -72,7 +72,7 @@ describe('on link resolved', () => {
 
 	it('records a visit from the resolved event', async () => {
 		const link = aLink();
-		const visitor = aVisitor();
+		const visitor = aVisitor({ country: 'ES' });
 		const event = new LinkResolvedEvent({ link, visitor });
 
 		await handler.handle(event);
@@ -92,8 +92,19 @@ describe('on link resolved', () => {
 				deviceType: DEVICE_TYPE.Desktop,
 			},
 			isBot: false,
-			country: null,
+			country: 'ES',
 		});
+	});
+
+	it('records legacy queued events without a country as null', async () => {
+		const link = aLink();
+		const legacyVisitor = aVisitor();
+		const event = new LinkResolvedEvent({ link, visitor: legacyVisitor });
+
+		await handler.handle(event);
+
+		const [visit] = await repository.findAll();
+		expect(visit?.country).toBeNull();
 	});
 
 	it('ignores unrelated domain events', async () => {

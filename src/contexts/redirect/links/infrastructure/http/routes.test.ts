@@ -27,6 +27,36 @@ describe('GET redirect link', () => {
 		expect(response.headers.get('location')).toBe('https://example.com/destination');
 	});
 
+	it('passes the Vercel country header to the link resolver', async () => {
+		execute.mockResolvedValue({ url: 'https://example.com/destination' });
+
+		await app.handle(
+			new Request('http://localhost/redirect/links/my-link', {
+				headers: { 'x-vercel-ip-country': 'es' },
+			}),
+		);
+
+		expect(execute).toHaveBeenCalledWith({
+			slug: 'my-link',
+			visitor: expect.objectContaining({ country: 'ES' }),
+		});
+	});
+
+	it('uses a null country when the Vercel country header is invalid', async () => {
+		execute.mockResolvedValue({ url: 'https://example.com/destination' });
+
+		await app.handle(
+			new Request('http://localhost/redirect/links/my-link', {
+				headers: { 'x-vercel-ip-country': 'Spain' },
+			}),
+		);
+
+		expect(execute).toHaveBeenCalledWith({
+			slug: 'my-link',
+			visitor: expect.objectContaining({ country: null }),
+		});
+	});
+
 	it.each([
 		['disabled', () => new LinkNotActiveError('private-slug')],
 		['unknown', () => new LinkSlugNotFoundError('private-slug')],

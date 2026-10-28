@@ -13,6 +13,12 @@ function extractIp(headers: Headers): string | null {
 	);
 }
 
+function extractCountry(headers: Headers): string | null {
+	const country = headers.get('x-vercel-ip-country')?.trim().toUpperCase();
+
+	return country && /^[A-Z]{2}$/.test(country) ? country : null;
+}
+
 export const visitorPlugin = new Elysia({ name: 'redirect.visitor' }).derive(
 	{ as: 'scoped' },
 	({ request }): { visitor: Visitor } => {
@@ -21,6 +27,7 @@ export const visitorPlugin = new Elysia({ name: 'redirect.visitor' }).derive(
 		return {
 			visitor: {
 				ip: extractIp(headers),
+				country: extractCountry(headers),
 				userAgent: headers.get('user-agent'),
 				referer: headers.get('referer'),
 			},

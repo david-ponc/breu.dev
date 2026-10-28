@@ -33,6 +33,12 @@ export const LinkSchema = z.object({
 
 export const VisitorSchema = z.object({
 	ip: z.string().nullable(),
+	country: z
+		.string()
+		.length(2)
+		.regex(/^[A-Z]{2}$/)
+		.nullable()
+		.optional(),
 	userAgent: z.string().nullable(),
 	referer: z.string().nullable(),
 });
