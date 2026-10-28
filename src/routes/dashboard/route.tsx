@@ -12,7 +12,7 @@ export const Route = createFileRoute('/dashboard')({
 		const session = await getSession();
 
 		if (!session) {
-			throw redirect({ to: '/auth/sign-in' });
+			throw redirect({ to: '/auth/sign-in', search: { error: undefined } });
 		}
 
 		return { session };

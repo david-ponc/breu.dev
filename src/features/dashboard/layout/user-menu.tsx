@@ -58,7 +58,7 @@ export function UserMenu() {
 
 	const handleSignOut = async () => {
 		await authClient.signOut();
-		navigate({ to: '/auth/sign-in' });
+		navigate({ to: '/auth/sign-in', search: { error: undefined } });
 	};
 
 	const handleOpenChange = (nextOpen: boolean) => {
