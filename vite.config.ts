@@ -11,7 +11,16 @@ const config = defineConfig({
 		devtools(),
 		tailwindcss(),
 		tanstackStart(),
-		nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+		nitro({
+			preset: 'vercel',
+			serverDir: './server',
+			rollupConfig: { external: [/^@sentry\//] },
+			vercel: {
+				queues: {
+					triggers: [{ topic: 'domain-events' }],
+				},
+			},
+		}),
 		viteReact(),
 	],
 });

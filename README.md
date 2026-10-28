@@ -9,6 +9,14 @@ bun install
 bun --bun run dev
 ```
 
+To test Vercel Queue producers and consumers locally, link the project and run it through the Vercel CLI:
+
+```bash
+vercel link
+vercel env pull
+vercel dev
+```
+
 # Building For Production
 
 To build this application for production:

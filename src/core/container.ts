@@ -38,9 +38,8 @@ import { LinkRepository as RedirectLinkRepository } from '#/contexts/redirect/li
 import { PostgresLinkRepository as RedirectPostgresLinkRepository } from '#/contexts/redirect/links/infrastructure/postgres-link-repository';
 import { DomainEventMapping } from '#/contexts/shared/domain/events/domain-event-mapping';
 import { EventBus } from '#/contexts/shared/domain/events/event-bus';
-import { BullMqConnection } from '#/contexts/shared/infrastructure/bullmq/connection';
-import { BullMqEventBus } from '#/contexts/shared/infrastructure/bullmq/event-bus';
 import { PostgresConnection } from '#/contexts/shared/infrastructure/postgres/connection';
+import { VercelQueueEventBus } from '#/contexts/shared/infrastructure/vercel-queue/event-bus';
 
 import { registerSubscribers } from './register-subscribers';
 
@@ -51,7 +50,6 @@ const builder = new ContainerBuilder();
 /* -------------------------------------------------------------------------- */
 
 builder.registerAndUse(PostgresConnection);
-builder.registerAndUse(BullMqConnection);
 builder.registerAndUse(OnLinkCreated);
 
 const domainEventMapping = new DomainEventMapping({
@@ -60,13 +58,12 @@ const domainEventMapping = new DomainEventMapping({
 	[LinkDeletedEvent.EVENT_NAME]: LinkDeletedEvent,
 	[LinkResolvedEvent.EVENT_NAME]: LinkResolvedEvent,
 });
-// biome-ignore lint/correctness/useHookAtTopLevel: diod registration, not a React hook
 builder.register(DomainEventMapping).useInstance(domainEventMapping);
 
 builder
 	.register(EventBus)
-	.use(BullMqEventBus)
-	.withDependencies([BullMqConnection, DomainEventMapping])
+	.use(VercelQueueEventBus)
+	.withDependencies([DomainEventMapping])
 	.asSingleton();
 
 /* -------------------------------------------------------------------------- */
