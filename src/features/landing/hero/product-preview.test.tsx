@@ -19,14 +19,10 @@ describe('ProductPreview', () => {
 		expect(screen.getByText('Settings').tagName).toBe('SPAN');
 	});
 
-	it('reuses the real activity chart with a descriptive label', () => {
-		render(<ProductPreview />);
+	it('renders the real activity chart as a decorative visual', () => {
+		const { container } = render(<ProductPreview />);
 
-		expect(
-			screen.getByRole('img', {
-				name: /Example activity: 1,000 clicks over the last 14 days/,
-			}),
-		).toBeDefined();
+		expect(container.querySelector('[aria-hidden][inert] svg')).not.toBeNull();
 	});
 
 	it('renders the destination open graph preview', () => {

@@ -140,8 +140,10 @@ describe('QuickLinkForm', () => {
 		);
 		expect(screen.getByText('Launch notes')).toBeDefined();
 		expect(
-			screen.getByRole('img', { name: /Example activity: 1,000 clicks/ }),
-		).toBeDefined();
+			document.querySelector(
+				'section[aria-labelledby="highlights-title"] [aria-hidden][inert] svg',
+			),
+		).not.toBeNull();
 		expect(
 			screen.getByRole('link', { name: 'Create account' }).getAttribute('href'),
 		).toBe('/auth/sign-in');
