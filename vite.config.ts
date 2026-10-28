@@ -16,6 +16,7 @@ const config = defineConfig({
 			serverDir: './server',
 			rollupConfig: { external: [/^@sentry\//] },
 			vercel: {
+				functions: { runtime: 'nodejs22.x' },
 				queues: {
 					triggers: [{ topic: 'domain-events' }],
 				},
