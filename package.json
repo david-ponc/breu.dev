@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"dev": "bun --bun vite dev",
-		"build": "bun --bun vite build",
+		"build": "vite build",
 		"serve": "bun --bun vite preview",
 		"generate-routes": "tsr generate",
 		"test": "vitest run",
