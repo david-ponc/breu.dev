@@ -32,5 +32,6 @@ export const postgresSql = createSql();
 export const authPool = {
 	dialect: new PostgresJSDialect({ postgres: createSql({ searchPath: 'auth' }) }),
 	type: 'postgres' as const,
+	schemaName: 'auth',
 	transaction: true,
 };
