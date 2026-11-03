@@ -118,11 +118,7 @@ export function QuickLinkForm({ className }: { className?: string }) {
 										</Field.Root>
 									)}
 								</form.AppField>
-								<Button
-									type='submit'
-									loading={status === 'creating'}
-									className='dark:text-zinc-950'
-								>
+								<Button type='submit' loading={status === 'creating'}>
 									Create link
 									<Icon name='link' aria-hidden data-icon='inline-end' />
 								</Button>

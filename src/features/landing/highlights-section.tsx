@@ -106,7 +106,7 @@ function LinkVisual() {
 			{previewLinks.map((link, index) => (
 				<Card.Root
 					key={link.shortUrl}
-					className='col-start-1 row-start-1 mx-auto w-full max-w-sm origin-bottom gap-3 shadow-md'
+					className='col-start-1 row-start-1 mx-auto w-full max-w-sm origin-bottom gap-3 bg-card-opaque shadow-md'
 					style={{
 						transform: `translateY(calc(${index * -12}px - ${index * 10}%)) scale(${1 - index * 0.1})`,
 						zIndex: previewLinks.length - index,

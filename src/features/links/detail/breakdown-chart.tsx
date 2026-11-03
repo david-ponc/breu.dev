@@ -100,8 +100,8 @@ export function BreakdownChart({
 						x2: 0,
 						y2: 1,
 						stops: [
-							{ offset: 0, color: 'white', opacity: 0.32 },
-							{ offset: 0.06, color: 'white', opacity: 0.32 },
+							{ offset: 0, color: 'var(--breakdown-bar-sheen)' },
+							{ offset: 0.06, color: 'var(--breakdown-bar-sheen)' },
 							{ offset: 0.1, color: 'white', opacity: 0 },
 							{ offset: 1, color: 'white', opacity: 0 },
 						],
@@ -180,7 +180,7 @@ export function CountryFlag(code: string) {
 			alt=''
 			width={16}
 			height={12}
-			className='h-3 w-4 shrink-0 rounded-xs outline outline-black/10 dark:outline-white/10'
+			className='h-3 w-4 shrink-0 rounded-xs outline outline-image-outline'
 		/>
 	);
 }

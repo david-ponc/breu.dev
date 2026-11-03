@@ -47,33 +47,31 @@ export function osAgent(os: string | null): AgentMeta {
 const BROWSER_TINTS: ReadonlyArray<{ pattern: RegExp; className: string }> = [
 	{
 		pattern: /firefox/i,
-		className:
-			'bg-orange-500/12 text-orange-700 dark:bg-orange-400/16 dark:text-orange-300',
+		className: 'agent-tint agent-tint-orange',
 	},
 	{
 		pattern: /safari/i,
-		className: 'bg-blue-500/12 text-blue-700 dark:bg-blue-400/16 dark:text-blue-300',
+		className: 'agent-tint agent-tint-blue',
 	},
 	{
 		pattern: /edge/i,
-		className: 'bg-teal-500/12 text-teal-700 dark:bg-teal-400/16 dark:text-teal-300',
+		className: 'agent-tint agent-tint-teal',
 	},
 	{
 		pattern: /opera|vivaldi|yandex/i,
-		className: 'bg-red-500/12 text-red-700 dark:bg-red-400/16 dark:text-red-300',
+		className: 'agent-tint agent-tint-red',
 	},
 	{
 		pattern: /brave/i,
-		className: 'bg-amber-500/12 text-amber-700 dark:bg-amber-400/16 dark:text-amber-300',
+		className: 'agent-tint agent-tint-amber',
 	},
 	{
 		pattern: /samsung/i,
-		className:
-			'bg-indigo-500/12 text-indigo-700 dark:bg-indigo-400/16 dark:text-indigo-300',
+		className: 'agent-tint agent-tint-indigo',
 	},
 	{
 		pattern: /chrome|chromium/i,
-		className: 'bg-sky-500/12 text-sky-700 dark:bg-sky-400/16 dark:text-sky-300',
+		className: 'agent-tint agent-tint-sky',
 	},
 ];
 
@@ -95,82 +93,77 @@ const REFERRER_TINTS: ReadonlyArray<{
 	{
 		pattern: /facebook|fb\./i,
 		label: 'Facebook',
-		className: 'bg-blue-500/12 text-blue-700 dark:bg-blue-400/16 dark:text-blue-300',
+		className: 'agent-tint agent-tint-blue',
 	},
 	{
 		pattern: /linkedin|lnkd/i,
 		label: 'LinkedIn',
-		className: 'bg-sky-500/12 text-sky-700 dark:bg-sky-400/16 dark:text-sky-300',
+		className: 'agent-tint agent-tint-sky',
 	},
 	{
 		pattern: /reddit/i,
 		label: 'Reddit',
-		className:
-			'bg-orange-500/12 text-orange-700 dark:bg-orange-400/16 dark:text-orange-300',
+		className: 'agent-tint agent-tint-orange',
 	},
 	{
 		pattern: /producthunt/i,
 		label: 'Product Hunt',
-		className:
-			'bg-orange-500/12 text-orange-700 dark:bg-orange-400/16 dark:text-orange-300',
+		className: 'agent-tint agent-tint-orange',
 	},
 	{
 		pattern: /ycombinator|hn\./i,
 		label: 'Hacker News',
-		className:
-			'bg-orange-500/12 text-orange-700 dark:bg-orange-400/16 dark:text-orange-300',
+		className: 'agent-tint agent-tint-orange',
 	},
 	{
 		pattern: /youtube|youtu\.be/i,
 		label: 'YouTube',
-		className: 'bg-red-500/12 text-red-700 dark:bg-red-400/16 dark:text-red-300',
+		className: 'agent-tint agent-tint-red',
 	},
 	{
 		pattern: /instagram/i,
 		label: 'Instagram',
-		className:
-			'bg-fuchsia-500/12 text-fuchsia-700 dark:bg-fuchsia-400/16 dark:text-fuchsia-300',
+		className: 'agent-tint agent-tint-fuchsia',
 	},
 	{
 		pattern: /whatsapp/i,
 		label: 'WhatsApp',
-		className:
-			'bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/16 dark:text-emerald-300',
+		className: 'agent-tint agent-tint-emerald',
 	},
 	{
 		pattern: /google/i,
 		label: 'Google',
-		className: 'bg-blue-500/12 text-blue-700 dark:bg-blue-400/16 dark:text-blue-300',
+		className: 'agent-tint agent-tint-blue',
 	},
 	{
 		pattern: /bing/i,
 		label: 'Bing',
-		className: 'bg-blue-500/12 text-blue-700 dark:bg-blue-400/16 dark:text-blue-300',
+		className: 'agent-tint agent-tint-blue',
 	},
 	{
 		pattern: /duckduckgo/i,
 		label: 'DuckDuckGo',
-		className: 'bg-blue-500/12 text-blue-700 dark:bg-blue-400/16 dark:text-blue-300',
+		className: 'agent-tint agent-tint-blue',
 	},
 	{
 		pattern: /telegram|t\.me/i,
 		label: 'Telegram',
-		className: 'bg-cyan-500/12 text-cyan-700 dark:bg-cyan-400/16 dark:text-cyan-300',
+		className: 'agent-tint agent-tint-cyan',
 	},
 	{
 		pattern: /x\.com|twitter|t\.co/i,
 		label: 'X',
-		className: 'bg-zinc-900/10 text-zinc-900 dark:bg-zinc-100/14 dark:text-zinc-100',
+		className: 'agent-tint agent-tint-neutral',
 	},
 	{
 		pattern: /github/i,
 		label: 'GitHub',
-		className: 'bg-zinc-900/10 text-zinc-900 dark:bg-zinc-100/14 dark:text-zinc-100',
+		className: 'agent-tint agent-tint-neutral',
 	},
 	{
 		pattern: /gitlab/i,
 		label: 'GitLab',
-		className: 'bg-zinc-900/10 text-zinc-900 dark:bg-zinc-100/14 dark:text-zinc-100',
+		className: 'agent-tint agent-tint-neutral',
 	},
 ];
 

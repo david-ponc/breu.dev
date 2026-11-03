@@ -32,7 +32,7 @@ export function ProductPreview({ className }: { className?: string }) {
 			/>
 			<div
 				data-slot='product-preview-viewport'
-				className='group/product-preview relative max-h-256 focus-within:max-h-none lg:max-h-140'
+				className='group/product-preview mask-b-from-90% focus-within:mask-none relative max-h-256 overflow-hidden focus-within:max-h-none lg:max-h-140'
 			>
 				<div
 					data-slot='product-preview-frame'

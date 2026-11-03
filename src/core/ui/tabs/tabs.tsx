@@ -37,7 +37,7 @@ function TabsIndicator({ className, ...props }: BaseTabs.Indicator.Props) {
 		<BaseTabs.Indicator
 			data-slot='tabs-indicator'
 			className={cn(
-				'absolute -bottom-0.75 left-(--active-tab-left) h-0.75 w-(--active-tab-width) rounded-t bg-primary-foreground',
+				'absolute -bottom-0.75 left-(--active-tab-left) h-0.75 w-(--active-tab-width) rounded-t bg-foreground',
 				className,
 			)}
 			{...props}

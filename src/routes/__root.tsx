@@ -13,6 +13,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 		meta: [
 			{ charSet: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+			{ name: 'color-scheme', content: 'light dark' },
+			{ name: 'theme-color', content: '#f4f4f5', media: '(prefers-color-scheme: light)' },
+			{ name: 'theme-color', content: '#09090b', media: '(prefers-color-scheme: dark)' },
 			{ title: 'breu.dev | Short links and analytics' },
 		],
 		links: [{ rel: 'stylesheet', href: appCss }],

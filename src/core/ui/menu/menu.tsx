@@ -105,9 +105,9 @@ function MenuItem({
 			data-inset={inset}
 			data-variant={variant}
 			className={cn(
-				'group/dropdown-menu-item relative inset-shadow-t-px inset-shadow-white/32 flex select-none items-center gap-1.5 whitespace-nowrap rounded-none px-2 py-2.5 text-muted-foreground text-sm outline-hidden',
+				'group/dropdown-menu-item themed-inset-highlight-32 relative inset-shadow-t-px flex select-none items-center gap-1.5 whitespace-nowrap rounded-none px-2 py-2.5 text-muted-foreground text-sm outline-hidden',
 				'focus:bg-secondary focus:text-foreground not-data-[variant=destructive]:focus:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring active:bg-outline-active',
-				"not-data-disabled:cursor-pointer data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-destructive",
+				"not-data-disabled:cursor-pointer data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-menu-destructive-hover-surface data-[variant=destructive]:focus:text-destructive [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-destructive",
 				className,
 			)}
 			{...props}

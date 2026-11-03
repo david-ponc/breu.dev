@@ -123,8 +123,7 @@ export function EditLinkForm({ linkId, userId }: EditLinkFormProps) {
 											onChange={(e) => field.handleChange(e.target.value)}
 											disabled={isGenerating}
 											className={cn(
-												isGenerating &&
-													'disabled:bg-secondary disabled:opacity-100 dark:disabled:bg-secondary',
+												isGenerating && 'disabled:bg-secondary disabled:opacity-100',
 											)}
 										/>
 										<Tooltip.Trigger

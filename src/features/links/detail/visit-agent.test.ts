@@ -42,9 +42,9 @@ describe('osAgent', () => {
 describe('browserAgent', () => {
 	it('labels the browser and tints known brands', () => {
 		expect(browserAgent('Chrome')).toMatchObject({ label: 'Chrome' });
-		expect(browserAgent('Chrome')?.className).toContain('text-sky-700');
-		expect(browserAgent('Firefox')?.className).toContain('text-orange-700');
-		expect(browserAgent('Mobile Safari')?.className).toContain('text-blue-700');
+		expect(browserAgent('Chrome')?.className).toContain('agent-tint-sky');
+		expect(browserAgent('Firefox')?.className).toContain('agent-tint-orange');
+		expect(browserAgent('Mobile Safari')?.className).toContain('agent-tint-blue');
 	});
 
 	it('falls back to a neutral badge', () => {
@@ -57,15 +57,18 @@ describe('referrerAgent', () => {
 	it('tints known referrers and renders their brand label', () => {
 		expect(referrerAgent('Direct')).toEqual({ label: 'Direct' });
 		expect(referrerAgent('www.google.com')).toMatchObject({ label: 'Google' });
-		expect(referrerAgent('www.google.com')?.className).toContain('text-blue-700');
+		expect(referrerAgent('www.google.com')?.className).toContain('agent-tint-blue');
 		expect(referrerAgent('news.ycombinator.com')).toMatchObject({
 			label: 'Hacker News',
 		});
-		expect(referrerAgent('news.ycombinator.com')?.className).toContain('text-orange-700');
+		expect(referrerAgent('news.ycombinator.com')?.className).toContain(
+			'agent-tint-orange',
+		);
 		expect(referrerAgent('www.facebook.com')).toMatchObject({ label: 'Facebook' });
 		expect(referrerAgent('t.me')).toMatchObject({ label: 'Telegram' });
 		expect(referrerAgent('x.com')).toMatchObject({ label: 'X' });
 		expect(referrerAgent('github.com')).toMatchObject({ label: 'GitHub' });
+		expect(referrerAgent('x.com')?.className).toContain('agent-tint-neutral');
 	});
 
 	it('strips the www prefix for unknown referrers', () => {

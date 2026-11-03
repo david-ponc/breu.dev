@@ -13,8 +13,8 @@ const alertVariants = tv({
 	variants: {
 		variant: {
 			default: 'bg-muted/50 text-foreground ring-foreground/10',
-			info: 'bg-info/10 text-info-foreground ring-info/20 dark:bg-info/16',
-			success: 'bg-success/10 text-success-foreground ring-success/20 dark:bg-success/16',
+			info: 'bg-alert-info-surface text-info-foreground ring-info/20',
+			success: 'bg-alert-success-surface text-success-foreground ring-success/20',
 		},
 	},
 	defaultVariants: { variant: 'default' },
