@@ -78,7 +78,7 @@ function Page() {
 					<Icon name='link' className='mt-1 size-4 text-brand' />
 					<BreuBrandIcon className='h-4 w-auto' />
 				</div>
-				<Card.Root className='z-1 overflow-auto'>
+				<Card.Root className='z-1 overflow-auto bg-card-opaque'>
 					<Card.Header>
 						<Card.Title>Sign in to your account</Card.Title>
 						<Card.Description>
