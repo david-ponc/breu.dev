@@ -11,6 +11,11 @@ import { LinkTable } from '#/features/links/table/link-table';
 import { userLinksQueryOptions } from '#/features/links/table/query';
 
 export const Route = createFileRoute('/dashboard/links/')({
+	loader: ({ context }) => {
+		void context.queryClient.prefetchQuery(
+			userLinksQueryOptions(context.session.user.id),
+		);
+	},
 	component: Page,
 	head: () => ({
 		meta: [

@@ -27,6 +27,7 @@ export function useCreateLinkForm({ defaultValues }: Props) {
 		queryKey: ['initial-slug'],
 		queryFn: () => httpClient().brevis.links.slugs.get(),
 		enabled: shouldFetchInitialSlug, // Solo si no hay slug por defecto
+		staleTime: 0,
 	});
 	const isInitialSlugPending = shouldFetchInitialSlug && initialSlugQuery.isPending;
 	const slugGenerator = useSlugGenerator();
