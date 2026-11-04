@@ -25,8 +25,9 @@ export function LandingHeader() {
 				</Link>
 				<Button
 					variant={isSignedIn ? 'ghost' : 'default'}
-					className='ml-auto px-4'
+					className='my-0.5 ml-auto'
 					render={<Link to={destination} />}
+					size='sm'
 				>
 					{label}
 					<Icon name='arrow-right' aria-hidden data-icon='inline-end' />
