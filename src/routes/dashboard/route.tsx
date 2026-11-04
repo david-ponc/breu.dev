@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router';
 
 import { BreuBrandIcon } from '#/core/icons/breu';
 import { getSession } from '#/core/lib/auth/functions';
@@ -28,9 +28,13 @@ function Layout() {
 		<div className='relative isolate flex min-h-svh w-full flex-col'>
 			<header className='flex items-center px-6'>
 				<div className='mx-auto flex min-w-0 max-w-[125rem] flex-1 items-center gap-6 py-1'>
-					<div>
-						<BreuBrandIcon className='h-4 w-auto' />
-					</div>
+					<Link
+						to='/'
+						aria-label='breu home'
+						className='flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring'
+					>
+						<BreuBrandIcon aria-hidden className='h-4 w-auto' />
+					</Link>
 					<Navbar />
 					<UserMenu />
 				</div>
