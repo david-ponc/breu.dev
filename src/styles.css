@@ -108,9 +108,9 @@
 	--selection-border: --alpha(var(--primary) / 30%);
 	--card-opaque: var(--color-white);
 	--image-outline: --alpha(var(--color-black) / 10%);
-	--theme-inset-highlight: var(--color-white);
-	--theme-inset-highlight-32: --alpha(var(--color-white) / 32%);
-	--theme-inset-highlight-40: --alpha(var(--color-white) / 40%);
+	--inset-highlight: var(--color-white);
+	--inset-highlight-32: --alpha(var(--color-white) / 32%);
+	--inset-highlight-40: --alpha(var(--color-white) / 40%);
 	--button-default-emphasis-image:
 		linear-gradient(to bottom, --alpha(var(--color-sky-200) / 32%), transparent),
 		linear-gradient(var(--primary), var(--primary));
@@ -210,9 +210,9 @@
 		--selection-border: --alpha(var(--primary) / 20%);
 		--card-opaque: var(--color-zinc-900);
 		--image-outline: --alpha(var(--color-white) / 10%);
-		--theme-inset-highlight: transparent;
-		--theme-inset-highlight-32: transparent;
-		--theme-inset-highlight-40: transparent;
+		--inset-highlight: transparent;
+		--inset-highlight-32: transparent;
+		--inset-highlight-40: transparent;
 		--button-default-emphasis-image: linear-gradient(var(--primary), var(--primary));
 		--button-destructive-emphasis-image: linear-gradient(
 			var(--destructive),
@@ -765,16 +765,16 @@
 	}
 }
 
-@utility themed-inset-highlight {
-	--tw-inset-shadow-color: var(--theme-inset-highlight);
+@utility inset-highlight {
+	--tw-inset-shadow-color: var(--inset-highlight);
 }
 
-@utility themed-inset-highlight-32 {
-	--tw-inset-shadow-color: var(--theme-inset-highlight-32);
+@utility inset-highlight-32 {
+	--tw-inset-shadow-color: var(--inset-highlight-32);
 }
 
-@utility themed-inset-highlight-40 {
-	--tw-inset-shadow-color: var(--theme-inset-highlight-40);
+@utility inset-highlight-40 {
+	--tw-inset-shadow-color: var(--inset-highlight-40);
 }
 
 @theme {

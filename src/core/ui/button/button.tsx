@@ -19,23 +19,23 @@ export const buttonVariants = tv({
 	variants: {
 		variant: {
 			default: [
-				'themed-inset-highlight inset-shadow-t-px/32 bg-default-enphasis text-primary-foreground hover:bg-primary/90 active:bg-default-active',
+				'inset-highlight-32 inset-shadow-t-px bg-default-enphasis text-primary-foreground hover:bg-primary/90 active:bg-default-active',
 			],
 			secondary: [
-				'themed-inset-highlight inset-shadow-t-px/32 bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary-active',
+				'inset-highlight-32 inset-shadow-t-px bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary-active',
 			],
 			outline: [
-				'themed-inset-highlight inset-shadow-t-px/32 border-border bg-secondary text-foreground hover:bg-secondary active:bg-outline-active',
+				'inset-highlight-32 inset-shadow-t-px border-border bg-secondary text-foreground hover:bg-secondary active:bg-outline-active',
 			],
 			ghost: ['bg-transparent text-foreground hover:bg-secondary active:bg-ghost-active'],
 			link: [
 				'bg-transparent text-foreground underline underline-offset-4 not-disabled:hover:underline-offset-[5px] not-disabled:[:active,[data-pressed]]:underline-offset-3',
 			],
 			destructive: [
-				'themed-inset-highlight inset-shadow-t-px/32 bg-destructive-enphasis text-white hover:bg-destructive/90 active:bg-destructive-active',
+				'inset-highlight-32 inset-shadow-t-px bg-destructive-enphasis text-white hover:bg-destructive/90 active:bg-destructive-active',
 			],
 			'destructive-outline': [
-				'themed-inset-highlight inset-shadow-t-px/32 border border-border bg-transparent text-destructive-foreground hover:bg-destructive/10 active:bg-destructive-outline-active',
+				'inset-highlight-32 inset-shadow-t-px border border-border bg-transparent text-destructive-foreground hover:bg-destructive/10 active:bg-destructive-outline-active',
 			],
 		},
 		size: {
