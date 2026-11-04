@@ -91,7 +91,9 @@ export function ActivityChart({
 	initialWidth,
 	ariaLabel,
 }: ActivityChartProps) {
-	const fillId = `activity-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+	const chartId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+	const fillId = `activity-fill-${chartId}`;
+	const gradientId = `activity-gradient-${chartId}`;
 	const resolvedAriaLabel =
 		ariaLabel ??
 		(interactive
@@ -111,7 +113,7 @@ export function ActivityChart({
 			) =>
 				renderChartSvg(scene, options).replace(
 					'</svg>',
-					`<defs><pattern id="${fillId}" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M-2 8L8 -2M2 10L10 2" fill="none" stroke="${COLOR}" stroke-width="1.25" stroke-opacity="0.52"/></pattern></defs></svg>`,
+					`<defs><pattern id="${fillId}" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 8L8 0" fill="none" stroke="${COLOR}" stroke-width="1.75" stroke-opacity="0.52"/></pattern></defs></svg>`,
 				),
 		[fillId],
 	);
@@ -248,6 +250,14 @@ export function ActivityChart({
 					x: 'date',
 					y: 'clicks',
 					y1: 0,
+					fill: `url(#${gradientId})`,
+					fillOpacity: 1,
+					curve: monotone,
+				}),
+				areaY(activity, {
+					x: 'date',
+					y: 'clicks',
+					y1: 0,
 					fill: `url(#${fillId})`,
 					curve: monotone,
 				}),
@@ -290,6 +300,20 @@ export function ActivityChart({
 					axis: { line: false },
 				},
 			},
+			gradients: [
+				{
+					id: gradientId,
+					x1: 0,
+					y1: 0,
+					x2: 0,
+					y2: 1,
+					stops: [
+						{ offset: 0, color: COLOR, opacity: 0.12 },
+						{ offset: 0.58, color: COLOR, opacity: 0.04 },
+						{ offset: 1, color: COLOR, opacity: 0 },
+					],
+				},
+			],
 		});
 
 		if (!interactive) {
@@ -318,7 +342,7 @@ export function ActivityChart({
 					`${formatDate(point.datum.date)} · ${formatCount(point.datum.clicks)} clicks`,
 			},
 		});
-	}, [activity, fillId, interactive]);
+	}, [activity, fillId, gradientId, interactive]);
 
 	return (
 		<Chart
