@@ -21,7 +21,7 @@ export function DeleteLinksDialog({
 
 	return (
 		<Dialog.Root handle={handle}>
-			<Dialog.Popup data-stagger='blur'>
+			<Dialog.Popup>
 				<Dialog.Header>
 					<Dialog.Title>
 						Delete {selectedCount === 1 ? 'link' : `${selectedCount} links`}?

@@ -96,16 +96,13 @@ export function UserMenu() {
 					) : null}
 				</div>
 				{open ? (
-					<div
-						data-stagger
-						className='overflow-hidden [--stagger-duration:280ms] [--stagger-step:40ms]'
-					>
+					<>
 						<MenuSeparator />
 						<MenuItem onClick={handleSignOut} variant='destructive'>
 							<Icon name='door-out' />
 							Cerrar sesión
 						</MenuItem>
-					</div>
+					</>
 				) : null}
 			</MenuPopup>
 		</MenuRoot>

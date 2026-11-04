@@ -3,16 +3,16 @@
    Animación de entrada sutil y escalonada para contenido de página.
 
    Marca cualquier contenedor con `data-stagger` y sus hijos directos
-   entran con un fade-up escalonado. `data-stagger="blur"` añade un
-   desenfoque breve (opt-in).
+   entran con un fade-up escalonado. Los bloques con controles se mueven
+   sin ocultarse ni esperar su turno.
 
    `data-stagger-isolate` (lo usa <PageTransition>) evita que un
    contenedor de página vuelva a animar a un hijo cuyo subárbol ya
    tiene su propio stagger, de modo que solo anima el más profundo.
 
    Ajusta con variables en cualquier ancestro:
-     --stagger-step     50ms    retardo entre hijos
-     --stagger-duration 420ms   duración de cada hijo
+      --stagger-step     30ms    retardo entre hijos
+      --stagger-duration 200ms   duración de cada hijo
    ───────────────────────────────────────────────────────────── */
 
 @keyframes stagger-rise {
@@ -22,11 +22,9 @@
 	}
 }
 
-@keyframes stagger-rise-blur {
+@keyframes stagger-rise-visible {
 	from {
-		opacity: 0;
-		translate: 0 10px;
-		filter: blur(4px);
+		translate: 0 6px;
 	}
 }
 
@@ -38,8 +36,8 @@
 
 @layer components {
 	[data-stagger] > * {
-		animation: stagger-rise var(--stagger-duration, 420ms) var(--ease-out) backwards;
-		animation-delay: calc(var(--stagger-step, 50ms) * var(--stagger-i, 0));
+		animation: stagger-rise var(--stagger-duration, 200ms) var(--ease-out) backwards;
+		animation-delay: calc(var(--stagger-step, 30ms) * var(--stagger-i, 0));
 	}
 
 	[data-stagger] > *:nth-child(1) {
@@ -54,22 +52,14 @@
 	[data-stagger] > *:nth-child(4) {
 		--stagger-i: 3;
 	}
-	[data-stagger] > *:nth-child(5) {
-		--stagger-i: 4;
-	}
-	[data-stagger] > *:nth-child(6) {
-		--stagger-i: 5;
-	}
-	[data-stagger] > *:nth-child(7) {
-		--stagger-i: 6;
-	}
-	[data-stagger] > *:nth-child(8),
-	[data-stagger] > *:nth-child(n + 9) {
-		--stagger-i: 7;
+	[data-stagger] > *:nth-child(n + 5) {
+		--stagger-i: 3;
 	}
 
-	[data-stagger='blur'] > * {
-		animation-name: stagger-rise-blur;
+	/* Interactive descendants are visible and ready from the first frame. */
+	[data-stagger] > *:has(a, button, input, select, textarea, [tabindex]) {
+		animation-name: stagger-rise-visible;
+		animation-delay: 0ms;
 	}
 
 	/* Si un hijo gestiona su propio stagger, no lo animamos además como bloque. */
@@ -82,9 +72,46 @@
 		animation: none;
 	}
 
+	/* One marketing entrance: title leads, copy and form join, preview only fades. */
+	.landing-hero-stagger > *:nth-child(1) {
+		animation: stagger-rise-lead 500ms var(--ease-out) both;
+		animation-delay: 0ms;
+	}
+	.landing-hero-stagger > *:nth-child(2) {
+		animation: stagger-rise-support 430ms var(--ease-out) both;
+		animation-delay: 0ms;
+	}
+	.landing-hero-stagger > *:nth-child(3) {
+		animation: stagger-rise-visible 420ms var(--ease-out) both;
+		animation-delay: 0ms;
+	}
+	.landing-hero-stagger > *:nth-child(4) {
+		animation: stagger-fade 360ms var(--ease-out) both;
+		animation-delay: 140ms;
+	}
+
+	@keyframes stagger-rise-lead {
+		from {
+			opacity: 0;
+			translate: 0 12px;
+		}
+	}
+
+	@keyframes stagger-rise-support {
+		from {
+			opacity: 0;
+			translate: 0 7px;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		[data-stagger] > * {
 			animation: stagger-fade 160ms var(--ease-out) backwards;
+			animation-delay: 0ms;
+		}
+
+		.landing-hero-stagger > * {
+			animation: stagger-fade 160ms var(--ease-out) both;
 			animation-delay: 0ms;
 		}
 	}

@@ -13,7 +13,7 @@ export function HeroSection() {
 			aria-labelledby='hero-title'
 			className='mx-auto w-full max-w-7xl px-6 pt-12 pb-0 sm:pt-16 lg:px-12'
 		>
-			<PageTransition className='grid grid-cols-1 gap-6 [--stagger-duration:420ms] [--stagger-step:60ms] lg:grid-cols-[minmax(0,1fr)_36rem] lg:gap-x-16'>
+			<PageTransition className='landing-hero-stagger grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_36rem] lg:gap-x-16'>
 				<h1
 					id='hero-title'
 					className='text-balance font-semibold text-4xl leading-[1.05] tracking-tight sm:text-5xl lg:self-end lg:text-6xl'

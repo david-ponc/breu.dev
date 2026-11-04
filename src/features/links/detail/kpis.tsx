@@ -18,7 +18,7 @@ export function LinkDetailKpis({ linkId, userId, range }: LinkDetailKpisProps) {
 	const { data: stats } = useSuspenseQuery(linkStatsQueryOptions(userId, linkId, range));
 
 	return (
-		<div data-stagger='blur' className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
+		<div data-stagger className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
 			<KpiCard label='Clicks' value={formatCount(stats.lifetimeClicks)} />
 			<KpiCard label='Period' value={formatCount(stats.periodClicks)} />
 			<KpiCard label='Bots' value={formatCount(stats.bots)} />
