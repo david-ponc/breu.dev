@@ -11,21 +11,21 @@ export function LandingHeader() {
 	const destination = isSignedIn ? '/dashboard/links' : '/auth/sign-in';
 
 	return (
-		<header className='px-6'>
+		<header className='flex items-center px-6'>
 			<nav
 				aria-label='Main navigation'
-				className='mx-auto flex max-w-[125rem] items-center justify-between gap-6 py-1'
+				className='mx-auto flex min-w-0 max-w-[125rem] flex-1 items-center gap-6 py-1'
 			>
 				<Link
 					to='/'
 					aria-label='breu home'
-					className='flex min-h-11 min-w-11 items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring'
+					className='flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring'
 				>
-					<BreuBrandIcon aria-hidden className='h-5 w-auto' />
+					<BreuBrandIcon aria-hidden className='h-4 w-auto' />
 				</Link>
 				<Button
 					variant={isSignedIn ? 'ghost' : 'default'}
-					className='px-4'
+					className='ml-auto px-4'
 					render={<Link to={destination} />}
 				>
 					{label}

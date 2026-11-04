@@ -36,7 +36,7 @@ export function ProductPreview({ className }: { className?: string }) {
 			>
 				<div
 					data-slot='product-preview-frame'
-					className='rounded-2xl bg-background p-2 shadow-[0_2px_6px_-2px_rgb(0_0_0/0.12),0_12px_28px_-16px_rgb(0_0_0/0.16)] ring-1 ring-foreground/10'
+					className='rounded-2xl bg-background p-2 shadow-[0_2px_6px_-2px_rgb(0_0_0/0.12),0_12px_28px_-16px_rgb(0_0_0/0.16)] ring-inset ring-1 ring-foreground/10'
 				>
 					<div className='flex items-center justify-between gap-4 px-3 pt-2 pb-4 sm:px-5'>
 						<div className='flex items-center gap-6' aria-hidden>

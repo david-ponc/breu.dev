@@ -2,6 +2,7 @@ import type { LinkActivity } from '#/contexts/analytics/visits/domain/link-stats
 import type { Meta } from '#/contexts/brevis/links/domain/link';
 
 const DAILY_CLICKS = [18, 26, 34, 22, 49, 61, 55, 84, 72, 96, 88, 120, 105, 170];
+const HIGHLIGHTS_DAILY_CLICKS = [52, 58, 54, 63, 31, 26, 55, 60, 56, 66, 61, 34, 29, 58];
 
 export const productPreviewData = {
 	slug: 'launch-notes',
@@ -16,6 +17,16 @@ export const productPreviewData = {
 } as const;
 
 export const previewPeriodClicks = productPreviewData.activity.reduce(
+	(total, point) => total + point.clicks,
+	0,
+);
+
+export const highlightsActivity = HIGHLIGHTS_DAILY_CLICKS.map((clicks, index) => ({
+	date: `2026-09-${String(index + 1).padStart(2, '0')}`,
+	clicks,
+})) satisfies LinkActivity[];
+
+export const highlightsPeriodClicks = highlightsActivity.reduce(
 	(total, point) => total + point.clicks,
 	0,
 );

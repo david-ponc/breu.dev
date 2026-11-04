@@ -9,7 +9,7 @@ import { ActivityChart } from '#/features/links/detail/activity-chart';
 import { BreakdownChart, CountryFlag } from '#/features/links/detail/breakdown-chart';
 import { formatCountry } from '#/features/links/detail/format';
 
-import { previewPeriodClicks, productPreviewData } from './hero/product-preview-data';
+import { highlightsActivity, highlightsPeriodClicks } from './hero/product-preview-data';
 
 const previewCountries = [
 	{ key: 'MX', count: 420 },
@@ -138,10 +138,10 @@ function ActivityVisual() {
 	return (
 		<div aria-hidden inert className='flex h-64 items-center'>
 			<ActivityChart
-				activity={productPreviewData.activity}
+				activity={highlightsActivity}
 				interactive={false}
 				height={215}
-				ariaLabel={`Example activity: ${previewPeriodClicks} clicks over the last 14 days.`}
+				ariaLabel={`Example activity: ${highlightsPeriodClicks} clicks over the last 14 days.`}
 			/>
 		</div>
 	);
