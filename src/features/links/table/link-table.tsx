@@ -210,7 +210,9 @@ export function LinkTable({
 										className={
 											cell.column.id === 'select'
 												? 'relative z-10 size-10 min-w-10 max-w-10 p-0 text-center leading-0'
-												: undefined
+												: cell.column.id === 'status' || cell.column.id === 'totalClicks'
+													? 'pointer-events-none'
+													: undefined
 										}
 									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}

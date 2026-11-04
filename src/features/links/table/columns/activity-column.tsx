@@ -8,7 +8,9 @@ export function ActivityColumn({
 }: Pick<LinkSummary, 'activity' | 'totalClicks'>) {
 	return (
 		<div className='flex items-end gap-4'>
-			<ActivitySparkline activity={activity} />
+			<div aria-hidden inert>
+				<ActivitySparkline activity={activity} />
+			</div>
 			<span className='shrink-0'>{totalClicks}</span>
 		</div>
 	);
