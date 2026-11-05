@@ -13,20 +13,20 @@ export function LandingCta() {
 	return (
 		<section
 			aria-labelledby='landing-cta-title'
-			className='relative isolate overflow-hidden border-border border-t'
+			className='landing-cta relative isolate overflow-clip border-border border-t'
 		>
 			<DiagonalPattern lineOpacity={0.05} />
 			<div className='relative z-10 mx-auto flex max-w-7xl flex-col gap-6 px-6 py-14 sm:py-18 md:flex-row md:items-end md:justify-between lg:px-12'>
 				<div className='max-w-2xl'>
 					<h2
 						id='landing-cta-title'
-						className='mt-3 text-balance font-semibold text-3xl tracking-tight sm:text-4xl'
+						className='reveal-on-scroll mt-3 text-balance font-semibold text-3xl tracking-tight sm:text-4xl'
 					>
 						{isSignedIn
 							? 'Ready to get back to your links?'
 							: 'Make room for every link.'}
 					</h2>
-					<p className='mt-3 max-w-xl text-pretty text-muted-foreground leading-relaxed'>
+					<p className='reveal-on-scroll mt-3 max-w-xl text-pretty text-muted-foreground leading-relaxed'>
 						{isSignedIn
 							? 'Your links and their activity are waiting in your workspace.'
 							: 'Create an account to organize all your links and see what happens after you share them.'}

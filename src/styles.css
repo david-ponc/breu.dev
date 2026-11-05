@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './scroll-fade.css';
+@import './scroll-driven.css';
 @import './morph.css';
 @import './stagger.css';
 @import '@fontsource-variable/ibm-plex-sans/wght.css';

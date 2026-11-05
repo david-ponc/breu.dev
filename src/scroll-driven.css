@@ -1,0 +1,70 @@
+@keyframes reveal-up {
+	from {
+		opacity: 0;
+		filter: blur(2px);
+		transform: translateY(1.5rem);
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateY(0);
+	}
+}
+
+@keyframes reveal-from-left {
+	from {
+		opacity: 0;
+		filter: blur(2px);
+		transform: translateX(-1.5rem);
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateX(0);
+	}
+}
+
+@keyframes reveal-from-right {
+	from {
+		opacity: 0;
+		filter: blur(2px);
+		transform: translateX(1.5rem);
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateX(0);
+	}
+}
+
+@utility reveal-on-scroll {
+	animation: reveal-up linear both;
+	animation-timeline: view();
+	animation-range: var(--reveal-range, entry 0% cover 28%);
+}
+
+@utility reveal-from-left {
+	animation: reveal-from-left linear both;
+	animation-timeline: view();
+	animation-range: var(--reveal-range, entry 0% cover 28%);
+}
+
+@utility reveal-from-right {
+	animation: reveal-from-right linear both;
+	animation-timeline: view();
+	animation-range: var(--reveal-range, entry 0% cover 28%);
+}
+
+@layer components {
+	.landing-cta {
+		--reveal-range: entry 0% entry 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reveal-on-scroll,
+	.reveal-from-left,
+	.reveal-from-right {
+		animation: none;
+	}
+}

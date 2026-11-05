@@ -65,18 +65,18 @@ export function RecentVisitsSection() {
 			<div className='mx-auto max-w-7xl px-6 py-14 sm:py-18 lg:px-12'>
 				<div className='grid gap-4 pb-8 sm:gap-6 md:grid-cols-2 md:items-end md:pb-10'>
 					<div>
-						<p className='flex items-center gap-2 font-medium'>
+						<p className='reveal-from-left flex items-center gap-2 font-medium'>
 							<Icon name='cursor-click' aria-hidden className='size-4 shrink-0' />
 							Visit insights
 						</p>
 						<h2
 							id='recent-visits-title'
-							className='mt-1.5 text-balance font-semibold text-3xl tracking-tight sm:text-4xl'
+							className='reveal-from-left mt-1.5 text-balance font-semibold text-3xl tracking-tight sm:text-4xl'
 						>
 							See what each click tells you.
 						</h2>
 					</div>
-					<p className='max-w-xl text-pretty text-base text-muted-foreground leading-relaxed sm:text-lg md:justify-self-end'>
+					<p className='reveal-from-right max-w-xl text-pretty text-base text-muted-foreground leading-relaxed sm:text-lg md:justify-self-end'>
 						Get a useful picture of recent visits, without displaying IP addresses.
 					</p>
 				</div>
