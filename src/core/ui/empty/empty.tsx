@@ -14,7 +14,7 @@ const emptyMediaVariants = tv({
 		variant: {
 			default: 'bg-transparent',
 			icon: [
-				"empty-media-icon relative flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-card text-foreground shadow-sm/5 [&_svg:not([class*='size-'])]:size-4.5",
+				"empty-media-icon relative flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-card-opaque text-foreground shadow-sm/5 [&_svg:not([class*='size-'])]:size-4.5",
 				'before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)]',
 			],
 		},
