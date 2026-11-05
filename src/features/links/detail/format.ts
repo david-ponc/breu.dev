@@ -17,7 +17,6 @@ const dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
 	year: 'numeric',
 	hour: 'numeric',
 	minute: '2-digit',
-	timeZone: 'UTC',
 });
 const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
