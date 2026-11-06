@@ -4,7 +4,7 @@ import {
 	type RowSelectionState,
 	useTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import type { LinkSummary } from '#/contexts/brevis/links/domain/link-summary';
 
@@ -29,6 +29,9 @@ export function useLinkTable({
 	onSelectionChange,
 }: UseLinkTableOptions) {
 	const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
+	const notifySelectionChange = useEffectEvent((selected: LinkSummary[]) => {
+		onSelectionChange?.(selected);
+	});
 	const isControlled = rowSelectionProp !== undefined;
 	const rowSelection = isControlled ? rowSelectionProp : internalRowSelection;
 
@@ -65,7 +68,7 @@ export function useLinkTable({
 
 	useEffect(() => {
 		const selected = links.filter((link) => rowSelection[link.id]);
-		onSelectionChange?.(selected);
+		notifySelectionChange(selected);
 	}, [links, rowSelection]);
 
 	return table;

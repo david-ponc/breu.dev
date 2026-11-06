@@ -1,4 +1,4 @@
-import { type FormEvent, useState, useTransition, ViewTransition } from 'react';
+import { type SubmitEvent, useState, useTransition, ViewTransition } from 'react';
 
 import { Icon } from '#/core/icons/icon';
 import { authClient } from '#/core/lib/auth/client';
@@ -19,7 +19,7 @@ export function MagicLinkSignInForm({ linkError = false }: MagicLinkSignInFormPr
 	const [isExpiredLinkError, setIsExpiredLinkError] = useState(linkError);
 	const [isPending, startTransition] = useTransition();
 
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 		startTransition(() => {
 			setStatus('idle');
